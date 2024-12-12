@@ -1,57 +1,143 @@
-import { User } from "../../models/user.model.js";
-import { apiError } from "../../utils/apiError.js";
-import { asyncHandler } from "../../utils/asyncHandler.js";
+
 import jwt from "jsonwebtoken";
+import { asyncHandler } from "../../utils/asyncHandler.js";
+import { apiError } from "../../utils/apiError.js";
 
-const verifyJWT = asyncHandler(async (req, res, next) => {
-    try {
-        // Retrieve the token from cookies or Authorization header
-        const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "").trim();
+const verifyJWT = (model) =>
+  asyncHandler(async (req, res, next) => {
+    const token =
+      req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "").trim();
 
-        if (!token) {
-            throw new apiError({
-                statusCode: 401,
-                message: "Unauthorized access: Token is missing",
-            });
-        }
-
-        // Verify the token with the secret key
-        const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        console.log("Decoded Token:", decodedToken);
-
-        // Find the user associated with the token
-        const user = await User.findById(decodedToken?._id).select("-password -refreshToken -accessToken");
-
-        if (!user) {
-            throw new apiError({
-                statusCode: 401,
-                message: "Invalid access token: User not found",
-            });
-        }
-
-        // Attach user information to the request object
-        req.user = user;
-        next();
-    } catch (error) {
-        // Handle token errors
-        if (error.name === "TokenExpiredError") {
-            throw new apiError({
-                statusCode: 401,
-                message: "Token expired. Please login again.",
-            });
-        } else if (error.name === "JsonWebTokenError") {
-            throw new apiError({
-                statusCode: 401,
-                message: "Malformed token. Authentication failed.",
-            });
-        }
-
-        // Handle other errors
-        throw new apiError({
-            statusCode: 401,
-            message: "Invalid access token",
-        });
+    if (!token) {
+      throw new apiError({
+        statusCode: 401,
+        message: "Unauthorized access: Token is missing",
+      });
     }
-});
+
+    try {
+      const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+      if (!model) {
+        throw new apiError({
+          statusCode: 500,
+          message: "Model not specified for token verification",
+        });
+      }
+
+      const entity = await model.findById(decodedToken?._id).select("-password");
+
+      if (!entity) {
+        throw new apiError({
+          statusCode: 401,
+          message: "Invalid access token: Entity not found",
+        });
+      }
+
+      // Assign entity to the correct request field
+
+ 
+        req.admin = entity;
+
+        req.manager = entity;
+
+        req.user = entity;
+    
+    
+
+      next();
+    } catch (error) {
+      console.error("JWT Verification error:", error);
+
+      if (error.name === "TokenExpiredError") {
+        throw new apiError({
+          statusCode: 401,
+          message: "Token expired. Please log in again.",
+        });
+      }
+
+      if (error.name === "JsonWebTokenError") {
+        throw new apiError({
+          statusCode: 401,
+          message: "Malformed token. Authentication failed.",
+        });
+      }
+
+      throw new apiError({
+        statusCode: 401,
+        message: "Invalid access token",
+      });
+    }
+  });
 
 export { verifyJWT };
+
+
+// const verifyJWT = (model) =>
+//   asyncHandler(async (req, res, next) => {
+//     const token =
+//       req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "").trim();
+
+//     if (!token) {
+//       throw new apiError({
+//         statusCode: 401,
+//         message: "Unauthorized access: Token is missing",
+//       });
+//     }
+
+//     try {
+//       const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+//       if (!model) {
+//         throw new apiError({
+//           statusCode: 500,
+//           message: "Model not specified for token verification",
+//         });
+//       }
+
+//       // Verify the entity from the model using the token's _id
+//       const entity = await model.findById(decodedToken?._id).select("-password");
+
+//       if (!entity) {
+//         throw new apiError({
+//           statusCode: 401,
+//           message: "Invalid access token: Entity not found",
+//         });
+//       }
+
+//       // Dynamically assign the entity to the corresponding request field
+//       if (model.modelName === "Admin") {
+//         req.admin = entity;
+//       } else if (model.modelName === "Manager") {
+//         req.manager = entity;
+//       } else {
+//         req.user = entity; // Default to user
+//       }
+
+//       next();
+//     } catch (error) {
+//       console.error("JWT Verification error:", error);
+
+//       if (error.name === "TokenExpiredError") {
+//         throw new apiError({
+//           statusCode: 401,
+//           message: "Token expired. Please log in again.",
+//         });
+//       }
+
+//       if (error.name === "JsonWebTokenError") {
+//         throw new apiError({
+//           statusCode: 401,
+//           message: "Malformed token. Authentication failed.",
+//         });
+//       }
+
+//       throw new apiError({
+//         statusCode: 401,
+//         message: "Invalid access token",
+//       });
+//     }
+//   });
+
+// export { verifyJWT };
+

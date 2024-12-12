@@ -1,14 +1,29 @@
 import multer from "multer";
+import path from "path";
+import { fileURLToPath } from "url";
+import fs from "fs";
 
+// Define __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Resolve absolute path for the upload directory
+const tempDir = path.join(__dirname, "../../public/temp");
+
+// Ensure the directory exists
+if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir, { recursive: true });
+}
+
+// Configure multer storage
 const storage = multer.diskStorage({
-    destination: function (req, file,2 cb){
-        cb(null,"./public/temp");
+    destination: (req, file, cb) => {
+        cb(null, tempDir); 
     },
-    filename: function(req, res,cb){
-        cb(null, file.originalname)
-    }
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    },
 });
 
-export const upload = multer({
-    storage
-});
+// Export multer upload middleware
+export const upload = multer({ storage });

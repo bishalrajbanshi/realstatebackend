@@ -26,7 +26,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
     }
 
     // Check if the OTP matches (hashed OTP comparison)
-    const isMatch = await bcryptjs.compare(code, user.passwordResetToken);
+    const isMatch =  bcryptjs.compare(code, user.passwordResetToken);
     if (!isMatch) {
         throw new apiError({
             statusCode: 400,
@@ -34,11 +34,11 @@ const resetPassword = asyncHandler(async (req, res, next) => {
         });
     }
 
-    // Set the new password directly (Mongoose will hash it)
+   
     user.password = newPassword;
-    user.passwordResetToken = undefined; // Clear the reset token
-    user.passwordResetTokenExpire = undefined; // Clear the expiration time
-    user.passwordChangedAt = Date.now(); // Set the time the password was changed
+    user.passwordResetToken = undefined; 
+    user.passwordResetTokenExpire = undefined; 
+    user.passwordChangedAt = Date.now();
 
     await user.save();
 

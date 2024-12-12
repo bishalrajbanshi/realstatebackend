@@ -4,6 +4,8 @@ import { apiResponse } from "../../utils/apiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 
 const logoutUser = asyncHandler(async (req, res, next) => {
+    console.log("User",req.user);
+    
     try {
         const userId = req.user?._id;
 
@@ -54,3 +56,5 @@ const logoutUser = asyncHandler(async (req, res, next) => {
 });
 
 export { logoutUser };
+
+

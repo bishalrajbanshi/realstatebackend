@@ -18,13 +18,12 @@ const  databaseConnectin = async () => {
 
         const { DB_USERNAME, DB_PASSWORD, DB_CLUSTERURI, DB_NAME } = process.env;
 
-        console.log(process.env.DB_USERNAME);  // Should print 'sulabghar'
-        console.log(process.env.DB_PASSWORD);  // Should print 'sulab'
-        console.log(process.env.DB_CLUSTERURI);  // Should print 'sulavgharghadari.x8rdq.mongodb.net'
-        console.log(process.env.DB_NAME);  // Should print 'sulabghargadari'
+        console.log(process.env.DB_USERNAME); 
+        console.log(process.env.DB_PASSWORD); 
+        console.log(process.env.DB_CLUSTERURI);
+        console.log(process.env.DB_NAME); 
         
-        
-
+    
          // Validate environment variables
          if (!DB_USERNAME || !DB_PASSWORD || !DB_CLUSTERURI || !DB_NAME) {
             throw new Error('Missing required environment variables');

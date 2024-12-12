@@ -1,7 +1,9 @@
+
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { apiError } from "../../utils/apiError.js";
-import { transporter } from "../../middlewares/emailmiddleware/emailconfig.middleware.js";
 import { User } from "../../models/user.model.js";
+import { sendEmail } from "../../middlewares/emailmiddleware/sendemail.js";
+import { emailHtmlContent } from "../../utils/emailTemplate.js";
 
 const forgotPassword = asyncHandler(async (req, res, next) => {
     const { email } = req.body;
@@ -24,12 +26,16 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     const resetToken = await user.createResetPasswordToken();
     await user.save({ validateBeforeSave: false });
 
+    const emailHtml = emailHtmlContent({
+        fullName: user.fullName || "User",
+        verificationCode: resetToken,
+    });
+
     try {
-        await transporter.sendMail({
-            from: '"Your App" <support@example.com>',
+        await sendEmail({
             to: user.email,
             subject: "Password Reset Request",
-            text: `Your OTP for password reset is ${resetToken}. It is valid for 15 minutes.`,
+            html: emailHtml,
         });
 
         res.status(200).json({
@@ -37,6 +43,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
             message: "Password reset OTP sent to email",
         });
     } catch (error) {
+        // Rollback token creation on failure
         user.passwordResetToken = undefined;
         user.passwordResetTokenExpire = undefined;
         await user.save({ validateBeforeSave: false });
@@ -48,4 +55,4 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     }
 });
 
-export { forgotPassword }
+export { forgotPassword };

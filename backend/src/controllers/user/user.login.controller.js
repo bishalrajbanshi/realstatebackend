@@ -45,9 +45,6 @@ const loginUser = async (req, res, next) => {
         const accessToken = user.generateAccessToken();
         const refreshToken = user.generateRefreshToken();
 
-        console.log("Generated Access Token:", accessToken);
-        console.log("Generated Refresh Token:", refreshToken);
-
         // Save tokens to user
         user.accessToken = accessToken;
         user.refreshToken = refreshToken;

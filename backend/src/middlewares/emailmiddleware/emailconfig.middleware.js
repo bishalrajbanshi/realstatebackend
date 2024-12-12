@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer"
 
-export const transporter = nodemailer.createTransport({
+ const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
     secure: false, 
@@ -9,6 +9,8 @@ export const transporter = nodemailer.createTransport({
       pass: "dgek trwz esdm kyzb",
     },
   });
+
+  export { transporter };
   
 
   

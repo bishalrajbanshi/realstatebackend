@@ -1,104 +1,108 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 import bcryptjs from "bcryptjs";
+import { apiError } from "../utils/apiError.js";
 import jwt from "jsonwebtoken";
 
-const managerSchema = new Schema(
-  {
-    fullName: {
-      type: String,
-      required: [true, "FULL NAME REQUIRED"],
-      trim: true,
+const managerSchema = new Schema({
+
+    fullName:{
+        type:String,
+        required: true
     },
     email: {
-      type: String,
-      required: [true, "EMAIL REQUIRED"],
-      lowercase: true,
-      unique: true,
-    },
-    mobileNumber: {
-      type: String,
-      required: true,
-      unique: true,
-      // match: [/^\d{10}$/, "INVALID MOBILE NUMBER"], // Validating for 10-digit numbers
-    },
-    avatar:{
-      type: String
+        type: String,
+        required: [true, "Email is required"],
+        unique: true,
+        // match: [/.+@.+\..+/, "Please enter a valid email address"],
     },
     password: {
-      type: String,
-      required: true,
+        type: String,
+        required: [true, "Password is required"],
+        minlength: 6,
     },
-    refreshToken:{
-      type: String
+    mobileNumber: {
+        type: String,
+        required: [true, "Phone number is required"],
+        unique: true,
     },
-    accessToken:{
-      type: String
+    avatar: {
+        type: String // from cloudinary
     },
-  },
-  { timestamps: true }
-);
+    role: {
+        type: String,
+        default: "Manager",
+    },
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: "Admin",
+        required: true,
+    },
+    accessToken: {
+        type:String
+    },
+    refreshToken: {
+        type: String
+    }
 
-// Password hashing
-managerSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
+},{ timestamps: true });
 
-  try {
-    const salt = await bcryptjs.genSalt(10);
-    this.password = await bcryptjs.hash(this.password, salt);
-    next();
-  } catch (error) {
-    console.error("Error hashing password:", error);
-    next(error);
-  }
+//PRE HOOK
+managerSchema.pre("save", async function(next){
+    if (!this.isModified('password')) return next();
+
+    try {
+        const salt = await bcryptjs.genSalt(10);
+        this.password = await bcryptjs.hash(this.password,salt);
+        next();
+    } catch (error) {
+            next(error);
+    }
 });
 
-// Password verification
-managerSchema.methods.isPasswordCorrect = async function (password) {
-  return bcryptjs.compare(password, this.password);
+//compare password
+managerSchema.methods.isPasswordCorrect =  async function(password){
+    return await bcryptjs.compare(password,this.password)
 };
 
-// Access token generation
-managerSchema.methods.generateAccessToken = function () {
-  const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
-  if (!accessTokenSecret) {
-    throw new Error("ACCESS_TOKEN_SECRET is not defined in the environment variables");
-  }
+managerSchema.methods.generateAccessToken =  function(){
+    const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+    const accessTokenExpiry = process.env.ACCESS_TOKEN_EXPIRY || '1h';
 
-  const accessTokenExpiry = process.env.ACCESS_TOKEN_EXPIRY || "1h";
-  return jwt.sign(
-    {
-      _id: this._id,
-      email: this.email,
-      fullName: this.fullName,
-      mobileNumber: this.mobileNumber,
-    },
-    accessTokenSecret,
-    {
-      expiresIn: accessTokenExpiry,
+    if (!accessTokenSecret) {
+        throw new apiError({
+            message:"access token is not defined"
+        });
     }
-  );
-};
 
-// Refresh token generation
+    return jwt.sign({
+        _id:this._id,
+        email:this.email
+    }, accessTokenSecret, {
+        expiresIn: accessTokenExpiry
+    });
+}
+
 managerSchema.methods.generateRefreshToken = function () {
-  const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
-  if (!refreshTokenSecret) {
-    throw new Error("REFRESH_TOKEN_SECRET is not defined in the environment variables");
-  }
+    const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
+    const refreshTokenExpiry = process.env.REFRESH_TOKEN_EXPIRY || '7d';
 
-  const refreshTokenExpiry = process.env.REFRESH_TOKEN_EXPIRY || "7d";
-  const refreshToken = jwt.sign(
-    {
-      _id: this._id,
-    },
-    refreshTokenSecret,
-    {
-      expiresIn: refreshTokenExpiry,
+    if (!refreshTokenSecret) {
+        throw new apiError({
+            message: "Refresh token secret is not defined"
+        });
     }
-  );
 
-  this.refreshToken = refreshToken;
-  return refreshToken;
+    // Generate the refresh token
+    const token = jwt.sign(
+        { _id: this._id },
+        refreshTokenSecret,
+        { expiresIn: refreshTokenExpiry }
+    );
+
+    // Return the generated token
+    return token;
 };
 
-export const Manager = mongoose.model("Manager", managerSchema);
+
+export const Manager = mongoose.model("Manager",managerSchema);
+

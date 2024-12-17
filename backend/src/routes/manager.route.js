@@ -7,7 +7,7 @@ import { adminManagerLogout } from "../controllers/admin.manager/admin.logout.co
 import { adminManagerlogin } from "../controllers/admin.manager/admin.login.controller.js";
 const router = Router();
 
-router.post("/register-manager", verifyJWT(Admin), registerManager);
+
 router.route("/login").post(adminManagerlogin)
 router.route("/logout").post(verifyJWT(Manager), adminManagerLogout);
 

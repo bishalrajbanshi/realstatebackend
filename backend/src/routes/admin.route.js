@@ -5,16 +5,21 @@ import { verifyJWT } from "../middlewares/auth.middleware/auth.middleware.js";
 import { Admin } from "../models/admin.model.js";
 import { Manager } from "../models/manager.model.js";
 import { registerManager } from "../controllers/admin.manager/manager.register.controller.js";
-
+import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router();
 
-//registermanager 
-router.post("/register-manager", verifyJWT(Admin), registerManager);
-router.route("/login").post(adminManagerlogin)
+//registermanager
+router.route("/login").post(adminManagerlogin);
+router.post("/register-manager",verifyJWT(Admin),
+    upload.fields([
+        {
+            name: "avatar",
+            maxCount:1
+        }
+    ]),
+  registerManager
+);
 router.route("/logout").post(verifyJWT(Admin), adminManagerLogout);
-// router.route("/manager/logout").post(verifyJWT(Manager), adminManagerLogout);
 
-
-
-export default router
+export default router;

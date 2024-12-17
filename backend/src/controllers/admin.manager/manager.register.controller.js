@@ -5,11 +5,16 @@ import { Manager } from "../../models/manager.model.js";
 import { emailHtmlContent } from "../../utils/emailTemplate.js";
 import { sendEmail } from "../../middlewares/emailmiddleware/sendemail.js";
 import bcryptjs from "bcryptjs";
+import { uploadOnCloudinary } from "../../utils/cloudinary.js";
+import path from "path";
+import fs from "fs";
 
 const registerManager = asyncHandler(async (req, res, next) => {
     try {
         const { fullName, email, mobileNumber, password } = req.body;
         const pwdToManager = password;
+
+      
 
         // Validate admin access
         const adminId = req.admin?._id;
@@ -40,12 +45,39 @@ const registerManager = asyncHandler(async (req, res, next) => {
             });
         }
 
+          // get the upload filr info
+          const avatarFile = req.files["avatar"]?req.files["avatar"][0]: null;
+
+          if (!avatarFile) {
+             throw new apiError({
+                 statusCode:400,
+                 message: "avatar not found"
+             })
+          }
+ 
+         //upload on cloudinary
+         const cloudinaryresponse = await uploadOnCloudinary(avatarFile.path)
+         if (!cloudinaryresponse) {
+            fs.unlinkSync(avatarFile.path);
+            throw new apiError({
+                statusCode:500,
+                message:"Error uploding avatar on cloudinary"
+            })
+         }
+
+         const avatarLink = cloudinaryresponse.url;
+
+         //delet local filr path
+         fs.unlinkSync(avatarFile.path);
+   
+
         // Create and save new manager
         const newManager = new Manager({
             fullName,
             email,
             mobileNumber,
             password,
+            avatar:avatarLink,
             createdBy: adminId,
         });
 
@@ -72,6 +104,7 @@ const registerManager = asyncHandler(async (req, res, next) => {
                 fullName: newManager.fullName,
                 email: newManager.email,
                 mobileNumber: newManager.mobileNumber,
+                avatar: avatarLink
             },
         });
     } catch (error) {

@@ -1,16 +1,17 @@
 import { Router } from "express";
-import { adminManagerlogin } from "../controllers/admin.manager/admin.login.controller.js";
-import { adminManagerLogout } from "../controllers/admin.manager/admin.logout.controller.js";
+import { adminManagerlogin } from "../controllers/adminAndManager/admin.manager.login.controller.js";
+import { adminManagerLogout } from "../controllers/adminAndManager/admin.manager.logout.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware/auth.middleware.js";
 import { Admin } from "../models/admin.model.js";
 import { Manager } from "../models/manager.model.js";
-import { registerManager } from "../controllers/admin.manager/manager.register.controller.js";
+import { registerManager } from "../controllers/adminAndManager/admin/manager.register.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { adminDetails } from "../controllers/adminAndManager/admin/admin.detials.sender.js";
 
 const router = Router();
 
-//registermanager
 router.route("/login").post(adminManagerlogin);
+router.route("/adminDetails").get(verifyJWT(Admin),adminDetails);
 router.post("/register-manager",verifyJWT(Admin),
     upload.fields([
         {

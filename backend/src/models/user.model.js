@@ -39,9 +39,9 @@ const userSchema = new Schema({
     verificationCodeExpire: {
         type: Date,
     },
-    passwordChangedAt: {
-        type: Date
-    },
+    // passwordChangedAt: {
+    //     type: Date
+    // },
     passwordResetToken: {
         type: String,
     },

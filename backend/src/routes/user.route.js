@@ -8,6 +8,8 @@ import { forgotPassword } from "../controllers/user/user.forgot.password.control
 import { resetPassword } from "../controllers/user/reset.password.controller.js";
 import { User } from "../models/user.model.js";
 import { userSellerForm } from "../controllers/user/user.seller.controller.js";
+import { userDetails } from "../controllers/user/user.detials.controller.js";
+import { upload } from "../middlewares/multer.middleware.js";
 
 
 const router = Router();
@@ -15,12 +17,22 @@ const router = Router();
 router.route("/register").post(registerUser);
 router.route("/verifyemail").post(verifyemail);
 router.route("/login").post(loginUser);
+router.route("/userdetails").get(verifyJWT(User),userDetails)
 //secured routes
 router.route("/logout").post(verifyJWT(User),logoutUser)
+
 router.route("/forgot-password").post(forgotPassword)
 router.route("/reset-password").patch(resetPassword)
 
-router.route("/senddata").post(verifyJWT(User),userSellerForm)
+router.route("/sendfrom").post(verifyJWT(User),
+    upload.fields([
+        {
+            name: "avatar",
+            maxCount: 1
+        }
+    ]),
+userSellerForm
+)
 
 
 export default router;

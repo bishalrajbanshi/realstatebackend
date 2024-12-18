@@ -126,7 +126,7 @@ const createPredefinedAdmin = asyncHandler(async () => {
             console.log('Predefined admin created successfully.');
         } else {
             // Admin already exists
-            console.log("Admin already exists with this email or username.");
+            // console.log("Admin already exists with this email or username.");
         }
     } catch (error) {
         console.error('Error creating predefined admin:', error);

@@ -23,15 +23,11 @@ const userSellerForm = asyncHandler(async (req, res, next) => {
    
 
     // Create and save the new Seller document (using await)
-    const newForm = await Seller.create({
+    const newForm = new Seller({
       fullName,
       mobileNumber,
       sentBy: userId,
     });
-
-    const populatedForm = await Seller.findById(newForm._id).populate('senderName', 'fullName');
-    console.log(populatedForm);
-
     await newForm.save()
     
 

@@ -28,7 +28,6 @@ const loginUser = async (req, res, next) => {
             });
         }
 
-        console.log("Entered password:", password);
 
         // Validate password
         const isPasswordValid = await user.isPasswordCorrect(password);
@@ -50,22 +49,18 @@ const loginUser = async (req, res, next) => {
         user.refreshToken = refreshToken;
         await user.save();
 
-        console.log("User saved with tokens.");
 
         //(excluding sensitive fields)
         const loggedInUser = await User.findById(user._id).select(
             "-password -accessToken -refreshToken"
         );
 
-        console.log("Logged-in user details:", loggedInUser);
 
         // Set cookies for tokens
         const options = {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production", 
         };
-
-        console.log("Setting cookies for tokens.");
 
         // Return response
         return res
@@ -74,11 +69,6 @@ const loginUser = async (req, res, next) => {
             .cookie("refreshToken", refreshToken, options)
             .json({
                 statusCode: 200,
-                data: {
-                    user: loggedInUser,
-                    accessToken,
-                    refreshToken,
-                },
                 message: "User logged in successfully",
                 success: true,
             });

@@ -1,75 +1,53 @@
 import mongoose from "mongoose";
 import { configDotenv } from "dotenv";
-import  { logger }  from "../utils/logger.js";
+import { logger } from "./logger.js";
 
-
-//config dot env
+// CONFIGURATION
 configDotenv({
-    path: './.env',
+  path: "./.env",
 });
 
-
-//db connection
-const  databaseConnectin = async () => {
-
-    try {
-
- 
-
-        const { DB_USERNAME, DB_PASSWORD, DB_CLUSTERURI, DB_NAME } = process.env;
-
-        console.log(process.env.DB_USERNAME); 
-        console.log(process.env.DB_PASSWORD); 
-        console.log(process.env.DB_CLUSTERURI);
-        console.log(process.env.DB_NAME); 
-        
+//CONNECTION
+const mongoDbConnection = async () => {
+  try {
+    //BRING FROM DOT ENV
+    const { DB_USERNAME, DB_PASSWORD, DB_CLUSTERURI, DB_NAME } = process.env;
     
-         // Validate environment variables
-         if (!DB_USERNAME || !DB_PASSWORD || !DB_CLUSTERURI || !DB_NAME) {
-            throw new Error('Missing required environment variables');
-        }
-        
-
-        const connectionString = `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@${DB_CLUSTERURI}/${DB_NAME}?retryWrites=true&w=majority`;
-        console.log(connectionString);
-        
-        logger.info('Attempting to connect to MongoDB...');
-
-        const connectionInstance = await mongoose.connect(connectionString,{
-            dbName: DB_NAME,
-            maxPoolSize: 30,
-            minPoolSize: 1
-        });
-      
-
-        
-        logger.info(`Mongoose connected to database on host:${connectionInstance.connection.host}`);
-
-       
-    } catch (error) {
-
-        logger.error(`Database connection failed: ${error.message}`);
-        if (error.message.includes('Missing required environment variables')) {
-            logger.error('Please check your .env file for missing values.');
-        } else {
-            logger.error('Error details:', error);
-        }
-        process.exit(1); 
-
-        
+    //VALIDATE USERNAME AAND PWD
+    if (!DB_USERNAME || !DB_PASSWORD) {
+      throw new Error("MISSING REQUIREMENTS ENVIRONMENT VARIABLES");
     }
 
-     //graceful sutdown
-     const cleanup = async () => {
-        await mongoose.connection.close();
-        logger.info('Mongoose connection closed due to application termination');
-        process.exit(0);
-    };
+    //CONNECTION STRING
+    const connectionString = `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@${DB_CLUSTERURI}/${DB_NAME}?retryWrites=true&w=majority`;
 
-    process.on('SIGINT', cleanup); 
-    process.on('SIGTERM', cleanup); 
-    
+    //CONNECTION INSTANCE
+    const connectionInstance = await mongoose.connect(connectionString, {
+      dbName: DB_NAME,
+      maxPoolSize: 20,
+      minPoolSize: 2,
+    });
+    console.log("MONGO DB CONNECTED");
+    logger.info(
+      `Mongoose connected to database on host:${connectionInstance.connection.host}`
+    );
+  } catch (error) {
+    if (error.message.includes("MISSING REQUIREMENTS ENVIRONMENT VARIABLES")) {
+      console.log("Please check your .env file for missing values");
+    } else {
+      console.log("Error details: ", error);
+    }
+    process.exit(1);
+  }
 
-}
+  const cleanup = async () => {
+    await mongoose.connection.close();
+    logger.info("Mongoose connection closed due to application termination");
+    process.exit(0);
+  };
 
-export default databaseConnectin;
+  process.on("SIGINT", cleanup);
+  process.on("SIGTERM", cleanup);
+};
+
+export default mongoDbConnection;

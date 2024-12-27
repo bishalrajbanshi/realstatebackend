@@ -1,38 +1,33 @@
-import { Router } from "express";
-import { registerUser } from "../controllers/user/user.register.controller.js";
-import { verifyemail } from "../controllers/verifyemail.js";
-import { loginUser } from "../controllers/user/user.login.controller.js";
-import { logoutUser } from "../controllers/user/user.logout.controller.js";
-import { verifyJWT } from "../middlewares/auth.middleware/auth.middleware.js";
-import { forgotPassword } from "../controllers/user/user.forgot.password.controller.js";
-import { resetPassword } from "../controllers/user/reset.password.controller.js";
-import { User } from "../models/user.model.js";
-import { userSellerForm } from "../controllers/user/user.seller.controller.js";
-import { userDetails } from "../controllers/user/user.detials.controller.js";
-import { upload } from "../middlewares/multer.middleware.js";
+import Router from "express";
+import {
+  forgotPassword,
+  login,
+  logout,
+  registerUser,
+  resendOtp,
+  resetPassword,
+  sendDetials,
+  userForm,
+  verifyEmail,
+  userSellerForm
+} from "../controller/allUser.services.controller.js";
 
+import { middlewares } from "../middlewares/index.js";
+const { verifyJWT } = middlewares;
+
+import { User } from "../models/user.model.js";
 
 const router = Router();
 
 router.route("/register").post(registerUser);
-router.route("/verifyemail").post(verifyemail);
-router.route("/login").post(loginUser);
-router.route("/userdetails").get(verifyJWT(User),userDetails)
-//secured routes
-router.route("/logout").post(verifyJWT(User),logoutUser)
-
-router.route("/forgot-password").post(forgotPassword)
-router.route("/reset-password").patch(resetPassword)
-
-router.route("/sendfrom").post(verifyJWT(User),
-    upload.fields([
-        {
-            name: "avatar",
-            maxCount: 1
-        }
-    ]),
-userSellerForm
-)
-
+router.route("/verifyemail").post(verifyEmail);
+router.route("/resendotp").post(resendOtp);
+router.route("/login").post(login);
+router.route("/logout").post(verifyJWT(User),logout);
+router.route("/forgot-password").post(forgotPassword);
+router.route("/reset-password").patch(resetPassword);
+router.route("/userdetails").get(verifyJWT(User),sendDetials)
+router.route("/enqueryfrom").post(verifyJWT(User),userForm);
+router.route("/sellerfrom").post(verifyJWT(User),userSellerForm);
 
 export default router;

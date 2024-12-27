@@ -1,27 +1,31 @@
 {
-  "name": "backend",
+  "name": "realstatebackend",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.js"
   },
-  "author": "sulab ghar ghadari",
+  "author": "bishal rajbanshi",
   "license": "ISC",
+  "description": "",
   "dependencies": {
+    "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
+    "bull": "^4.16.4",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "cripto": "^1.1.4",
-    "dotenv": "^16.4.6",
-    "express": "^4.21.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
     "express-sanitizer": "^1.0.6",
+    "express-session": "^1.18.1",
+    "express-validator": "^7.2.0",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
-    "logger": "^0.0.1",
-    "mongoose": "^8.8.3",
+    "mongoose": "^8.9.1",
+    "mongoose-aggregate-paginate-v2": "^1.1.2",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.16",
     "otp-generator": "^4.0.1",
@@ -29,6 +33,7 @@
     "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.7"
+    "logger": "^0.0.1",
+    "nodemon": "^3.1.9"
   }
 }

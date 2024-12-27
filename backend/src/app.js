@@ -1,53 +1,76 @@
 import express from "express";
-import cookieparser from "cookie-parser";
+import cookieParser from "cookie-parser";
 import cors from "cors";
-import { size } from "./constants.js";
 import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import expressSanitizer from "express-sanitizer";
-import { apiError } from "./utils/apiError.js";
+import { size } from "./constant.js";
+import session from "express-session"; 
 
 const app = express();
 
-//cors configuration
+//CORS CONFIGURATION
 const origin = process.env.CORS_ORIGIN;
 app.use(cors({
     origin: origin || '*',
-    Credential: true,
+    credentials: true
 }));
 
-//helmet config
+//USE HELMET
 app.use(helmet());
 
-
-//json limit
+//LIMIT JSON
 app.use(express.json({
-    limit: size,
-}))
+    limit:size,
+}));
 
-//express senitizer
+//USE EXPRESS SENITIZER
 app.use(expressSanitizer());
 
-
-//static file
+//STATIC FILES
 app.use(express.static("public"));
 
-//cookieparser
-app.use(cookieparser());
+//COOKIEPARSER
+app.use(cookieParser());
+
+// SET SESSON MANAGEMENT
+app.use(session({
+    secret: process.env.SESSION_SECRET , 
+// Don't save session if not modified
+    resave: false, 
+     // Don't create session until something is stored
+    saveUninitialized: false,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production', 
+         // Ensure cookie is only accessible by the server
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000 
+    }
+}));
+
+//RETE LIMITINE MIDDLEWARE
+const limiter = rateLimit({
+    //limit 15 minuits
+    windowMs: 15 * 60 * 1000,
+    // limit each IP 
+    max: 100, 
+    message: "Too many requests from this IP, please try again later"
+})
+app.use(limiter);
 
 
-//import Routes
+//api DECLERATIONS
+import adminRouter from "./routes/admin.route.js";
+import managerRouter from "./routes/manager.route.js";
 import userRouter from "./routes/user.route.js";
-import adminRouter from "./routes/admin.route.js"
-import managerRouter from "./routes/manager.route.js"
+
+app.use("/api/admin",adminRouter);
+app.use("/api/manager",managerRouter);
 app.use("/api/v1/user",userRouter);
-app.use("/api/v2/admin",adminRouter)
-app.use("/api/v3/manager",managerRouter)
 
 
 
-
-
-
+//ERROR HANDALING MIDDLEWARES
 app.use((err, req, res, next) => {
     if (process.env.NODE_ENV === 'production') {
         return res.status(err.statusCode || 500).json({

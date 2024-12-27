@@ -2,8 +2,6 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=node
 
 ### Node ###
-
-node_modules/
 # Logs
 logs
 *.log
@@ -142,9 +140,5 @@ dist
 
 # SvelteKit build / generate output
 .svelte-kit
-
-#docker ignore
-dockerfile
-.dockerignore
 
 # End of https://www.toptal.com/developers/gitignore/api/node

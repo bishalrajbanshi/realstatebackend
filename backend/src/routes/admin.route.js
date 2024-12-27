@@ -1,26 +1,37 @@
 import { Router } from "express";
-import { adminManagerlogin } from "../controllers/adminAndManager/admin.manager.login.controller.js";
-import { adminManagerLogout } from "../controllers/adminAndManager/admin.manager.logout.controller.js";
-import { verifyJWT } from "../middlewares/auth.middleware/auth.middleware.js";
 import { Admin } from "../models/admin.model.js";
-import { Manager } from "../models/manager.model.js";
-import { registerManager } from "../controllers/adminAndManager/admin/manager.register.controller.js";
-import { upload } from "../middlewares/multer.middleware.js";
-import { adminDetails } from "../controllers/adminAndManager/admin/admin.detials.sender.js";
+
+import { utils } from "../utils/index.js";
+const{ upload }=utils;
+
+import {
+  deleteMannagers,
+  fetchAllManagers,
+  loginadmin,
+  logoutadmin,
+  registermanager,
+  sendadmindetails,
+  totalForms,
+} from "../controller/allAdmin.services.controller.js";
+
+import { middlewares } from "../middlewares/index.js";
+const { verifyJWT } = middlewares;
 
 const router = Router();
 
-router.route("/login").post(adminManagerlogin);
-router.route("/adminDetails").get(verifyJWT(Admin),adminDetails);
-router.post("/register-manager",verifyJWT(Admin),
-    upload.fields([
-        {
-            name: "avatar",
-            maxCount:1
-        }
-    ]),
-  registerManager
+router.route("/login").post(loginadmin);
+router.route("/logout").post(verifyJWT(Admin), logoutadmin);
+router.route("/register-manager").post(verifyJWT(Admin),
+upload.fields([
+  {
+    name: "avatar",
+    maxCount:1
+  }
+]),
+registermanager
 );
-router.route("/logout").post(verifyJWT(Admin), adminManagerLogout);
-
+router.route("/admindetails").get(verifyJWT(Admin),sendadmindetails);
+router.route("/allmanager").get(verifyJWT(Admin),fetchAllManagers);
+router.route("/delete/:managerId").delete(verifyJWT(Admin),deleteMannagers);
+router.route("/total-forms").get(verifyJWT(Admin),totalForms)
 export default router;

@@ -2,7 +2,7 @@ import { utils } from "../utils/index.js";
 const { apiError, apiResponse, asyncHandler,countForms } = utils;
 
 import { services } from "../services/index.js";
-import { Enqueryform } from "../models/user.enquery.form.js";
+import { Enqueryform } from "../models/user.enquery.form.model.js";
 const {
   managerRegister,
   adminManagerLogin,

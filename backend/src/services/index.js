@@ -15,6 +15,10 @@ import { allManagers, deleteManager } from "./adminAndManager/admin/managerServi
 import { userEnqueryForm } from "./user/auth/user.enqueryfrom.js";
 import { enqueryFormByUser } from "./adminAndManager/manager/allenqueryForm.js";
 import { sellerFormByUser } from "./user/auth/user.seller.from.js";
+import { sellerUser } from "./adminAndManager/manager/allsellerForm.js";
+import { userSellerData } from "./adminAndManager/manager/sellerformdata.js";
+
+
 
 export const services = {
     userRegister,
@@ -34,5 +38,7 @@ export const services = {
     deleteManager,
     userEnqueryForm,
     enqueryFormByUser,
-    sellerFormByUser
+    sellerFormByUser,
+    sellerUser,
+    userSellerData
 }

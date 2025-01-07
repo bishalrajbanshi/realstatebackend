@@ -1,10 +1,11 @@
 import { Manager } from "../../../models/manager.model.js";
+import { Sellerfrom } from "../../../models/user.seller.from.model.js";
 import { utils } from "../../../utils/index.js";
 const { apiError } = utils;
 
-const sellerFormByUser =  async(
+const sellerUser =  async(
     filters={},
-    projection= null,
+    projection= {},
     options ={},
     managerId
 ) => {
@@ -28,13 +29,19 @@ const sellerFormByUser =  async(
                 })
             }
 
+            //combbine filters 
+            const combinedFiltersData = { ...filters, "landLocation.address": manager.address };
+
+            //fetch data
+            const userSellerData = await Sellerfrom.find(combinedFiltersData,projection,options);
+            return userSellerData;
     } catch (error) {
-        
+        throw error;
     }
     
 
 }
 
-export { sellerFormByUser }
+export { sellerUser }
 
 

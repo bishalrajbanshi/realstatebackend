@@ -250,7 +250,6 @@ const userSellerForm = asyncHandler( async (req,res,next) => {
        .json( new apiResponse({
          success: true,
          message: "seller form send successful",
-         data: userData,
        }))
    } catch (error) {
     return next( new apiError({
@@ -271,5 +270,5 @@ export {
   resetPassword,
   sendDetials,
   userForm,
-  userSellerForm
+  userSellerForm 
 };

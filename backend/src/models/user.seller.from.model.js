@@ -12,6 +12,9 @@ const sellerForm = new Schema(
       required: [true,"fullname is required"],
       trim: true
     },
+    mobileNumber: {
+      type: String
+    },
     // user input address city and area inland location
     landLocation: [
       {
@@ -52,6 +55,11 @@ const sellerForm = new Schema(
             trim: true
         }
     ],
+    state: {
+      type: String,
+      enum: ["pending","completed"],
+      default: "pending"
+    },
     discription: {
         type: String,
         trim: true,

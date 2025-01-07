@@ -1,4 +1,4 @@
-import { Enqueryform } from "../../../models/user.enquery.form.js";
+import { Enqueryform } from "../../../models/user.enquery.form.model.js";
 import { User } from "../../../models/user.model.js";
 import { utils } from "../../../utils/index.js";
 const { apiError } = utils;

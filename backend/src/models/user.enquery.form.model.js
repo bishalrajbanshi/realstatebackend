@@ -36,6 +36,11 @@ const enqueryForm = new Schema(
       type: String,
       required: true,
     },
+    state: {
+      type: String,
+      enum: ["pending","completed"],
+      default: "pending"
+    },
     message: { type: String },
   },
   { timestamps: true }

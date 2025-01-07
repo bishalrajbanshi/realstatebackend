@@ -1,5 +1,5 @@
 import { Manager } from "../../../models/manager.model.js";
-import { Enqueryform } from "../../../models/user.enquery.form.js";
+import { Enqueryform } from "../../../models/user.enquery.form.model.js";
 
 import { utils } from "../../../utils/index.js";
 const { apiError } = utils;
@@ -34,9 +34,7 @@ const enqueryFormByUser = async (
 
     //fetch the user from 
     const userFrom = await Enqueryform.find(combinedFilters,projection,options);
-
-    return userFrom;
-    
+return userFrom;
   } catch (error) {
     throw error;
   }

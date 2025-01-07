@@ -1,5 +1,5 @@
 import { User } from "../../../models/user.model.js";
-import { Sellerfrom } from "../../../models/user.seller.from.js";
+import { Sellerfrom } from "../../../models/user.seller.from.model.js";
 import { utils } from "../../../utils/index.js";
 const { apiError } = utils;
 
@@ -39,6 +39,7 @@ const sellerFormByUser = async function (sellerData, userId) {
    
      const newSellerForm = new Sellerfrom({
        fullName: user.fullName,
+       mobileNumber: user.mobileNumber,
        landLocation,
        landCategory,
        landType,

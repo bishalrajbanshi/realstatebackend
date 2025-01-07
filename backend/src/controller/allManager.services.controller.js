@@ -2,14 +2,15 @@ import { utils } from "../utils/index.js";
 const { apiError, apiResponse, asyncHandler } = utils;
 
 import { services } from "../services/index.js";
-import { Enqueryform } from "../models/user.enquery.form.js";
 
 
 const { 
   adminManagerLogin,
   adminManagerLogout, 
   managerDetails,
-  enqueryFormByUser
+  enqueryFormByUser,
+  sellerUser,
+userSellerData
 } =services;
 
 //login manager
@@ -114,10 +115,13 @@ const fetchForm = asyncHandler(async (req, res, next) => {
       });
     }
     const filters = {};
-    const projection = { fullName: 1, email: 1, mobileNumber: 1, address: 1,currentAddress: 1,propertyType: 1,
+    const projection = { fullName: 1, email: 1, mobileNumber: 1, address: 1,currentAddress: 1,propertyType: 1,state: 1,
       purpose:1,message: 1
     }; 
-    const options = {}; 
+    const options = {
+      sort: { createdAt: -1 }, 
+      limit: 10, 
+    };
 
     const userForms = await enqueryFormByUser(filters, projection, options, managerId);
 
@@ -137,4 +141,76 @@ const fetchForm = asyncHandler(async (req, res, next) => {
   }
 });
 
-export { loginManager, logoutmanager, managerdetailsSend, fetchForm };
+
+//fetch seller from
+const fetchSellerForm = asyncHandler(async(req,res,next) => {
+  try {
+    const managerId = req.manager?._id;
+
+    const  filters= {};
+    const projection = {
+      fullName: 1,
+      mobileNumber: 1,
+      "landLocation.address": 1,
+      "landLocation.city": 1,
+      "landLocation.area": 1,
+      landType: 1,
+      landCategory: 1,
+      facilities: 1,
+      state: 1,
+      discription: 1
+    };
+ const options = {
+      sort: { createdAt: -1 }, // Sort by most recent
+      limit: 10, 
+    };
+
+
+    const sellerData = await sellerUser(filters, projection,options, managerId)
+
+    if (!sellerData || sellerData.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No seller data found.",
+      });
+    }
+    res.status(200)
+    .json( new apiResponse({
+      success : true,
+      data : sellerData
+    }))
+    
+
+  } catch (error) {
+    return  next( new apiError({
+      statusCode: 500,
+      message: error.message || "error sending seller from"
+    }))
+  }
+})
+
+//manager post 
+const managerPosts = asyncHandler(async(req,res,next) => {
+try {
+  const {postId} = req.params;
+  console.log("PostID: ",postId);
+  
+  const postData = await userSellerData(postId);
+  res.status(200)
+  .json(new apiResponse({
+    success: true,
+    data: postData
+  }))
+   
+    
+} catch (error) {
+  return next (new apiError({
+    statusCode: 500,
+    message: error.message || "error on manager posting data"
+  }))
+}
+
+
+})
+
+export { loginManager, logoutmanager, managerdetailsSend, fetchForm, fetchSellerForm, managerPosts };

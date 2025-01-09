@@ -16,7 +16,10 @@ import { userEnqueryForm } from "./user/auth/user.enqueryfrom.js";
 import { enqueryFormByUser } from "./adminAndManager/manager/allenqueryForm.js";
 import { sellerFormByUser } from "./user/auth/user.seller.from.js";
 import { sellerUser } from "./adminAndManager/manager/allsellerForm.js";
-import { userSellerData } from "./adminAndManager/manager/sellerformdata.js";
+
+import { managerpost } from "./adminAndManager/manager/managerpost.js";
+import { viewSellerData } from "./adminAndManager/manager/viewsellerdata.js";
+import { viewPosts } from "./user/auth/viewposts.js";
 
 
 
@@ -40,5 +43,7 @@ export const services = {
     enqueryFormByUser,
     sellerFormByUser,
     sellerUser,
-    userSellerData
+    viewSellerData,
+    managerpost,
+    viewPosts
 }

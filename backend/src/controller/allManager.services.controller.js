@@ -4,13 +4,15 @@ const { apiError, apiResponse, asyncHandler } = utils;
 import { services } from "../services/index.js";
 
 
+
 const { 
   adminManagerLogin,
   adminManagerLogout, 
   managerDetails,
   enqueryFormByUser,
   sellerUser,
-userSellerData
+  viewSellerData,
+  managerpost
 } =services;
 
 //login manager
@@ -161,7 +163,7 @@ const fetchSellerForm = asyncHandler(async(req,res,next) => {
       discription: 1
     };
  const options = {
-      sort: { createdAt: -1 }, // Sort by most recent
+      sort: { createdAt: -1 }, 
       limit: 10, 
     };
 
@@ -187,19 +189,42 @@ const fetchSellerForm = asyncHandler(async(req,res,next) => {
       message: error.message || "error sending seller from"
     }))
   }
+});
+
+//view seller data
+const viewSeller = asyncHandler(async(req,res,next)=>{
+  try {
+    const{sellerId} = req.params;
+    console.log("seller Id",sellerId);
+
+    const viewData = await viewSellerData(sellerId);
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      data: viewData
+    }))
+    
+  } catch (error) {
+    return next(new apiError({
+      statusCode: 500,
+      message: error.message || "error infetching seller data"
+    }))
+  }
 })
 
 //manager post 
 const managerPosts = asyncHandler(async(req,res,next) => {
 try {
-  const {postId} = req.params;
-  console.log("PostID: ",postId);
+  const {sellerId} = req.params;
+  const managerId = req.manager?._id;
+  const {fullName,mobileNumber,landType,landCategory,facilities} = req.body;
+  console.log("sellerid: ",sellerId);
+  console.log("ManagerId: ",managerId);
   
-  const postData = await userSellerData(postId);
+  const postData = await managerpost(sellerId,managerId,fullName,mobileNumber,landType,landCategory,facilities,req);
   res.status(200)
   .json(new apiResponse({
     success: true,
-    data: postData
   }))
    
     
@@ -209,8 +234,6 @@ try {
     message: error.message || "error on manager posting data"
   }))
 }
-
-
 })
 
-export { loginManager, logoutmanager, managerdetailsSend, fetchForm, fetchSellerForm, managerPosts };
+export { loginManager, logoutmanager, managerdetailsSend, fetchForm, fetchSellerForm, viewSeller, managerPosts };

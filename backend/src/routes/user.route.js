@@ -9,7 +9,8 @@ import {
   sendDetials,
   userForm,
   verifyEmail,
-  userSellerForm
+  userSellerForm,
+  fetchAllPosts
 } from "../controller/allUser.services.controller.js";
 
 import { middlewares } from "../middlewares/index.js";
@@ -29,5 +30,6 @@ router.route("/reset-password").patch(resetPassword);
 router.route("/userdetails").get(verifyJWT(User),sendDetials)
 router.route("/enqueryfrom").post(verifyJWT(User),userForm);
 router.route("/sellerfrom").post(verifyJWT(User),userSellerForm);
+router.route("/posts").get(fetchAllPosts)
 
 export default router;

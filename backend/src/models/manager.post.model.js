@@ -7,15 +7,14 @@ const managerPostSchema = new Schema({
         ref: "Manager",
         required: [true, "post by required"]
     },
+    managerFullName: {
+        type: String
+    },
     managerAddress: {
         type: String,
         required: true
     },
-    managerFullName: {
-        type: String
-    },
-  
-    images: [
+    avatar: [
         {
             type: String, //from cloudinary
             required: true
@@ -27,14 +26,17 @@ const managerPostSchema = new Schema({
         ref: "Enqueryform",
         required:  [true, "seller is required"]
     },
-    sellerFullname: {
+    sellerFullName: {
         type: String,
     },
-    sellerEmail: {
+    sellerNumber: {
         type: String,
     },
-    sellerAddress: {
-        type: String
+    sellerLandType: {
+        type: String,
+    },
+    sellerLandCatagory: {
+        type: String,
     },
     sellerFacilities: [
         {

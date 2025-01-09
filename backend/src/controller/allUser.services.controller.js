@@ -1,6 +1,7 @@
 import { utils } from "../utils/index.js";
 const { apiError, apiResponse, asyncHandler } = utils;
 import { services } from "../services/index.js";
+
 const {
   userRegister,
   userLogin,
@@ -11,7 +12,7 @@ const {
   userResetPassword,
   userDetails,
   userEnqueryForm,
-  sellerFormByUser
+  sellerFormByUser,viewPosts
 } = services;
 
 // Register User Controller
@@ -258,6 +259,16 @@ const userSellerForm = asyncHandler( async (req,res,next) => {
     }))
    }
 
+});
+
+//fetch all post
+const fetchAllPosts = asyncHandler(async(req,res,next)=>{
+    const data = await viewPosts();
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      data: data
+    }))
 })
 
 export {
@@ -270,5 +281,6 @@ export {
   resetPassword,
   sendDetials,
   userForm,
-  userSellerForm 
+  userSellerForm,
+  fetchAllPosts
 };

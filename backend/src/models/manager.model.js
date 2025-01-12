@@ -62,6 +62,7 @@ managerSchema.plugin(mongooseAggregatePaginate)
 managerSchema.index({ email: 1, mobileNumber: 1});
 managerSchema.index({ isLoggedIn: 1});
 managerSchema.index({ address: 1});
+managerSchema.index({ createdAt: -1})
 
 addPasswordhashingHook(managerSchema);
 addPasswordVerificationMethod(managerSchema);

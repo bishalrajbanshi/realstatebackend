@@ -11,4 +11,8 @@ mongoDbConnection()
 })
 .catch((error) => {
     console.error("MONGODB CONNECTION ERROR !! ",error);
+    process.exit(1)
+})
+.finally(()=> {
+    console.log("Attempt to connect to MongoDB completed."); 
 })

@@ -20,8 +20,8 @@ const uploadOnCloudinary = async (localFilePath) => {
 
     // Upload file to Cloudinary
     const response = await cloudinary.uploader.upload(localFilePath, {
-      resource_type: "auto",
-      folder: "realstate"
+      resource_type: "image",
+      folder: "realstate",
     });
 
     console.log("File uploaded to Cloudinary:", response.url);
@@ -33,7 +33,6 @@ const uploadOnCloudinary = async (localFilePath) => {
     if (fs.existsSync(localFilePath)) {
       fs.unlinkSync(localFilePath);
     }
-
     throw error;
   }
 };

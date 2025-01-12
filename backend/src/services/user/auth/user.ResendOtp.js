@@ -1,7 +1,7 @@
 import { sendEmail } from "../../../middlewares/emailMiddleware/sendEmail.js";
 import { User } from "../../../models/user.model.js";
 import { apiError } from "../../../utils/common/apiError.js";
-import { emailHtmlContent } from "../../../utils/general/emailTemplate.js";
+import { emailHtmlContent } from "../../../utils/common/emailTemplate.js";
 import { generateCode, hashOtp } from "../../../utils/helper/otpgenarator.js";
 
 const userResend = async (userData) => {

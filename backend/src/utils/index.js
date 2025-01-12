@@ -1,7 +1,7 @@
 import { apiError } from "./common/apiError.js";
 import { apiResponse } from "./common/apiResponse.js";
 import { asyncHandler } from "./common/asyncHandler.js";
-import { emailHtmlContent } from "./general/emailTemplate.js";
+import { emailHtmlContent } from "./common/emailTemplate.js";
 import { uploadOnCloudinary } from "./helper/cloudinary.js";
 import { upload } from "./helper/multer.js";
 import { generateAccessToken, generateRefreshToken } from "./helper/generateTokens.js";
@@ -9,6 +9,7 @@ import { generateCode, hashOtp } from "./helper/otpgenarator.js";
 import { addPasswordhashingHook, addPasswordVerificationMethod } from "./helper/passwordHashCompare.js";
 import { generateResetToken } from "./helper/passwordResetToken.js";
 import { countForms } from "./helper/counter.js";
+import { stateUpdate } from "../middlewares/general/stateUpdate.js";
 
 export const utils = { 
     apiError,
@@ -24,5 +25,6 @@ export const utils = {
     addPasswordhashingHook,
     addPasswordVerificationMethod,
     generateResetToken,
-    countForms
+    countForms,
+    stateUpdate
 }

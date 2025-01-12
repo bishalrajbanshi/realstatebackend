@@ -51,6 +51,8 @@ const adminSchema = new Schema(
   { timestamps: true }
 );
 
+adminSchema.index({ createdAt: -1})
+
 // Add plugin and indexes
 adminSchema.plugin(mongooseAggregatePaginate);
 

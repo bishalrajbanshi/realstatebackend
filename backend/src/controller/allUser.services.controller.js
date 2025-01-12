@@ -12,7 +12,10 @@ const {
   userResetPassword,
   userDetails,
   userEnqueryForm,
-  sellerFormByUser,viewPosts
+  sellerFormByUser,
+  viewPosts,
+  viewProperty,
+  userPurchase
 } = services;
 
 // Register User Controller
@@ -263,12 +266,104 @@ const userSellerForm = asyncHandler( async (req,res,next) => {
 
 //fetch all post
 const fetchAllPosts = asyncHandler(async(req,res,next)=>{
-    const data = await viewPosts();
+   try {
+     const filters={};
+     const projection= {
+       homeName: 1,
+       avatar: 1,
+       landType:1,
+       landCatagory:1,
+       facilities:1,
+       price:1,
+       isNegotiable: 1
+     }
+     const options = {
+       sort: { createdAt: -1 }, 
+       limit: 10, 
+     };
+     const data = await viewPosts(filters,projection,options);
+     res.status(200)
+     .json(new apiResponse({
+       success: true,
+       data: data
+     }))
+   } catch (error) {
+    return next(new apiError({
+      statusCode: 500,
+      message: error.message || "error fetching post"
+    }))
+   }
+});
+
+//view post
+const viewPropertyData = asyncHandler(async(req,res,next)=> {
+  try {
+    const {postId} = req.params;
+    
+    const filters={};
+    const projection= {
+      homeName: 1,
+      avatar: 1,
+      images:1,
+      landLocation: 1,
+      landType:1,
+      landCatagory:1,
+      facilities:1,
+      price:1,
+      isNegotiable: 1,
+      type: 1,
+      description: 1,
+      state: 1
+    }
+    const options = {
+      sort: { createdAt: -1 }, 
+      limit: 10, 
+    };
+
+    const propertyData = await viewProperty(postId,filters,projection,options);
+    if (!propertyData || propertyData.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No property found",
+      });
+    }
+    
     res.status(200)
     .json(new apiResponse({
       success: true,
-      data: data
+      data: propertyData
     }))
+
+  } catch (error) {
+    return next(new apiError({
+      statusCode: 500,
+      message: error.message || " error viewing property data"
+    }))
+  }
+})
+
+// purchasse data
+const userPurchaseData = asyncHandler(async(req,res,next) =>{
+    try {
+        const userId = req.user?._id;
+        const {postId} = req.params;
+        const {mobileNumber} = req.body;
+        console.log("userId",userId);
+        console.log("postId",postId);
+        
+        const pudata = await userPurchase(userId,postId,mobileNumber);
+
+        res.status(200)
+        .json(new apiResponse({
+          success: true,
+          data:pudata 
+        }))
+    } catch (error) {
+          return next(new apiError({
+            statusCode: 500,
+            message: error.message || "error getting purchase data"
+          }))
+    }
 })
 
 export {
@@ -282,5 +377,7 @@ export {
   sendDetials,
   userForm,
   userSellerForm,
-  fetchAllPosts
+  fetchAllPosts,
+  userPurchaseData,
+  viewPropertyData
 };

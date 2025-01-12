@@ -10,9 +10,14 @@ const {
   adminManagerLogout, 
   managerDetails,
   enqueryFormByUser,
+  viewEnqueryForm,
   sellerUser,
   viewSellerData,
-  managerpost
+  managerpost,
+  allform,
+  sellerState,
+  enquertState,
+  deletePost
 } =services;
 
 //login manager
@@ -117,8 +122,7 @@ const fetchForm = asyncHandler(async (req, res, next) => {
       });
     }
     const filters = {};
-    const projection = { fullName: 1, email: 1, mobileNumber: 1, address: 1,currentAddress: 1,propertyType: 1,state: 1,
-      purpose:1,message: 1
+    const projection = { fullName: 1, mobileNumber: 1,currentAddress: 1,state: 1
     }; 
     const options = {
       sort: { createdAt: -1 }, 
@@ -143,6 +147,24 @@ const fetchForm = asyncHandler(async (req, res, next) => {
   }
 });
 
+//view enquery from
+const viewEnqueryData = asyncHandler(async(req,res,next)=>{
+  try {
+    const {formId} = req.params;
+    const alldata = await viewEnqueryForm(formId);
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      data: alldata
+    }))
+  } catch (error) {
+    return next(new apiError({
+      statusCode: 500,
+      message: error.message || "erron fetching enquery data"
+    }))
+  }
+})
+
 
 //fetch seller from
 const fetchSellerForm = asyncHandler(async(req,res,next) => {
@@ -151,14 +173,9 @@ const fetchSellerForm = asyncHandler(async(req,res,next) => {
 
     const  filters= {};
     const projection = {
+      homeName: 1,
       fullName: 1,
       mobileNumber: 1,
-      "landLocation.address": 1,
-      "landLocation.city": 1,
-      "landLocation.area": 1,
-      landType: 1,
-      landCategory: 1,
-      facilities: 1,
       state: 1,
       discription: 1
     };
@@ -195,8 +212,7 @@ const fetchSellerForm = asyncHandler(async(req,res,next) => {
 const viewSeller = asyncHandler(async(req,res,next)=>{
   try {
     const{sellerId} = req.params;
-    console.log("seller Id",sellerId);
-
+    //send id 
     const viewData = await viewSellerData(sellerId);
     res.status(200)
     .json(new apiResponse({
@@ -213,27 +229,118 @@ const viewSeller = asyncHandler(async(req,res,next)=>{
 })
 
 //manager post 
-const managerPosts = asyncHandler(async(req,res,next) => {
-try {
-  const {sellerId} = req.params;
-  const managerId = req.manager?._id;
-  const {fullName,mobileNumber,landType,landCategory,facilities} = req.body;
-  console.log("sellerid: ",sellerId);
-  console.log("ManagerId: ",managerId);
-  
-  const postData = await managerpost(sellerId,managerId,fullName,mobileNumber,landType,landCategory,facilities,req);
-  res.status(200)
-  .json(new apiResponse({
-    success: true,
-  }))
-   
-    
-} catch (error) {
-  return next (new apiError({
-    statusCode: 500,
-    message: error.message || "error on manager posting data"
-  }))
-}
+const managerPosts = asyncHandler(async (req, res, next) => {
+  try {
+    const { sellerId } = req.params;
+    const managerId = req.manager?._id;
+
+    // Create the post data (but don't wait for image uploads yet)
+    const postData = await managerpost(sellerId, managerId, req.body, req);
+
+    // Send immediate response to the client
+    res.status(200).json(new apiResponse({
+      success: true,
+      data: postData,
+    }));
+
+
+  } catch (error) {
+    return next(new apiError({
+      statusCode: error.statusCode || 500,
+      message: error.message || "Error on manager posting data"
+    }));
+  }
+});
+
+// fetch all purchaserequest froms
+const fetchAllForms = asyncHandler(async(req,res,next)=> {
+  try {
+    const managerId = req.manager?._id;
+    const alldata = await allform(managerId);
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      data: alldata
+    }))
+
+  } catch (error) {
+    return next(new apiError({
+      statusCode: 500,
+      message: error.message || "error while fetching form"
+    }))
+  }
+});
+
+// state checking for seller
+const stateCheckingSeller = asyncHandler(async (req, res, next) => {
+  try {
+    const { sellerId } = req.params;
+    const updatedPost = await sellerState(req.body, sellerId);
+
+    // Send the response with the updated post
+    res.status(200).json(new apiResponse({
+      success: true,
+      message: `successfully updated state`
+    }));
+  } catch (error) {
+
+    return next(new apiError({
+      statusCode: 500,
+      message: error.message || "Error setting state"
+    }));
+  }
+});
+
+    //enqueery from state
+const stateCheckingEnquery = asyncHandler(async (req, res, next) => {
+  try {
+    const { enqueryId } = req.params;
+    const updatedPost = await enquertState(req.body, enqueryId);
+
+    // Send the response with the updated post
+    res.status(200).json(new apiResponse({
+      success: true,
+      message: `successfully updated state`
+    }));
+  } catch (error) {
+
+    return next(new apiError({
+      statusCode: 500,
+      message: error.message || "Error setting state"
+    }));
+  }
+});
+
+//manager delete post
+const deletePosts = asyncHandler(async(req,res,next) => {
+  try {
+    const { postId } = req.params;
+    const updatedData = await deletePost(postId);
+    res.status(200)
+    .json( new apiResponse({
+      success: true,
+      message: "success deleting post"
+    }))
+  } catch (error) {
+    return next (new apiError({
+      statusCode: 500,
+      message: error.message || "error deleting post"
+    }))
+  }
 })
 
-export { loginManager, logoutmanager, managerdetailsSend, fetchForm, fetchSellerForm, viewSeller, managerPosts };
+
+export { 
+  loginManager, 
+  logoutmanager, 
+  managerdetailsSend, 
+  fetchForm, 
+  viewEnqueryData,
+  fetchSellerForm, 
+  viewSeller, 
+  managerPosts ,
+  fetchAllForms,
+  stateCheckingSeller,
+  stateCheckingEnquery,
+  deletePost
+};

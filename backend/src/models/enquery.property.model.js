@@ -1,6 +1,6 @@
 import mongoose, { Schema, Types } from "mongoose";
 
-const enqueryForm = new Schema(
+const enquertProperty = new Schema(
   {
     sendBy: {
       type: Schema.Types.ObjectId,
@@ -47,10 +47,10 @@ const enqueryForm = new Schema(
   { timestamps: true }
 );
 
-enqueryForm.index({ sendBy: 1 });
-enqueryForm.index({ address: 1});
-enqueryForm.index({ propertyType: 1});
-enqueryForm.index({ purpose: 1});
-enqueryForm.index({ createdAt: -1});
+enquertProperty.index({ sendBy: 1 });
+enquertProperty.index({ address: 1});
+enquertProperty.index({ propertyType: 1});
+enquertProperty.index({ purpose: 1});
+enquertProperty.index({ createdAt: -1});
 
-export const Enqueryform = mongoose.model("Enqueryform", enqueryForm);
+export const Enquertproperty = mongoose.model("Enquertproperty", enquertProperty);

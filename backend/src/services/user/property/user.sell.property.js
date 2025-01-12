@@ -1,5 +1,5 @@
 import { User } from "../../../models/user.model.js";
-import { Sellerfrom } from "../../../models/sell.property.model.js";
+import { Sellproperty } from "../../../models/sell.property.model.js";
 import { utils } from "../../../utils/index.js";
 const { apiError } = utils;
 
@@ -37,7 +37,7 @@ const sellerFormByUser = async function (sellerData, userId) {
        });
      }
    
-     const newSellerForm = new Sellerfrom({
+     const newSellerForm = new Sellproperty({
        fullName: user.fullName,
        mobileNumber: user.mobileNumber,
        homeName,

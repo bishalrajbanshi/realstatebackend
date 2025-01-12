@@ -1,4 +1,4 @@
-import { Enqueryform } from "../../../models/enquery.property.model.js";
+import { Enquertproperty } from "../../../models/enquery.property.model.js";
 import { User } from "../../../models/user.model.js";
 import { utils } from "../../../utils/index.js";
 const { apiError } = utils;
@@ -26,7 +26,7 @@ const userEnqueryForm = async (userEnqueryData, userId) => {
       });
     }
 
-    const newEnqueryForm = new Enqueryform({
+    const newEnqueryForm = new Enquertproperty({
       fullName: user.fullName,
       email: user.email,
       currentAddress: user.currentAddress,

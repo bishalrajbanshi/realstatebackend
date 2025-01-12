@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-const sellerForm = new Schema(
+const sellProperty = new Schema(
   {
     sendBy:{
         type: Schema.Types.ObjectId,
@@ -72,5 +72,5 @@ const sellerForm = new Schema(
   { timestamps: true }
 );
 
-sellerForm.index({ landType: 1});
-export const Sellerfrom = mongoose.model("Sellerform", sellerForm);
+sellProperty.index({ landType: 1});
+export const Sellproperty = mongoose.model("Sellerform", sellProperty);

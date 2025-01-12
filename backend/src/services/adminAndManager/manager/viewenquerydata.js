@@ -1,5 +1,5 @@
 import { Manager } from "../../../models/manager.model.js";
-import { Enqueryform } from "../../../models/enquery.property.model.js";
+import { Enquertproperty } from "../../../models/enquery.property.model.js";
 
 import { utils } from "../../../utils/index.js";
 const { apiError,stateUpdate } = utils;
@@ -33,7 +33,15 @@ const enqueryFormByUser = async (
     const combinedFilters = { ...filters, address: manager.address };
 
     //fetch the user from 
-    const userFrom = await Enqueryform.find(combinedFilters,projection,options);
+    const userFrom = await Enquertproperty.find(combinedFilters,projection,options);
+ // Check if no forms are found
+ if (!userFrom || userFrom.length === 0) {
+  throw new apiError({
+    statusCode: 404,
+    message: "No forms found",
+  });
+} 
+
 return userFrom;
   } catch (error) {
     throw error;
@@ -52,7 +60,7 @@ const viewEnqueryForm = async(formId)=>{
     };
 
     //enquery from
-    const enqueryForm = await Enqueryform.findById(formId);
+    const enqueryForm = await Enquertproperty.findById(formId);
     if (!formId) {
       throw new apiError({
         statusCode: 404,

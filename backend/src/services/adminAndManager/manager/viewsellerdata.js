@@ -1,4 +1,4 @@
-import { Sellerfrom } from "../../../models/sell.property.model.js";
+import { Sellproperty } from "../../../models/sell.property.model.js";
 import { utils } from "../../../utils/index.js";
 const { apiError, stateUpdate } = utils;
 import { Manager } from "../../../models/manager.model.js";
@@ -36,7 +36,7 @@ const sellerUser = async (
     };
 
     //fetch data
-    const userSellerData = await Sellerfrom.find(
+    const userSellerData = await Sellproperty.find(
       combinedFiltersData,
       projection,
       options
@@ -59,7 +59,7 @@ const viewSellerData = async (sellerId) => {
     }
 
     //seller form data
-    const sellerData = await Sellerfrom.findById(sellerId);
+    const sellerData = await Sellproperty.findById(sellerId);
     if (!sellerData) {
       throw new apiError({
         statusCode: 404,
@@ -77,7 +77,7 @@ const viewSellerData = async (sellerId) => {
 const sellerState = async (data, sellerId) => {
   try {
     const { state } = data;
-    const updatestate = await stateUpdate(Sellerfrom, state, sellerId);
+    const updatestate = await stateUpdate(Sellproperty, state, sellerId);
     return updatestate;
   } catch (error) {
     throw error;

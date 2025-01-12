@@ -110,4 +110,4 @@ managerPostSchema.index({ landCatagory: 1})
 managerPostSchema.index({ landLocation: 1})
 managerPostSchema.index({ area: 1})
 
-export const Managerpost = mongoose.model("Managerpost", managerPostSchema);
+export const Post = mongoose.model("Post", managerPostSchema);

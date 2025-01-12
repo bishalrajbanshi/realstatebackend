@@ -1,6 +1,6 @@
 import { Manager } from "../../../models/manager.model.js";
-import { Managerpost } from "../../../models/manager.post.model.js";
-import { Sellerfrom } from "../../../models/sell.property.model.js";
+import { Post } from "../../../models/manager.post.model.js";
+import { Sellproperty } from "../../../models/sell.property.model.js";
 import { utils } from "../../../utils/index.js";
 const { apiError, uploadOnCloudinary } = utils;
 import fs from "fs";
@@ -16,7 +16,7 @@ const managerpost = async (sellerId, managerId, postdata, req) => {
       throw new apiError({ statusCode: 401, message: "Seller ID not found" });
     }
 
-    const sellerData = await Sellerfrom.findById(sellerId);
+    const sellerData = await Sellproperty.findById(sellerId);
     if (!sellerData) {
       throw new apiError({ statusCode: 404, message: "Seller ID is invalid" });
     }
@@ -26,7 +26,7 @@ const managerpost = async (sellerId, managerId, postdata, req) => {
       throw new apiError({ statusCode: 404, message: "Manager not found" });
     }
 
-    const existingPost = await Managerpost.findOne({ sellerId: sellerId });
+    const existingPost = await Post.findOne({ sellerId: sellerId });
     if (existingPost) {
       throw new apiError({ statusCode: 400, message: "Post already exists for this seller" });
     }
@@ -68,7 +68,7 @@ const managerpost = async (sellerId, managerId, postdata, req) => {
     ].filter((facility) => facility);
 
     // Create the new post
-    const newPost = new Managerpost({
+    const newPost = new Post({
       postBy: managerId,
       managerFullName: manager.fullName,
       managerAddress: manager.address,

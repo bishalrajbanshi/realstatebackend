@@ -15,9 +15,11 @@ const {
   viewSellerData,
   managerpost,
   allform,
+  viewbuyerData,
   sellerState,
   enquertState,
-  deletePost
+  deletePost,
+  buyerState
 } =services;
 
 //login manager
@@ -252,7 +254,7 @@ const managerPosts = asyncHandler(async (req, res, next) => {
   }
 });
 
-// fetch all purchaserequest froms
+// fetch all buyer froms
 const fetchAllForms = asyncHandler(async(req,res,next)=> {
   try {
     const managerId = req.manager?._id;
@@ -270,6 +272,43 @@ const fetchAllForms = asyncHandler(async(req,res,next)=> {
     }))
   }
 });
+
+//view buyerdata
+const fetchBuyerData = asyncHandler(async(req,res,next)=> {
+  try {
+    const {postId} = req.params;
+    const viewData = await viewbuyerData(postId);
+  
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      data: viewData,
+    }))
+  } catch (error) {
+    return next(new apiError({
+      statusCode: 500,
+      message: error.message || "error fetching postdata"
+    }))
+  }
+})
+
+//state update for buyer
+const stateCheckingBuyer = asyncHandler(async(req,res,next) => {
+  try {
+    const {buyerId} = req.params;
+    const updateState = await buyerState(req.body,buyerId);
+    res.status(200)
+    .json (new apiResponse({
+      success: true,
+      message: "State updated successful"
+    }))
+  } catch (error) {
+    return next(new apiError({
+      statusCode: 500,
+      message: error.message || "error updating the buyer state"
+    }))
+  }
+})
 
 // state checking for seller
 const stateCheckingSeller = asyncHandler(async (req, res, next) => {
@@ -311,6 +350,7 @@ const stateCheckingEnquery = asyncHandler(async (req, res, next) => {
   }
 });
 
+
 //manager delete post
 const deletePosts = asyncHandler(async(req,res,next) => {
   try {
@@ -327,7 +367,9 @@ const deletePosts = asyncHandler(async(req,res,next) => {
       message: error.message || "error deleting post"
     }))
   }
-})
+});
+
+
 
 
 export { 
@@ -340,6 +382,8 @@ export {
   viewSeller, 
   managerPosts ,
   fetchAllForms,
+  fetchBuyerData,
+  stateCheckingBuyer,
   stateCheckingSeller,
   stateCheckingEnquery,
   deletePost

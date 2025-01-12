@@ -1,4 +1,4 @@
-import { Managerpost } from "../../../models/manager.post.model.js";
+import { Post } from "../../../models/manager.post.model.js";
 import { User } from "../../../models/user.model.js";
 import { Buyproperty } from "../../../models/buy.property.model.js";
 import { utils } from "../../../utils/index.js";
@@ -30,7 +30,7 @@ const userPurchase = async (userId, postId, mobileNumber) => {
       });
     }
 
-    const post = await Managerpost.findById(postId);
+    const post = await Post.findById(postId);
     if (!post) {
       throw new apiError({
         statusCode: 404,

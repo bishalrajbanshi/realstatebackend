@@ -9,8 +9,10 @@ import {
   managerPosts,
   viewSeller,
   fetchAllForms,
+  fetchBuyerData,
   stateCheckingSeller,
   stateCheckingEnquery,
+  stateCheckingBuyer
 } from "../controller/allManager.services.controller.js";
 import { verifyJWT } from "../middlewares/authMiddleware/auth.middleware.js";
 import { Manager } from "../models/manager.model.js";
@@ -24,8 +26,8 @@ router.route("/managerdetails").get(verifyJWT(Manager), managerdetailsSend);
 router.route("/enqueryfrom").get(verifyJWT(Manager), fetchForm);
 router.route("/viewdata/:formId").get(verifyJWT(Manager),viewEnqueryData)
 router.route("/fetchallseller").get(verifyJWT(Manager), fetchSellerForm);
-router.route("/updatestate/:sellerId").patch(verifyJWT(Manager),stateCheckingSeller)
-router.route("/updatestates/:enqueryId").patch(verifyJWT(Manager),stateCheckingEnquery)
+router.route("/sellerstate/:sellerId").patch(verifyJWT(Manager),stateCheckingSeller)
+router.route("/enquerystate/:enqueryId").patch(verifyJWT(Manager),stateCheckingEnquery)
 router.route("/view/:sellerId").get(verifyJWT(Manager), viewSeller);
 router.route("/post/:sellerId").post(
   verifyJWT(Manager),
@@ -42,6 +44,8 @@ router.route("/post/:sellerId").post(
   managerPosts
 );
 router.route("/fetchallforms").get(verifyJWT(Manager), fetchAllForms);
+router.route("/fetchdata/:postId").get(verifyJWT(Manager),fetchBuyerData)
+router.route("/buyserstate/:buyerId").patch(verifyJWT(Manager),stateCheckingBuyer)
 
 
 export default router;

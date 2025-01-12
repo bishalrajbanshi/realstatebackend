@@ -19,7 +19,7 @@ import { managerpost } from "./adminAndManager/manager/manager.Post.Services.js"
 import { sellerState, sellerUser,viewSellerData } from "./adminAndManager/manager/viewsellerdata.js";
 import { viewPosts,viewProperty } from "./user/property/view.property.js";
 import { userPurchase } from "./user/property/user.buy.property.js";
-import { allform } from "./adminAndManager/manager/property.Request.Services.js";
+import { allform, buyerState, viewbuyerData } from "./adminAndManager/manager/viewbuyerdata.js";
 
 
 
@@ -51,7 +51,9 @@ export const services = {
     viewPosts,
     viewProperty,
     userPurchase,
-    allform,
     sellerState,
     enquertState,
+    allform,
+    viewbuyerData,
+    buyerState
 }

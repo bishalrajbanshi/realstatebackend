@@ -20,6 +20,12 @@ const buyProperty = new Schema({
     managerId:{
         type: String,
         required: [true,"manager id is required"]
+    },
+    state: {
+        type: String,
+        enum:["pending", "approved", "reject"],
+        default:"pending",
+        required: [true, "State is required"],
     }
 
 },{ timestamps: true})
@@ -28,4 +34,4 @@ buyProperty.index({ createdAt: -1});
 buyProperty.index({ sendBy: 1, postId: 1 });
 
 
-export const Buyproperty = mongoose.model("Userpurchaserequest",buyProperty);
+export const Buyproperty = mongoose.model("Buyproperty",buyProperty);

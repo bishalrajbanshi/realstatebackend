@@ -1,4 +1,4 @@
-import { Managerpost } from "../../../models/manager.post.model.js"
+import { Post } from "../../../models/manager.post.model.js"
 import { apiError } from "../../../utils/common/apiError.js"
 
 const viewPosts = async(
@@ -8,7 +8,7 @@ const viewPosts = async(
 ) =>{
     try {
         //all posts fetch
-        const allPost = await Managerpost.find(filters,projection,options);
+        const allPost = await Post.find(filters,projection,options);
 
         if (!allPost || allPost.length === 0) {
            throw new apiError({
@@ -35,7 +35,7 @@ const viewProperty = async (postId, filters = {}, projection = {}, options = {})
       }
   
       // Find the post by postId
-      const post = await Managerpost.findById(postId, projection, options);
+      const post = await Post.findById(postId, projection, options);
   
       // If no post found
       if (!post) {

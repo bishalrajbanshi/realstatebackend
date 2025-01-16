@@ -1,4 +1,5 @@
-import { sendEmail } from "../../../middlewares/emailMiddleware/sendEmail.js";
+import { middlewares } from "../../../middlewares/index.js";
+const{sendEmail} =middlewares;
 import { User } from "../../../models/user.model.js";
 import { apiError } from "../../../utils/common/apiError.js";
 import { emailHtmlContent } from "../../../utils/common/emailTemplate.js";

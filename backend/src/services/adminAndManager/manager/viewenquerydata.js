@@ -68,6 +68,13 @@ const viewEnqueryForm = async(formId)=>{
       })
     };
 
+    if (!enqueryForm || enqueryForm.length === 0) {
+      throw new apiError({
+        statusCode: 404,
+        message: "No forms found",
+      });
+    } 
+
     return enqueryForm;
 
   } catch (error) {

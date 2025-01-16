@@ -1,22 +1,16 @@
 import mongoose from "mongoose";
-import { configDotenv } from "dotenv";
 import { logger } from "./logger.js";
-
-// CONFIGURATION
-configDotenv({
-  path: "./.env",
-});
+import { config } from "../constant.js";
+const { DB_USERNAME, DB_PASSWORD, DB_CLUSTERURI, DB_NAME } = config;
 
 //CONNECTION
 const mongoDbConnection = async () => {
   try {
-    //BRING FROM DOT ENV
-    const { DB_USERNAME, DB_PASSWORD, DB_CLUSTERURI, DB_NAME } = process.env;
-    
     //VALIDATE USERNAME AAND PWD
     if (!DB_USERNAME || !DB_PASSWORD) {
       throw new Error("MISSING REQUIREMENTS ENVIRONMENT VARIABLES");
     }
+    console.log("db name: ", DB_NAME);
 
     //CONNECTION STRING
     const connectionString = `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@${DB_CLUSTERURI}/${DB_NAME}?retryWrites=true&w=majority`;

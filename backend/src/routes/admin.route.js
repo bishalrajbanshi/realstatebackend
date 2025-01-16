@@ -1,9 +1,6 @@
 import { Router } from "express";
 import { Admin } from "../models/admin.model.js";
 
-import { utils } from "../utils/index.js";
-const{ upload }=utils;
-
 import {
   deleteMannagers,
   fetchAllManagers,
@@ -13,9 +10,9 @@ import {
   sendadmindetails,
   totalForms,
 } from "../controller/allAdmin.services.controller.js";
-
 import { middlewares } from "../middlewares/index.js";
-const { verifyJWT } = middlewares;
+
+const { upload,verifyJWT } = middlewares;
 
 const router = Router();
 

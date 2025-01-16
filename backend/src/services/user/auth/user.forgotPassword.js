@@ -1,9 +1,10 @@
 import { User } from "../../../models/user.model.js";
 import { apiError } from "../../../utils/common/apiError.js";
-import { sendEmail } from "../../../middlewares/emailMiddleware/sendEmail.js";
 import { emailHtmlContent } from "../../../utils/common/emailTemplate.js"; 
 import bcryptjs from "bcryptjs";
 import { salt } from "../../../constant.js"; 
+import { middlewares } from "../../../middlewares/index.js";
+const{sendEmail}=middlewares;
 
 const userForgotPassword = async (userData) => {
     const { email } = userData;

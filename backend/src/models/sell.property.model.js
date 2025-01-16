@@ -73,4 +73,4 @@ const sellProperty = new Schema(
 );
 
 sellProperty.index({ landType: 1});
-export const Sellproperty = mongoose.model("Sellerform", sellProperty);
+export const Sellproperty = mongoose.model("Sellproperty", sellProperty);

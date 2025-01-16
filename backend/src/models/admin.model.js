@@ -47,6 +47,10 @@ const adminSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    isEmailUpdating:{
+      type: Boolean,
+      default: false
+  },
   },
   { timestamps: true }
 );

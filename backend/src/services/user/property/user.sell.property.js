@@ -27,6 +27,13 @@ const sellerFormByUser = async function (sellerData, userId) {
         });
       }
 
+      //validate
+      if (!userId) {
+        throw new apiError({
+          statusCode: 400,
+          message: `Invalid user Id`
+        })
+      }
       
      //fetch the user
      const user = await User.findById(userId);

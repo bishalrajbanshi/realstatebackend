@@ -27,7 +27,7 @@ const managerPostSchema = new Schema({
         }
     ],
     //seller from data
-    sellerId: {
+    userId: {
         type: Schema.Types.ObjectId,
         ref: "Enqueryform",
         required:  [true, "seller is required"]
@@ -91,7 +91,7 @@ const managerPostSchema = new Schema({
         default:"pending",
         required: [true, "State is required"],
     },
-    type: {
+    purpose: {
         type: String,
         enum: ["rent", "sell", "officeSpace"],
         required: [true, "Property type is required"],

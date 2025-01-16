@@ -31,10 +31,14 @@ const userSchema = new Schema({
     },
     role: {
         type: String,
-        enum: ["user"], 
-        default: "user",
+        enum: ["User"], 
+        default: "User",
     },
     isverified: {
+        type: Boolean,
+        default: false
+    },
+    isEmailUpdating:{
         type: Boolean,
         default: false
     },
@@ -53,9 +57,9 @@ const userSchema = new Schema({
     refreshToken: {
         type: String,
     },
-    accessToken: {
-        type: String,
-    },
+    // accessToken: {
+    //     type: String,
+    // },
     isLoggedIn: {
         type: Boolean,
         default: false

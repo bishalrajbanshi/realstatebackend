@@ -1,44 +1,15 @@
-// import jwt from "jsonwebtoken";
-
-// function generateAccessToken(user) {
-//     const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
-//     const accessTokenExpiry = process.env.ACCESS_TOKEN_EXPIRY || '1h';
-
-//     if (!accessTokenSecret) {
-//         throw new Error("ACCESS_TOKEN_SECRET is not defined");
-//     }
-
-//     return jwt.sign({
-//         _id: user._id,
-//         email: user.email,
-//         role:user.role
-//     }, accessTokenSecret, { expiresIn: accessTokenExpiry });
-// }
-
-// function generateRefreshToken(user) {
-//     const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
-//     const refreshTokenExpiry = process.env.REFRESH_TOKEN_EXPIRY || '7d';
-
-//     if (!refreshTokenSecret) {
-//         throw new Error("REFRESH_TOKEN_SECRET is not defined");
-//     }
-
-//     const refreshToken = jwt.sign({ 
-//         _id: user._id,
-//      }, refreshTokenSecret, { expiresIn: refreshTokenExpiry });
-//     console.log("Generated Refresh Token:", refreshToken);
-//     return refreshToken;
-// }
-
-
-// export{ generateAccessToken, generateRefreshToken };
-
 
 import jwt from "jsonwebtoken";
 
+import { config } from "../../constant.js";
+const{ ALGORITHEM,ACCESS_TOKEN_SECRET,ACCESS_TOKEN_EXPIRY,REFRESH_TOKEN_SECRET,REFRESH_TOKEN_EXPIRY }=config;
+
+console.log("algo",ALGORITHEM);
+
+
 function generateAccessToken(user) {
-    const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
-    const accessTokenExpiry = process.env.ACCESS_TOKEN_EXPIRY || "1h";
+    const accessTokenSecret = ACCESS_TOKEN_SECRET;
+    const accessTokenExpiry = ACCESS_TOKEN_EXPIRY || "15m";
 
     if (!accessTokenSecret) {
         console.error("ACCESS_TOKEN_SECRET is not defined");
@@ -53,14 +24,15 @@ function generateAccessToken(user) {
         accessTokenSecret,
         {
             expiresIn: accessTokenExpiry,
-            algorithm: "HS256",
+            algorithm: ALGORITHEM,
         }
     );
 }
 
 function generateRefreshToken(user) {
-    const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
-    const refreshTokenExpiry = process.env.REFRESH_TOKEN_EXPIRY || "7d";
+    const refreshTokenSecret = REFRESH_TOKEN_SECRET;
+    const refreshTokenExpiry = REFRESH_TOKEN_EXPIRY || "7d";
+    
 
     if (!refreshTokenSecret) {
         console.error("REFRESH_TOKEN_SECRET is not defined");
@@ -70,12 +42,13 @@ function generateRefreshToken(user) {
     return jwt.sign(
         {
             _id: user._id,
-            tokenVersion: user.tokenVersion || 0, // Helps in invalidating old tokens
+            role: user.role,
+            tokenVersion: user.tokenVersion || 0, 
         },
         refreshTokenSecret,
         {
             expiresIn: refreshTokenExpiry,
-            algorithm: "HS256", // Explicitly specify algorithm
+            algorithm: ALGORITHEM,
         }
     );
 }

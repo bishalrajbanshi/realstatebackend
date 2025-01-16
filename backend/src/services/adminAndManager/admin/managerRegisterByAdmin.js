@@ -1,11 +1,12 @@
-import { sendEmail } from "../../../middlewares/emailMiddleware/sendEmail.js";
 import { Manager } from "../../../models/manager.model.js";
 import { utils } from "../../../utils/index.js";
 const { 
     apiError, 
     emailHtmlContent,
-    uploadOnCloudinary
 } = utils;
+import { middlewares } from "../../../middlewares/index.js";
+const{ uploadOnCloudinary,sendEmail }=middlewares
+
 import fs from "fs"
 
 const managerRegister = async (managerData, adminId,req) => {

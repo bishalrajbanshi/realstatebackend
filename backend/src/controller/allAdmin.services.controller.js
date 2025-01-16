@@ -4,8 +4,8 @@ const { apiError, apiResponse, asyncHandler,countForms } = utils;
 import { services } from "../services/index.js";
 const {
   managerRegister,
-  adminManagerLogin,
-  adminManagerLogout,
+  loginServices,
+  logoutServices,
   adminDetails,
   deleteManager,
   allManagers,
@@ -52,7 +52,7 @@ const registermanager = asyncHandler(async (req, res, next) => {
 //admin login
 const loginadmin = asyncHandler(async (req, res, next) => {
   try {
-    const { accessToken, refreshToken, user } = await adminManagerLogin(
+    const { accessToken, refreshToken, user } = await loginServices(
       req.body
     );
 
@@ -87,7 +87,7 @@ const loginadmin = asyncHandler(async (req, res, next) => {
 //admin logout
 const logoutadmin = asyncHandler(async (req, res, next) => {
   try {
-    const updatedUser = await adminManagerLogout(req.user);
+    const updatedUser = await logoutServices(req.user);
 
     // Clear cookies
     const isProduction = process.env.NODE_ENV === "production";

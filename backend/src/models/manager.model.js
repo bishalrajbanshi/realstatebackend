@@ -45,6 +45,16 @@ const managerSchema = new Schema({
         type:Boolean,
         default: false
     },
+    verificationCode: {
+        type: String
+    },
+    verificationCodeExpire: {
+        type: Date,
+    },
+    isEmailUpdating:{
+        type: Boolean,
+        default: false
+    },
     createdBy: {
         type: Schema.Types.ObjectId,
         ref: "Admin",

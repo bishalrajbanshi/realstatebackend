@@ -1,5 +1,6 @@
 import axios from "axios";
 
+
 const mailGunApi = process.env.MAILGUN_API_KEY;
 
 // Function to validate email

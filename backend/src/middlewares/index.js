@@ -1,9 +1,13 @@
-import { verifyJWT } from "./authMiddleware/auth.middleware.js";
-import { sendEmail } from "./emailMiddleware/sendEmail.js";
-import { transporter } from "./emailMiddleware/emailTransporter.js";
+import { verifyJWT } from "./general/auth.middleware.js";
+import { transporter } from "./general/emailTransporter.js";
+import { uploadOnCloudinary } from "./general/cloudinary.js";
+import { upload } from "./general/multer.js";
+import { sendEmail } from "./general/sendemail.js";
 
 export const middlewares = {
     verifyJWT,
-    sendEmail,
     transporter,
+    upload,
+    uploadOnCloudinary,
+    sendEmail
 }

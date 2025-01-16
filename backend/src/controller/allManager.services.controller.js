@@ -2,13 +2,13 @@ import { utils } from "../utils/index.js";
 const { apiError, apiResponse, asyncHandler } = utils;
 
 import { services } from "../services/index.js";
-
-
-
 const { 
-  adminManagerLogin,
-  adminManagerLogout, 
+ loginServices,
+ logoutServices,
+ generateNewToken, 
   managerDetails,
+  editProfile,
+  changeUserPassword,
   enqueryFormByUser,
   viewEnqueryForm,
   sellerUser,
@@ -25,7 +25,7 @@ const {
 //login manager
 const loginManager = asyncHandler(async (req, res, next) => {
   try {
-    const { accessToken, refreshToken, user } = await adminManagerLogin(
+    const { accessToken, refreshToken, user } = await loginServices(
       req.body
     );
 
@@ -44,6 +44,7 @@ const loginManager = asyncHandler(async (req, res, next) => {
       .json(
         new apiResponse({
           success: true,
+          data:{accessToken,refreshToken,user},
           message: "Manager Logged In",
         })
       );
@@ -60,7 +61,7 @@ const loginManager = asyncHandler(async (req, res, next) => {
 //logout manager
 const logoutmanager = asyncHandler(async (req, res, next) => {
   try {
-    const updatedUser = await adminManagerLogout(req.user);
+    const updatedUser = await logoutServices(req.user);
 
     // Clear cookies
     const isProduction = process.env.NODE_ENV === "production";
@@ -109,6 +110,119 @@ const managerdetailsSend =  asyncHandler( async ( req,res,next)  =>{
     }))
   }
 });
+
+const changeManagerEmail = asyncHandler(async(req,res,next)=>{
+  try {
+    const data = await changeEmail(req.body,req.user?._id);
+    res.status(200)
+    .json(new apiResponse({
+        success: true,
+        data: data,
+        message:"otp sent to emiail"
+    }))
+} catch (error) {
+    return next(new apiError({
+        statusCode: 500,
+        message:`error sending otp${error.message}`
+    }))
+}
+});
+
+//change password
+const changePassword = asyncHandler(async (req, res, next) => {
+  try {
+    const { role, userId } = req.params; 
+    const { newPassword, oldPassword } = req.body; 
+    const data = await changeUserPassword({ role, userId }, { newPassword, oldPassword });
+    
+    // Validate the result
+    if (!data) {
+      throw new apiError({
+        statusCode: 400,
+        message: "Invalid data"
+      });
+    }
+
+    // Respond with success
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        message: `PASSWORD CHANGED`
+      })
+    );
+  } catch (error) {
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: `Error changing password: ${error.message}`
+      })
+    );
+  }
+});
+
+//generate access token
+const generateAccessToken = async (req, res, next) => {
+  //extract cookie token
+  const { refreshToken } = req.cookies;
+  console.log("refresh token from cookies", refreshToken);
+
+  try {
+    // Check if refresh token exists in cookies
+    if (!refreshToken) {
+      return next(new apiError({
+        statusCode: 403,
+        message: "Refresh token is missing in cookies",
+      }));
+    }
+
+    // Call the function to generate new tokens
+    const { accessToken, newRefreshToken } = await generateNewToken(refreshToken);
+
+    // Cookie options
+    const options = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    };
+     // Set cookies and send response
+     return res
+     .status(200)
+     .cookie("accessToken", accessToken, options)
+     .cookie("refreshToken", newRefreshToken, options)
+     .json(
+       new apiResponse({
+         success: true,
+         message: `LOGIN SUCCESS`,
+         data : {accessToken,refreshToken:newRefreshToken}
+       })
+     );
+
+  } catch (error) {
+    return next(new apiError({
+      statusCode: 500,
+      message: `Error generating token: ${error.message}`,
+    }));
+  }
+};
+
+
+//edit manager details
+const editDetails = asyncHandler(async(req,res,next)=>{
+  try {
+    const uodatedData = await editProfile(req.params,req.body);
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      message: `PROFILE UPDATED SUCCESS`
+    }))
+  } catch (error) {
+    return next(new apiError({
+      statusCode:500,
+      message:`error updating manager ${error.message}`
+    }))
+  }
+
+})
 
 
 // fetch enquery froms by user
@@ -233,11 +347,11 @@ const viewSeller = asyncHandler(async(req,res,next)=>{
 //manager post 
 const managerPosts = asyncHandler(async (req, res, next) => {
   try {
-    const { sellerId } = req.params;
+    const { userId } = req.params;
     const managerId = req.manager?._id;
 
     // Create the post data (but don't wait for image uploads yet)
-    const postData = await managerpost(sellerId, managerId, req.body, req);
+    const postData = await managerpost(userId, managerId, req.body, req);
 
     // Send immediate response to the client
     res.status(200).json(new apiResponse({
@@ -374,7 +488,11 @@ const deletePosts = asyncHandler(async(req,res,next) => {
 
 export { 
   loginManager, 
-  logoutmanager, 
+  logoutmanager,
+  generateAccessToken,
+  editDetails,
+  changeManagerEmail,
+  changePassword,
   managerdetailsSend, 
   fetchForm, 
   viewEnqueryData,

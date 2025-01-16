@@ -1,22 +1,24 @@
 import { Manager } from "../../../models/manager.model.js";
 import { Post } from "../../../models/manager.post.model.js";
 import { Sellproperty } from "../../../models/sell.property.model.js";
+import { middlewares } from "../../../middlewares/index.js";
+const { uploadOnCloudinary } =middlewares;
 import { utils } from "../../../utils/index.js";
-const { apiError, uploadOnCloudinary } = utils;
+const { apiError } = utils;
 import fs from "fs";
 
-const managerpost = async (sellerId, managerId, postdata, req) => {
+const managerpost = async (userId, managerId, postdata, req) => {
   let avatarFiles = null;
   let imagesFiles = null;
   
   try {
-    const { fullName, mobileNumber, landType, landCategory, facilities, area, price, isNegotiable, type, description } = postdata;
+    const { fullName, mobileNumber, landType, landCategory, facilities, area, price, isNegotiable, purpose, description } = postdata;
     
-    if (!sellerId) {
+    if (!userId) {
       throw new apiError({ statusCode: 401, message: "Seller ID not found" });
     }
 
-    const sellerData = await Sellproperty.findById(sellerId);
+    const sellerData = await Sellproperty.findById(userId);
     if (!sellerData) {
       throw new apiError({ statusCode: 404, message: "Seller ID is invalid" });
     }
@@ -26,7 +28,7 @@ const managerpost = async (sellerId, managerId, postdata, req) => {
       throw new apiError({ statusCode: 404, message: "Manager not found" });
     }
 
-    const existingPost = await Post.findOne({ sellerId: sellerId });
+    const existingPost = await Post.findOne({ userId: userId });
     if (existingPost) {
       throw new apiError({ statusCode: 400, message: "Post already exists for this seller" });
     }
@@ -40,11 +42,11 @@ const managerpost = async (sellerId, managerId, postdata, req) => {
       throw new apiError({ statusCode: 400, message: "Images not found" });
     }
 
-    // Upload all avatar images to Cloudinary concurrently
+    // Upload all avatar images to Cloudinary 
     const avatarPromises = avatarFiles.map(file => uploadOnCloudinary(file.path).then(response => response.url));
     const avatarLinks = await Promise.all(avatarPromises);
 
-    // Upload all images to Cloudinary concurrently
+    // Upload all images to Cloudinary 
     const imagesPromises = imagesFiles.map(file => uploadOnCloudinary(file.path).then(response => response.url));
     const imagesLinks = await Promise.all(imagesPromises);
 
@@ -72,7 +74,7 @@ const managerpost = async (sellerId, managerId, postdata, req) => {
       postBy: managerId,
       managerFullName: manager.fullName,
       managerAddress: manager.address,
-      sellerId: sellerId,
+      userId: userId,
       homeName: sellerData.homeName,
       fullName: fullName || sellerData.fullName,
       sellerNumber: mobileNumber || sellerData.mobileNumber,
@@ -85,7 +87,7 @@ const managerpost = async (sellerId, managerId, postdata, req) => {
       facilities: updatedFacilities.length > 0 ? updatedFacilities : sellerData.facilities,
       price: price,
       isNegotiable: isNegotiable,
-      type: type,
+      purpose: purpose,
       description: description,
     });
 

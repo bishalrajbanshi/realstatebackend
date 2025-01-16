@@ -1,7 +1,6 @@
 import bcryptjs from "bcryptjs";
 function addPasswordhashingHook(schema) {
   schema.pre("save", async function (next) {
-    // Skip if password is not modified
     if (!this.isModified("password")) return next();
 
     try {
@@ -17,6 +16,7 @@ function addPasswordhashingHook(schema) {
 
 function addPasswordVerificationMethod(schema) {
   schema.methods.isPasswordCorrect = async function (password) {
+    if (!this.password) return false;
     return await bcryptjs.compare(password, this.password);
   };
 }

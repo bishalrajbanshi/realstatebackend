@@ -1,10 +1,11 @@
 import { app } from "./app.js";
 import mongoDbConnection from "./db/dbConnection.js";
-
+import { config } from "./constant.js";
+const{ PORT }=config;
 
 mongoDbConnection()
 .then(()=>{
-    const port = process.env.PORT || 6000;
+    const port = PORT || 6000;
     app.listen(port, ()=>{
         console.log(`CONNECTED APPLICATION IS RUNNING AT PORT ${port}`);
     })

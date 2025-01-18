@@ -3,6 +3,8 @@ import { Sellproperty } from "../../../models/sell.property.model.js";
 import { utils } from "../../../utils/index.js";
 const { apiError } = utils;
 
+
+//userseller property
 const sellerFormByUser = async function (sellerData, userId) {
  try {
      const { homeName,landLocation = [], landType, landCategory, facilities = [], discription } =
@@ -62,4 +64,80 @@ const sellerFormByUser = async function (sellerData, userId) {
  }
 };
 
-export { sellerFormByUser }
+//get seller property
+const getSellerData = async (userId) => {
+  try {
+    //validate user id
+    if (!userId) {
+      throw new apiError({
+        statusCode: 400,
+        message: "Invalid user access",
+      });
+    }
+
+    //find the user 
+    const user = await User.findById(userId);
+    if (!user) {
+        throw new apiError({
+            statusCode: 400,
+            message:"Invalid user"
+        })
+    }
+  
+    // find  id
+    const allEnqueryData = await Sellproperty.find({sendBy:user._id})
+
+    if (!allEnqueryData) {
+        throw new apiError({
+            statusCode: 404,
+            message: "no data found"
+        })
+    }
+    return allEnqueryData;
+  } catch (error) {
+    throw error;
+  }
+};
+
+//delet enquery property
+ const deleteSellerfrom = async(userId,sellerId)=>{
+  try {
+if (!userId) {
+  throw new apiError({
+    statusCode: 400,
+    message: "no user id"
+  })
+};
+
+const user = await User.findById(userId);
+if (!user) {
+  throw new apiError({
+    statusCode: 400,
+    message:"invalid user"
+  })
+}
+    if (!sellerId) {
+      throw new apiError({
+        statusCode:400,
+        message:"no seller id"
+      })
+    }
+
+    //find enquery data
+    const enqueryData = await Sellproperty.findByIdAndDelete({userId,_id:sellerId});
+
+    if (!enqueryData) {
+      throw new apiError({
+        statusCode: 400,
+        message: "no data found"
+      })
+    }
+
+    return enqueryData;
+  } catch (error) {
+    throw error;
+  }
+ }
+
+
+export { sellerFormByUser,getSellerData,deleteSellerfrom }

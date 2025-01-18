@@ -18,9 +18,16 @@ const {
   userDetails,
   userEnqueryForm,
   sellerFormByUser,
+  getSellerData,
+  deleteSellerfrom,
   viewPosts,
   viewProperty,
   userPurchase,
+  viewEnqueryProperty,
+  deleteEnqueyProperty,
+  addToCart,
+  viewCartproperty,
+  deleteCartProperty
 } = services;
 
 // Register User Controller
@@ -45,6 +52,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
   }
 });
 
+//verify email
 const verifyEmails = asyncHandler(async (req, res, next) => {
 try {
   const userData=req.body;
@@ -337,6 +345,46 @@ const userSellerForm = asyncHandler( async (req,res,next) => {
 
 });
 
+//get seller from
+const getSellerproperty = asyncHandler(async(req,res,next)=> {
+  try {
+    const userId = req.user?._id;
+    const data = await getSellerData(userId);
+
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      message:"No data found"
+    }))
+  } catch (error) {
+    return next ( new apiError({
+      statusCode: 500,
+      message:`error geting my data ${error.message}`
+    }))
+  }
+})
+
+//delete seller from
+const deleteSellerData = asyncHandler(async(req,res,next) => {
+  try {
+    const userId = req.user?._id;
+    const {sellerId}= req.params
+  
+    await deleteSellerfrom(userId,sellerId);
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      message:"Deleted Form"
+    }))
+    
+  } catch (error) {
+    return next(new apiError({
+      statusCode: 500,
+      message:`error deleting data ${error.message}`
+    }))
+  }
+})
+
 //fetch all post
 const fetchAllPosts = asyncHandler(async(req,res,next)=>{
    try {
@@ -488,6 +536,117 @@ const generateAccessToken = async (req, res, next) => {
 };
 
 
+//view enquery properties
+const viewUserEnqueryData = asyncHandler(async(req,res,next)=> {
+  try {
+    const userId = req.user?._id;
+    const allData = await viewEnqueryProperty(userId);
+
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      data: allData
+    }))
+
+  } catch (error) {
+    return next(new apiError({
+      statusCode: 500,
+      message:`error retriving data${error.message}`
+    }))
+  }
+});
+
+//delete enquery from
+const deleteEnqueryForm = asyncHandler(async(req,res,next)=> {
+  try {
+    const userId = req.user?._id;
+    const {enqueryId}=req.params;
+
+    const cart = await deleteEnqueyProperty(userId,enqueryId);
+
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      message:"enquery property deleted"
+    }))
+ 
+
+  } catch (error) {
+    return next (new apiError({
+      statusCode: 500,
+      message:`error deleting cart product${error.message}`
+    }))
+  }
+})
+
+
+//add to cart by user
+const userCart = asyncHandler(async(req,res,next)=> {
+  try {
+    const userId = req.user?._id;
+    const {postId}=req.params;
+
+    const cart = await addToCart(userId,postId);
+
+  res.status(200)
+  .json(new apiResponse({
+    success:true,
+    data:cart,
+    message:"added to cart"
+  }))
+
+  } catch (error) {
+    return next(new apiError({
+      statusCode: 500,
+      message: `error adding  product${error.message}`
+    }))
+  }
+});
+
+//view cart product
+const getCartProduct = asyncHandler(async(req,res,next)=> {
+  try {
+    const userId = req.user?._id;
+
+    const getproperty = await viewCartproperty(userId);
+
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      data: getproperty
+    }))
+
+  } catch (error) {
+    return next(new apiError({
+      statusCode: 500,
+      message:`error getting cart product${error.message}`
+    }))
+  }
+});
+
+//delete cart peroduct
+const deleteCartData = asyncHandler(async(req,res,next)=> {
+  try {
+    const userId = req.user?._id;
+    const {postId}=req.params;
+
+    const cart = await deleteCartProperty(userId,postId);
+
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      message:"cart property deleted"
+    }))
+ 
+
+  } catch (error) {
+    return next (new apiError({
+      statusCode: 500,
+      message:`error deleting cart product${error.message}`
+    }))
+  }
+})
+
 
 export {
   generateAccessToken,
@@ -504,7 +663,14 @@ export {
   sendDetials,
   userForm,
   userSellerForm,
+  deleteSellerData,
+  getSellerproperty,
   fetchAllPosts,
   userPurchaseData,
-  viewPropertyData
+  viewPropertyData,
+  viewUserEnqueryData,
+  deleteEnqueryForm,
+  userCart,
+  getCartProduct,
+  deleteCartData
 };

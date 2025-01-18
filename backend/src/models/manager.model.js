@@ -60,9 +60,15 @@ const managerSchema = new Schema({
         ref: "Admin",
         required: true,
     },
-    accessToken: {
-        type:String
+    passwordResetToken: {
+        type: String,
     },
+    passwordResetTokenExpire: {
+        type: Date
+    },
+    // accessToken: {
+    //     type:String
+    // },
     refreshToken: {
         type: String
     }

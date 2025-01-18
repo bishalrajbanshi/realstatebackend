@@ -1,5 +1,5 @@
-import { User } from "../../../models/user.model.js";
-import { apiError } from "../../../utils/common/apiError.js";
+import { User } from "../../models/user.model.js";
+import { apiError } from "../../utils/common/apiError.js";
 import bcryptjs from "bcryptjs";
 
 const userResetPassword = async (userData) => {
@@ -30,11 +30,7 @@ const userResetPassword = async (userData) => {
         }
 
         // Log and compare the code with the stored hashed token
-        console.log("Code Provided: ", code);
-        console.log("Stored Token: ", user.passwordResetToken);
-
         const isMatch = await bcryptjs.compare(code, user.passwordResetToken);
-        console.log("Is Match: ", isMatch);
 
         if (!isMatch) {
             throw new apiError({
@@ -54,6 +50,9 @@ const userResetPassword = async (userData) => {
         throw error;
     }
 };
+
+
+
 
 
 export { userResetPassword };

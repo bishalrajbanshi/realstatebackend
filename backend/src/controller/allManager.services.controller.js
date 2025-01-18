@@ -8,17 +8,23 @@ const {
  generateNewToken, 
   managerDetails,
   editProfile,
+  userForgotPassword,
+  userResetPassword,
+  verifyEmail,
   changeUserPassword,
   enqueryFormByUser,
   viewEnqueryForm,
+  totalEnqueryForm,
+  totalSellerForm,
   sellerUser,
   viewSellerData,
   managerpost,
+  editPost,
+  postDelete,
   allform,
   viewbuyerData,
   sellerState,
   enquertState,
-  deletePost,
   buyerState
 } =services;
 
@@ -61,7 +67,10 @@ const loginManager = asyncHandler(async (req, res, next) => {
 //logout manager
 const logoutmanager = asyncHandler(async (req, res, next) => {
   try {
-    const updatedUser = await logoutServices(req.user);
+    const  userId= req.manager;
+    console.log("userId",userId);
+    
+    const updatedUser = await logoutServices(userId);
 
     // Clear cookies
     const isProduction = process.env.NODE_ENV === "production";
@@ -89,6 +98,28 @@ const logoutmanager = asyncHandler(async (req, res, next) => {
     );
   }
 });
+
+//user forgot password
+const forgotPassword = asyncHandler(async (req, res, next) => {
+  try {
+    const email = await userForgotPassword(req.body);
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        message: `RESET OTP IS SEND TO ${email}`,
+        data: email,
+      })
+    );
+  } catch (error) {
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: `error sending email ${error.message}`,
+      })
+    );
+  }
+});
+ 
 
 //manager details
 const managerdetailsSend =  asyncHandler( async ( req,res,next)  =>{
@@ -123,9 +154,33 @@ const changeManagerEmail = asyncHandler(async(req,res,next)=>{
 } catch (error) {
     return next(new apiError({
         statusCode: 500,
-        message:`error sending otp${error.message}`
+           message: error.message || "error changing email"
     }))
 }
+});
+
+
+//verify email
+
+const verifyEmails = asyncHandler(async (req, res, next) => {
+  try {
+    const userData=req.body;
+    const userId = req.user?._id;
+  
+    const data = await verifyEmail(userData,userId);
+  
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      data: data
+    }))
+  
+  } catch (error) {
+    return next ( new apiError({
+      statusCode: 500,
+      message: error.message
+    }))
+  }
 });
 
 //change password
@@ -154,7 +209,7 @@ const changePassword = asyncHandler(async (req, res, next) => {
     return next(
       new apiError({
         statusCode: 500,
-        message: `Error changing password: ${error.message}`
+        message: error.message || "error changinf password"
       })
     );
   }
@@ -200,7 +255,7 @@ const generateAccessToken = async (req, res, next) => {
   } catch (error) {
     return next(new apiError({
       statusCode: 500,
-      message: `Error generating token: ${error.message}`,
+      message: error.message || "error generating token"
     }));
   }
 };
@@ -218,7 +273,7 @@ const editDetails = asyncHandler(async(req,res,next)=>{
   } catch (error) {
     return next(new apiError({
       statusCode:500,
-      message:`error updating manager ${error.message}`
+      message:error.message || "error editing details"
     }))
   }
 
@@ -277,6 +332,25 @@ const viewEnqueryData = asyncHandler(async(req,res,next)=>{
     return next(new apiError({
       statusCode: 500,
       message: error.message || "erron fetching enquery data"
+    }))
+  }
+});
+
+//view total enquery from
+const totalEnqueryData = asyncHandler(async(req,res,next) => {
+  try {
+    const managerId = req.manager?._id;
+    const data = await totalEnqueryForm(managerId)
+
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      data: data
+    }))
+  } catch (error) {
+    return next(new apiError({
+      statusCode: 500,
+      message: error.manager || "error getting total forms"
     }))
   }
 })
@@ -344,6 +418,24 @@ const viewSeller = asyncHandler(async(req,res,next)=>{
   }
 })
 
+//view total seller form
+const totalSellerData =asyncHandler(async(req,res,next)=>{
+  try {
+    const managerId = req.manager?._id;
+    const data =  await totalSellerForm(managerId);
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      data:data
+    }))
+  } catch (error) {
+    return next(new apiError({
+      statusCode: 500,
+      message:error.manager || "error getting total seller from"
+    }))
+  }
+});
+
 //manager post 
 const managerPosts = asyncHandler(async (req, res, next) => {
   try {
@@ -367,6 +459,26 @@ const managerPosts = asyncHandler(async (req, res, next) => {
     }));
   }
 });
+
+//manager edit post
+const editPostbyManager = asyncHandler(async(req,res,next) => {
+  try {
+    const managerId = req.manager?._id;
+    const { postId } = req.params;
+    await editPost(managerId,postId,req.body);
+
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      message:"Post updated success"
+    }))
+  } catch (error) {
+    return next(new apiError({
+      statusCode: 500,
+      message:error.message || "error editing data"
+    }))
+  }
+})
 
 // fetch all buyer froms
 const fetchAllForms = asyncHandler(async(req,res,next)=> {
@@ -468,8 +580,9 @@ const stateCheckingEnquery = asyncHandler(async (req, res, next) => {
 //manager delete post
 const deletePosts = asyncHandler(async(req,res,next) => {
   try {
+    const managerId = req.manager?._id;
     const { postId } = req.params;
-    const updatedData = await deletePost(postId);
+    await postDelete(managerId,postId);
     res.status(200)
     .json( new apiResponse({
       success: true,
@@ -491,18 +604,23 @@ export {
   logoutmanager,
   generateAccessToken,
   editDetails,
+  forgotPassword,
   changeManagerEmail,
+  verifyEmails,
   changePassword,
   managerdetailsSend, 
   fetchForm, 
   viewEnqueryData,
+  totalEnqueryData,
+  totalSellerData,
   fetchSellerForm, 
   viewSeller, 
-  managerPosts ,
+  managerPosts,
+  editPostbyManager,
   fetchAllForms,
   fetchBuyerData,
   stateCheckingBuyer,
   stateCheckingSeller,
   stateCheckingEnquery,
-  deletePost
+  deletePosts
 };

@@ -4,12 +4,25 @@ import { User } from "../../models/user.model.js";
 import { apiError } from "../../utils/common/apiError.js";
 
 const logoutServices = async (userId) => {
-  if (userId.role === "Admin") {
-    return await logoutUser(Admin, userId._id);
-  } else if (userId.role === "Manager") {
-    return await logoutUser (Manager, userId, userId._id);
-  } else {
-      return await logoutUser(User,userId._id);
+  try {
+    
+    if (!userId) {
+      throw new apiError({
+        statusCode: 400,
+        message: "Role or user ID is missing",
+      });
+    }
+    
+
+    if (userId.role === "Admin") {
+      return await logoutUser(Admin, userId);
+    } else if (userId.role === "Manager") {
+      return await logoutUser(Manager, userId);
+    } else {
+      return await logoutUser(User, userId);
+    }
+  } catch (error) {
+    throw error;
   }
 };
 

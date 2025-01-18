@@ -49,7 +49,7 @@ const registermanager = asyncHandler(async (req, res, next) => {
   }
 });
 
-//admin login
+//login admin
 const loginadmin = asyncHandler(async (req, res, next) => {
   try {
     const { accessToken, refreshToken, user } = await loginServices(
@@ -71,23 +71,27 @@ const loginadmin = asyncHandler(async (req, res, next) => {
       .json(
         new apiResponse({
           success: true,
-          message: "Admin Logged In",
+          data:{accessToken,refreshToken,user},
+          message: "Manager Logged In",
         })
       );
   } catch (error) {
     return next(
       new apiError({
         statusCode: 500,
-        message: error.message,
+        message: error.message || "error login manager",
       })
     );
   }
 });
 
-//admin logout
+//logout admin
 const logoutadmin = asyncHandler(async (req, res, next) => {
   try {
-    const updatedUser = await logoutServices(req.user);
+    const  userId= req.admin;
+    console.log("userId",userId);
+    
+    const updatedUser = await logoutServices(userId);
 
     // Clear cookies
     const isProduction = process.env.NODE_ENV === "production";
@@ -104,17 +108,18 @@ const logoutadmin = asyncHandler(async (req, res, next) => {
       .clearCookie("refreshToken", cookieOptions)
       .json({
         success: true,
-        message: "Admin logged out successfully",
+        message: "Manager logged out successfully",
       });
   } catch (error) {
     return next(
       new apiError({
         statusCode: 500,
-        message: error.message || "Error logging out user",
+        message: error.message || "Error logging out manager",
       })
     );
   }
 });
+
 
 //admin details
 const sendadmindetails = asyncHandler(async (req, res, next) => {

@@ -4,6 +4,7 @@ import {
   addPasswordhashingHook,
   addPasswordVerificationMethod,
 } from "../utils/helper/passwordHashCompare.js";
+import { generateResetToken } from "../utils/helper/passwordResetToken.js";
 
 const adminSchema = new Schema(
   {
@@ -40,9 +41,9 @@ const adminSchema = new Schema(
     refreshToken: {
       type: String,
     },
-    accessToken: {
-      type: String,
-    },
+    // accessToken: {
+    //   type: String,
+    // },
     isLoggedIn: {
       type: Boolean,
       default: false,
@@ -63,6 +64,8 @@ adminSchema.plugin(mongooseAggregatePaginate);
 // Hooks
 addPasswordhashingHook(adminSchema);
 addPasswordVerificationMethod(adminSchema);
+
+generateResetToken(adminSchema);
 
 // Define Admin model
 export const Admin = mongoose.model("Admin", adminSchema);

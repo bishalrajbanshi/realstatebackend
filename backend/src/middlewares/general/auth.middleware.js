@@ -13,7 +13,7 @@ const verifyJWT = (model) =>
     if (!token) {
       throw new apiError({
         statusCode: 401,
-        message: "Unauthorized access: Token is missing",
+        message: "Unauthorized access Token is missing",
       });
     }
 

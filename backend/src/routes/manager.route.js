@@ -9,6 +9,7 @@ import {
   loginManager,
   logoutmanager,
   forgotPassword,
+  resetPassword,
   editDetails,
   changePassword,
   changeManagerEmail,
@@ -33,13 +34,14 @@ const router = Router();
 router.route("/refresh").post(generateAccessToken)
 router.route("/login").post(loginManager);
 router.route("/logout").post(verifyJWT(Manager), logoutmanager);
-router.route("/verifymail").post(verifyJWT(Manager),verifyEmails);
 router.route("/forgotpwd").post(forgotPassword)
+router.route("/resetpwd").patch(resetPassword)
 
 //edit manager
 router.route("/managerdetails").get(verifyJWT(Manager), managerdetailsSend);
 router.route("/edit/:role/:userId").patch(verifyJWT(Manager),editDetails)
 router.route("/changeemail").patch(verifyJWT(Manager),changeManagerEmail)
+router.route("/verifymail").post(verifyJWT(Manager),verifyEmails);
 router.route("/changepassword/:role/:userId").patch(verifyJWT(Manager),changePassword);
 
 // enquery from

@@ -25,6 +25,7 @@ const userForgotPassword = async (userData) => {
     // Hash the reset token before saving
     const hashedToken = await bcryptjs.hash(resetToken, salt);
     
+    user.isLoggedIn = false
     user.passwordResetToken = hashedToken;
     user.passwordResetTokenExpiry = Date.now() + 5 * 60 * 1000; 
     await user.save({ validateBeforeSave: false });

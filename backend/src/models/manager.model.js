@@ -5,6 +5,7 @@ const { addPasswordhashingHook, addPasswordVerificationMethod } = utils;
 
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 import { type } from "os";
+import { generateResetToken } from "../utils/helper/passwordResetToken.js";
 
 const managerSchema = new Schema({
 
@@ -83,6 +84,7 @@ managerSchema.index({ createdAt: -1})
 addPasswordhashingHook(managerSchema);
 addPasswordVerificationMethod(managerSchema);
 
+generateResetToken(managerSchema);
 
 export const Manager = mongoose.model("Manager",managerSchema);
 

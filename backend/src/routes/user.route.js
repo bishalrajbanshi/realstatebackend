@@ -65,9 +65,9 @@ router.route("/viewenquerydata").get(verifyJWT(User),viewUserEnqueryData)
 router.route("/deleteenquery/:enqueryId").delete(verifyJWT(User),deleteEnqueryForm)
 
 //cart items
-router.route("/deleteproperty/:postId").delete(verifyJWT(User),deleteCartData)
-router.route("/cart/:postId").post(verifyJWT(User),userCart);
 router.route("/cartproperty").get(verifyJWT(User),getCartProduct)
+router.route("/cart/:postId").post(verifyJWT(User),userCart);
+router.route("/deleteproperty/:postId").delete(verifyJWT(User),deleteCartData)
 
 
 //seller

@@ -3,15 +3,66 @@ const { apiError, apiResponse, asyncHandler,countForms } = utils;
 
 import { services } from "../services/index.js";
 const {
+  generateNewToken,
   managerRegister,
   loginServices,
   logoutServices,
+  userForgotPassword,
+  userResetPassword,
+changeUserPassword,
   adminDetails,
-  deleteManager,
   allManagers,
+  totalPosts,
+  postByManager
 } = services;
 
 //controllers
+
+//generate access token
+const generateAccessToken = async (req, res, next) => {
+  //extract cookie token
+  const { refreshToken } = req.cookies;
+  console.log("refresh token from cookies", refreshToken);
+
+  try {
+    // Check if refresh token exists in cookies
+    if (!refreshToken) {
+      return next(new apiError({
+        statusCode: 403,
+        message: "Refresh token is missing in cookies",
+      }));
+    }
+
+    // Call the function to generate new tokens
+    const { accessToken, newRefreshToken } = await generateNewToken(refreshToken);
+
+    // Cookie options
+    const options = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    };
+     // Set cookies and send response
+     return res
+     .status(200)
+     .cookie("accessToken", accessToken, options)
+     .cookie("refreshToken", newRefreshToken, options)
+     .json(
+       new apiResponse({
+         success: true,
+         message: `LOGIN SUCCESS`,
+         data : {accessToken,refreshToken:newRefreshToken}
+       })
+     );
+
+  } catch (error) {
+    return next(new apiError({
+      statusCode: 500,
+      message: error.message || "error generating token"
+    }));
+  }
+};
+
 //admin register manager
 const registermanager = asyncHandler(async (req, res, next) => {
   try {
@@ -72,7 +123,7 @@ const loginadmin = asyncHandler(async (req, res, next) => {
         new apiResponse({
           success: true,
           data:{accessToken,refreshToken,user},
-          message: "Manager Logged In",
+          message: "Admin Logged In",
         })
       );
   } catch (error) {
@@ -108,7 +159,7 @@ const logoutadmin = asyncHandler(async (req, res, next) => {
       .clearCookie("refreshToken", cookieOptions)
       .json({
         success: true,
-        message: "Manager logged out successfully",
+        message: "Admin logged out successfully",
       });
   } catch (error) {
     return next(
@@ -120,6 +171,80 @@ const logoutadmin = asyncHandler(async (req, res, next) => {
   }
 });
 
+
+//user forgot password
+const forgotPassword = asyncHandler(async (req, res, next) => {
+  try {
+    const email = await userForgotPassword(req.body);
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        message: `RESET OTP IS SEND TO ${email}`,
+        data: email,
+      })
+    );
+  } catch (error) {
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: `error sending email ${error.message}`,
+      })
+    );
+  }
+});
+// resetPassword
+const resetPassword = asyncHandler(async (req, res, next) => {
+  try {
+    const data = await userResetPassword(req.body);
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        message: `PASSWORD RESET SUCCESS`,
+        data: data,
+      })
+    );
+  } catch (error) {
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: `error resetseting password ${error.message}`
+      })
+    );
+  }
+});
+
+
+//change password
+const changePassword = asyncHandler(async (req, res, next) => {
+  try {
+    const { role, userId } = req.params; 
+    const { newPassword, oldPassword } = req.body; 
+    const data = await changeUserPassword({ role, userId }, { newPassword, oldPassword });
+    
+    // Validate the result
+    if (!data) {
+      throw new apiError({
+        statusCode: 400,
+        message: "Invalid data"
+      });
+    }
+
+    // Respond with success
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        message: `PASSWORD CHANGED`
+      })
+    );
+  } catch (error) {
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.message || "error changinf password"
+      })
+    );
+  }
+});
 
 //admin details
 const sendadmindetails = asyncHandler(async (req, res, next) => {
@@ -193,31 +318,77 @@ const deleteMannagers = asyncHandler(async (req, res, next) => {
   }
 });
 
-
-//total count for froms
-const totalForms = asyncHandler(async(req,res,next) => {
+//total froms 
+const totalPostsData = asyncHandler(async(req,res,next) =>{
   try {
-    const userfroms = await countForms(Enqueryform);
-    return res.status(200).json({
+    const adminId = req.admin?._id;
+
+    const  filters= {};
+    const projection = {
+      postBy:1,
+      managerFullName: 1,
+      managerAddress: 1,
+      avatar: 1,
+      homeName: 1,
+      fullName: 1,
+      sellerNumber: 1,
+      landLocation:1
+    };
+ const options = {
+      sort: { createdAt: -1 }, 
+      limit: 10, 
+    };
+
+    const data = await totalPosts(adminId,filters,projection,options)
+
+    res.status(200)
+    .json(new apiResponse({
       success: true,
-      data: userfroms,
-    });
+      data: data
+    }))
   } catch (error) {
-    return next(
-      new apiError({
-        statusCode: 500,
-        message: error.message || "Error fetching total forms count",
-      })
-    );
+    return next (new apiResponse({
+      statusCode:500,
+      message: error.message || "error getting total psot"
+    }))
+  }
+});
+
+
+//post by manager
+const postBymanagerData = asyncHandler(async(req,res,next) => {
+  try {
+    const adminId = req.admin?._id;
+    const {managerId} = req.params;
+
+    const data = await postByManager(adminId,managerId)
+
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      data: data
+    }))
+
+  } catch (error) {
+    return next(new apiError({
+      statusCode:500,
+      message: error.message || "error getting data"
+    }))
   }
 })
+
 
 export {
   loginadmin,
   logoutadmin,
+  generateAccessToken,
+  forgotPassword,
+  resetPassword,
+  changePassword,
   registermanager,
   sendadmindetails,
   fetchAllManagers,
   deleteMannagers,
-  totalForms
+  totalPostsData,
+  postBymanagerData
 };

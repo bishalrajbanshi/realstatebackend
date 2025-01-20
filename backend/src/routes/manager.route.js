@@ -42,7 +42,7 @@ router.route("/managerdetails").get(verifyJWT(Manager), managerdetailsSend);
 router.route("/edit/:role/:userId").patch(verifyJWT(Manager),editDetails)
 router.route("/changeemail").patch(verifyJWT(Manager),changeManagerEmail)
 router.route("/verifymail").post(verifyJWT(Manager),verifyEmails);
-router.route("/changepassword/:role/:userId").patch(verifyJWT(Manager),changePassword);
+router.route("/changepassword/:role/:userId").patch(verifyJWT(Manager),changePassword);3
 
 // enquery from
 router.route("/enqueryfrom").get(verifyJWT(Manager), fetchForm);

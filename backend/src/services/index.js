@@ -62,6 +62,7 @@ import {
   totalSellerForm,
 } from "./adminAndManager/manager/manager.daashboard.js";
 import { totalUsers } from "./adminAndManager/admin/total.users.js";
+import { viewPostData } from "./adminAndManager/admin/view.posts.js";
 export const services = {
   //admin
   totalPosts,
@@ -110,5 +111,6 @@ export const services = {
   addToCart,
   viewCartproperty,
   deleteCartProperty,
-  totalUsers
+  totalUsers,
+  viewPostData
 };

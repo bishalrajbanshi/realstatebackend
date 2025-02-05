@@ -15,7 +15,8 @@ changeUserPassword,
   allManagers,
   totalPosts,
   postByManager,
-  totalUsers
+  totalUsers,
+  viewPostData
 } = services;
 
 //controllers
@@ -378,7 +379,7 @@ const totalUserData = asyncHandler(async(req,res,next)=> {
   try {
     const adminId = req.admin._id;
     const filters = { isverified : true}
-    const projection = { email:1,fullName: 1, mobileNumber: 1
+    const projection = { email:1,fullName: 1, mobileNumber: 1,currentAddress:1
     }; 
     const options = {
       sort: { createdAt: -1 }, 
@@ -389,6 +390,7 @@ const totalUserData = asyncHandler(async(req,res,next)=> {
 
     res.status(200)
     .json(new apiResponse({
+      success:true,
       data:data,
       message:"all users"
     }))
@@ -398,7 +400,48 @@ const totalUserData = asyncHandler(async(req,res,next)=> {
       message:error.message
     }))
   }
+});
+
+
+//view posts by admin
+const viewAllPosts = asyncHandler(async (req,res,next) => {
+  try {
+    const adminId = req.admin._id;
+    const filters ={};
+    const projection = 
+    {
+      managerFullName:1,
+      managerAddress:1,
+      avatar:1,
+      homeName:1,
+      fullName:1,
+      price:1,
+      state:1
+    };
+    const options = {
+      sort: { createdAt: -1 }, 
+      limit: 10, 
+    };
+
+    const data = await viewPostData(adminId,filters,projection,options);
+
+    res.status(200)
+    .json(new apiResponse({
+      success:true,
+      message:"all posts",
+      data:data,
+    }))
+
+  } catch (error) {
+    return next(new apiError({
+      statusCode:500,
+      message:error.message
+    }))
+  }
 })
+
+
+
 
 
 export {
@@ -414,5 +457,6 @@ export {
   deleteMannagers,
   totalPostsData,
   postBymanagerData,
-  totalUserData
+  totalUserData,
+  viewAllPosts
 };

@@ -7,7 +7,7 @@ const sellProperty = new Schema(
         ref: "User",
         required: true
     },
-    homeName:{
+    propertyTitle:{
       type: String
     },
     fullName:{
@@ -19,26 +19,21 @@ const sellProperty = new Schema(
       type: String
     },
     // user input address city and area inland location
-    landLocation: [
-      {
-        address: {
-          type: String,
-          enum:["Province1","Province2","Province3","Province4","Province5","Province6","Province7"],
-          required: [true, "Address is required"],
-          trim: true
-        },
-        city: {
-          type: String,
-          required: [true, "city is required"],
-          trim: true
-        },
-        area: {
-          type: String,
-          required: [true, "area is required"],
-          trim: true
-        },
-      },
-    ],
+    landLocation:{
+      type:String,
+      enum:["Province1","Province2","Province3","Province4","Province5","Province6","Province7"],
+      required: [true, "Address is required"],
+      trim: true
+    },
+    landCity: {
+      type: String,
+      required: [true, "city is required"],
+      trim: true
+    },
+    landAddress: {
+      type: String,
+      required:[true,"land address is required"]
+    },
     landType: {
       type: String,
       enum: ["Commercial", "Residential"],

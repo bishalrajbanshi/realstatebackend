@@ -32,7 +32,7 @@ const sellerUser = async (
     //combbine filters
     const combinedFiltersData = {
       ...filters,
-      "landLocation.address": manager.address,
+      "landLocation": manager.address,
     };
 
     //fetch data

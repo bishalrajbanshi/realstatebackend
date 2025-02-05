@@ -47,7 +47,7 @@ const loginManager = asyncHandler(async (req, res, next) => {
     return res
       .status(200)
       .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
+      .cookie("refreshToken", refreshToken, { ...options, path: "/api/auth/refresh" })
       .json(
         new apiResponse({
           success: true,
@@ -85,7 +85,7 @@ const logoutmanager = asyncHandler(async (req, res, next) => {
     return res
       .status(200)
       .clearCookie("accessToken", cookieOptions)
-      .clearCookie("refreshToken", cookieOptions)
+      .clearCookie("refreshToken", { ...cookieOptions, path: "/api/auth/refresh" })
       .json({
         success: true,
         message: "Manager logged out successfully",
@@ -115,7 +115,8 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     return next(
       new apiError({
         statusCode: 500,
-        message: `error sending email ${error.message}`,
+        message:error.message || "error sending email"
+
       })
     );
   }
@@ -135,7 +136,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
     return next(
       new apiError({
         statusCode: 500,
-        message: `error resetseting password ${error.message}`
+        message:error.message || "error reseting passowrd"
       })
     );
   }
@@ -197,7 +198,7 @@ const verifyEmails = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next ( new apiError({
       statusCode: 500,
-      message: error.message
+      message: error.message || "error verifying email"
     }))
   }
 });
@@ -228,7 +229,7 @@ const changePassword = asyncHandler(async (req, res, next) => {
     return next(
       new apiError({
         statusCode: 500,
-        message: error.message || "error changinf password"
+        message: error.message || "error changing password"
       })
     );
   }
@@ -236,21 +237,22 @@ const changePassword = asyncHandler(async (req, res, next) => {
 
 //generate access token
 const generateAccessToken = async (req, res, next) => {
-  //extract cookie token
-  const { refreshToken } = req.cookies;
-  console.log("refresh token from cookies", refreshToken);
+  const refreshToken = req.cookies.refreshToken;
+
+  console.log("Refresh token received:", refreshToken);
+
 
   try {
-    // Check if refresh token exists in cookies
+    // Validate refresh token
     if (!refreshToken) {
       return next(new apiError({
         statusCode: 403,
-        message: "Refresh token is missing in cookies",
+        message: "Refresh token is missing",
       }));
     }
 
-    // Call the function to generate new tokens
-    const { accessToken, newRefreshToken } = await generateNewToken(refreshToken);
+    // Generate new access token
+    const { accessToken, refreshToken: newRefreshToken } = await generateNewToken(refreshToken);
 
     // Cookie options
     const options = {
@@ -258,26 +260,26 @@ const generateAccessToken = async (req, res, next) => {
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
     };
-     // Set cookies and send response
-     return res
-     .status(200)
-     .cookie("accessToken", accessToken, options)
-     .cookie("refreshToken", newRefreshToken, options)
-     .json(
-       new apiResponse({
-         success: true,
-         message: `LOGIN SUCCESS`,
-         data : {accessToken,refreshToken:newRefreshToken}
-       })
-     );
+
+    // Set cookies and send response
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", newRefreshToken, { ...options, path: "/api/auth/refresh" })
+      .json(new apiResponse({
+        success: true,
+        message: "Token refreshed successfully",
+        data: { accessToken, refreshToken: newRefreshToken },
+      }));
 
   } catch (error) {
     return next(new apiError({
       statusCode: 500,
-      message: error.message || "error generating token"
+      message: error.message || "Error generating token",
     }));
   }
 };
+
 
 
 //edit manager details
@@ -458,11 +460,12 @@ const totalSellerData =asyncHandler(async(req,res,next)=>{
 //manager post 
 const managerPosts = asyncHandler(async (req, res, next) => {
   try {
-    const { userId } = req.params;
+    //if seller id exist use it else set null
+    const { sellerId } = req.params || null;
     const managerId = req.manager?._id;
 
     // Create the post data (but don't wait for image uploads yet)
-    const postData = await managerpost(userId, managerId, req.body, req);
+    const postData = await managerpost(sellerId, managerId, req.body, req);
 
     // Send immediate response to the client
     res.status(200).json(new apiResponse({

@@ -90,7 +90,7 @@ const resendOtp = asyncHandler(async (req, res, next) => {
     return next(
       new apiError({
         statusCode: 500,
-        message: `error sending otp ${error.message}`,
+        message: error.message ||"error sending otp",
       })
     );
   }
@@ -114,7 +114,7 @@ const login = asyncHandler(async (req, res, next) => {
     return res
       .status(200)
       .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
+      .cookie("refreshToken", refreshToken, { ...options, path: "/api/auth/refresh" })
       .json(
         new apiResponse({
           success: true,
@@ -126,13 +126,13 @@ const login = asyncHandler(async (req, res, next) => {
     return next(
       new apiError({
         statusCode: 500,
-        message: `error login user ${error.message}`,
+        message: error.message || "error login user",
       })
     );
   }
 });
 
-//logout manager
+//logout user
 const logout = asyncHandler(async (req, res, next) => {
   try {
     const updatedUser = await logoutServices(req.user);
@@ -149,7 +149,7 @@ const logout = asyncHandler(async (req, res, next) => {
     return res
       .status(200)
       .clearCookie("accessToken", cookieOptions)
-      .clearCookie("refreshToken", cookieOptions)
+      .clearCookie("refreshToken", { ...cookieOptions, path: "/api/auth/refresh" })
       .json({
         success: true,
         message: `LOGED OUT SUCCESS`,
@@ -158,7 +158,7 @@ const logout = asyncHandler(async (req, res, next) => {
     return next(
       new apiError({
         statusCode: 500,
-        message: `error logout user ${error.message}`,
+        message: error.message || "error logout user",
       })
     );
   }
@@ -183,7 +183,7 @@ const sendDetials = asyncHandler(async (req, res, next) => {
     return next(
       new apiError({
         statusCode: 400,
-        message: `error sending data ${error.message}`,
+        message: error.message || "error sending data",
       })
     );
   }
@@ -204,7 +204,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     return next(
       new apiError({
         statusCode: 500,
-        message: `error sending email ${error.message}`,
+        message: error.message || "error sending email",
       })
     );
   }
@@ -225,7 +225,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
     return next(
       new apiError({
         statusCode: 500,
-        message: `error resetseting password ${error.message}`
+        message:  error.message||"error resetseting password"
       })
     );
   }
@@ -244,7 +244,7 @@ const changeUserEmail = asyncHandler(async(req,res,next)=>{
 } catch (error) {
     return next(new apiError({
         statusCode: 500,
-        message:`hello${error.message}`
+        message:error.message || "error changing email"
     }))
 }
 });
@@ -275,7 +275,7 @@ const changePassword = asyncHandler(async (req, res, next) => {
     return next(
       new apiError({
         statusCode: 500,
-        message: `Error changing password: ${error.message}`
+        message: error.message ||"Error changing password"
       })
     );
   }
@@ -295,7 +295,7 @@ const editDetails = asyncHandler(async(req,res,next)=> {
   } catch (error) {
     return next(new apiError({
       statusCode:500,
-      message:`error updating user ${error.message}`
+      message:error.message || "error updating data"
     }))
   }
 })
@@ -319,7 +319,7 @@ const userForm = asyncHandler(async(req,res,next) => {
  } catch (error) {
   return next ( new apiError({
     statusCode: 500,
-    message: `error sending data ${error.message}`
+    message: error.message || "error sending enquery data"
   }))
  }
 })
@@ -338,7 +338,7 @@ const userSellerForm = asyncHandler( async (req,res,next) => {
    } catch (error) {
     return next( new apiError({
       statusCode: 500,
-      message: `error sending data ${error.message}`
+      message:error.message || "error sending seller data"
 
     }))
    }
@@ -359,7 +359,7 @@ const getSellerproperty = asyncHandler(async(req,res,next)=> {
   } catch (error) {
     return next ( new apiError({
       statusCode: 500,
-      message:`error geting my data ${error.message}`
+      message:error.message || "error sending seller data"
     }))
   }
 })
@@ -380,7 +380,8 @@ const deleteSellerData = asyncHandler(async(req,res,next) => {
   } catch (error) {
     return next(new apiError({
       statusCode: 500,
-      message:`error deleting data ${error.message}`
+      message:error.message || "error deleting data"
+
     }))
   }
 })
@@ -411,7 +412,8 @@ const fetchAllPosts = asyncHandler(async(req,res,next)=>{
    } catch (error) {
     return next(new apiError({
       statusCode: 500,
-      message: `error fetching data ${error.message}`
+      message:error.message || "error fetching post data"
+
 
     }))
    }
@@ -459,7 +461,8 @@ const viewPropertyData = asyncHandler(async(req,res,next)=> {
   } catch (error) {
     return next(new apiError({
       statusCode: 500,
-      message: `error getting property ${error.message}`
+      message:error.message || "error getting property"
+
 
     }))
   }
@@ -484,27 +487,28 @@ const userPurchaseData = asyncHandler(async(req,res,next) =>{
     } catch (error) {
           return next(new apiError({
             statusCode: 500,
-            message: `error sending data ${error.message}`
+            message:error.message || "error sending buy data"
           }))
     }
 });
 
+//generate access token
 const generateAccessToken = async (req, res, next) => {
-  //extract cookie token
   const { refreshToken } = req.cookies;
-  console.log("refresh token from cookies", refreshToken);
+
+  console.log("Refresh token received:", refreshToken);
 
   try {
-    // Check if refresh token exists in cookies
+    // Validate refresh token
     if (!refreshToken) {
       return next(new apiError({
         statusCode: 403,
-        message: "Refresh token is missing in cookies",
+        message: "Refresh token is missing",
       }));
     }
 
-    // Call the function to generate new tokens
-    const { accessToken, newRefreshToken } = await generateNewToken(refreshToken);
+    // Generate new access token
+    const { accessToken, refreshToken: newRefreshToken } = await generateNewToken(refreshToken);
 
     // Cookie options
     const options = {
@@ -513,27 +517,26 @@ const generateAccessToken = async (req, res, next) => {
       sameSite: "strict",
     };
 
-
-     // Set cookies and send response
-     return res
-     .status(200)
-     .cookie("accessToken", accessToken, options)
-     .cookie("refreshToken", newRefreshToken, options)
-     .json(
-       new apiResponse({
-         success: true,
-         message: `LOGIN SUCCESS`,
-         data : {accessToken,refreshToken:newRefreshToken}
-       })
-     );
+    // Set cookies and send response
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", newRefreshToken, { ...options, path: "/api/auth/refresh" })
+      .json(new apiResponse({
+        success: true,
+        message: "Token refreshed successfully",
+        data: { accessToken, refreshToken: newRefreshToken },
+      }));
 
   } catch (error) {
     return next(new apiError({
       statusCode: 500,
-      message: `Error generating token: ${error.message}`,
+      message: error.message || "Error generating token",
     }));
   }
 };
+
+
 
 
 //view enquery properties
@@ -551,7 +554,8 @@ const viewUserEnqueryData = asyncHandler(async(req,res,next)=> {
   } catch (error) {
     return next(new apiError({
       statusCode: 500,
-      message:`error retriving data${error.message}`
+      message:error.message || "error retrivering data"
+
     }))
   }
 });
@@ -574,7 +578,8 @@ const deleteEnqueryForm = asyncHandler(async(req,res,next)=> {
   } catch (error) {
     return next (new apiError({
       statusCode: 500,
-      message:`error deleting cart product${error.message}`
+      message:error.message || "error deleting enquery data"
+
     }))
   }
 })
@@ -598,7 +603,8 @@ const userCart = asyncHandler(async(req,res,next)=> {
   } catch (error) {
     return next(new apiError({
       statusCode: 500,
-      message: `error adding  product${error.message}`
+      message:error.message || "error adding data to cart"
+
     }))
   }
 });
@@ -619,7 +625,8 @@ const getCartProduct = asyncHandler(async(req,res,next)=> {
   } catch (error) {
     return next(new apiError({
       statusCode: 500,
-      message:`error getting cart product${error.message}`
+      message:error.message || "error getting cart data"
+
     }))
   }
 });
@@ -642,7 +649,8 @@ const deleteCartData = asyncHandler(async(req,res,next)=> {
   } catch (error) {
     return next (new apiError({
       statusCode: 500,
-      message:`error deleting cart product${error.message}`
+      message:error.message || "error deleting cart data"
+
     }))
   }
 })

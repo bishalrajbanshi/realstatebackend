@@ -7,17 +7,12 @@ const { apiError } = utils;
 //userseller property
 const sellerFormByUser = async function (sellerData, userId) {
  try {
-     const { homeName,landLocation = [], landType, landCategory, facilities = [], discription } =
+     const { propertyTitle,landLocation,landCity,landAddress , landType, landCategory, facilities = [], discription } =
        sellerData;
 
-       if (landLocation.length > 0) {
-            const { address, city, area } =landLocation[0];
-       }
-   
      //validate fields
      if (
-        !landLocation.length ||
-        [landType, landCategory, discription].some(
+        [propertyTitle, landLocation, landType, landCategory,landCity,landAddress, discription].some(
           (field) => typeof field !== "string" || !field.trim()
         ) ||
         !facilities.length ||
@@ -49,8 +44,10 @@ const sellerFormByUser = async function (sellerData, userId) {
      const newSellerForm = new Sellproperty({
        fullName: user.fullName,
        mobileNumber: user.mobileNumber,
-       homeName,
+       propertyTitle,
        landLocation,
+       landCity,
+       landAddress,
        landCategory,
        landType,
        facilities,
@@ -98,6 +95,7 @@ const getSellerData = async (userId) => {
     throw error;
   }
 };
+
 
 //delet enquery property
  const deleteSellerfrom = async(userId,sellerId)=>{

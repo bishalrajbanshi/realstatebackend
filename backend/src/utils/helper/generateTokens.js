@@ -54,4 +54,3 @@ function generateRefreshToken(user) {
 }
 
 export { generateAccessToken, generateRefreshToken };
-

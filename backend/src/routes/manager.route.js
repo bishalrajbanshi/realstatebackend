@@ -31,7 +31,8 @@ import { middlewares } from "../middlewares/index.js";
 const{upload} = middlewares;
 
 const router = Router();
-router.route("/refresh").post(generateAccessToken)
+router.patch("/refresh", generateAccessToken);
+
 router.route("/login").post(loginManager);
 router.route("/logout").post(verifyJWT(Manager), logoutmanager);
 router.route("/forgotpwd").post(forgotPassword)
@@ -57,7 +58,7 @@ router.route("/sellerstate/:sellerId").patch(verifyJWT(Manager),stateCheckingSel
 router.route("/totalseller").get(verifyJWT(Manager),totalSellerData);
 
 //manager  post
-router.route("/post/:userId").post(
+router.route("/post/:sellerId?").post(
   verifyJWT(Manager),
   upload.fields([
      {

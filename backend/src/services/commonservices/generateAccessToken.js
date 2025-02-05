@@ -19,42 +19,64 @@ const generateNewToken = async (refreshToken) => {
         message: "Refresh token is missing",
       });
     }
-    console.log("refresh token",refreshToken);
 
-    //verify the refresh token with my refresh secret key
+    // Verify the refresh token
     const decodedToken = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
+    console.log("Decoded Token:", decodedToken);
 
-    console.log("decoded token",decodedToken.role);
-
+    // Retrieve the user based on role
     let user;
     if (decodedToken.role === "Admin") {
       user = await Admin.findById(decodedToken._id);
-    }
-   else if (decodedToken.role === "Manager") {
+    } else if (decodedToken.role === "Manager") {
       user = await Manager.findById(decodedToken._id);
-    }else{
-      user = await User.findById(decodedToken._id)
+    } else {
+      user = await User.findById(decodedToken._id);
     }
 
-    const accessToken = generateAccessToken(user)
+    const manager = await Manager.findById("676a0c073bc07ee4c3c5cf07");
+    console.log("manager", manager);
+
+    // Validate user existence
+    if (!user) {
+      throw new apiError({
+        statusCode: 403,
+        message: "User not found",
+      });
+    }
+
+    // Check if the refresh token exists in the user's stored refresh tokens**
+    if (!user.refreshToken.includes(refreshToken)) {
+      throw new apiError({
+        statusCode: 403,
+        message: "Invalid refresh token",
+      });
+    }
+
+    if (!user || !Array.isArray(user.refreshToken)) {
+      throw new apiError({
+        statusCode: 403,
+        message: "User not found or invalid refresh token storage",
+      });
+    }
+
+    // Generate new tokens
+    const accessToken = generateAccessToken(user);
     const newRefreshToken = generateRefreshToken(user);
-    console.log("new refresh token",newRefreshToken);
-    
-    user.refreshToken = newRefreshToken;
+
+    // Remove the used refresh token and store the new one
+    user.refreshToken = user.refreshToken.filter((rt) => rt !== refreshToken);
+    user.refreshToken.push(newRefreshToken);
     await user.save();
 
-    return { accessToken, newRefreshToken};
-
-
- 
-  
+    return { accessToken, refreshToken: newRefreshToken };
   } catch (error) {
     console.error("JWT Verification error:", error);
 
     if (error.name === "TokenExpiredError") {
       throw new apiError({
         statusCode: 401,
-        message: "TokenExpired",
+        message: "Token expired",
       });
     }
 
@@ -67,31 +89,9 @@ const generateNewToken = async (refreshToken) => {
 
     throw new apiError({
       statusCode: 401,
-      message: "Invalid access token",
-    })
+      message: "Invalid token",
+    });
   }
 };
 
-
-export { generateNewToken }
-
-
-
-
-
-
-// / //validate user not found
-    // if (!user || user.refreshToken !== refreshToken) {
-    //   throw new apiError({
-    //     statusCode: 403,
-    //     message: "invalid refresh token",
-    //   });
-    // }
-
-    // const accessToken = generateAccessToken(user);
-    // const newRefreshToken = generateRefreshToken(user);
-    // //set and save to db
-    // user.refreshToken = newRefreshToken;
-    // await user.save();
-
-      // return { accessToken, newRefreshToken };
+export { generateNewToken };

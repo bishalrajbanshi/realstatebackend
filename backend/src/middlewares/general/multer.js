@@ -16,7 +16,7 @@ if (!fs.existsSync(tempDir)) {
     fs.mkdirSync(tempDir, { recursive: true });
 }
 
-// Function to generate a random 6-character string with letters and digits
+// Function to generate a random 6character string with letters and digits
 const generateRandomString = () => {
     return Math.random().toString(36).substr(2, 6).toLowerCase(); 
 };
@@ -34,4 +34,14 @@ const storage = multer.diskStorage({
     },
 });
 
-export const upload = multer({ storage });
+export const upload = multer({ 
+    storage, 
+    limits: { fileSize: 3 * 1024 * 1024 }, 
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+        if (!allowedTypes.includes(file.mimetype)) {
+            return cb(new Error("Only images (JPEG, PNG, GIF) are allowed"));
+        }
+        cb(null, true);
+    }
+});

@@ -21,8 +21,6 @@ const userRegister = async (userData) => {
       });
     }
 
-    console.log("user data", userData);
-
     // Check if the user already exists
     const existingUser = await User.findOne({
       $or: [{ email }, { mobileNumber }],
@@ -59,6 +57,8 @@ const userRegister = async (userData) => {
       subject: "Verify Your Email",
       html: emailHtml,
     });
+
+    return newUser;
   } catch (error) {
     console.error("Error in createUser:", error);
     throw error;

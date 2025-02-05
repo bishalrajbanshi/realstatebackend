@@ -11,7 +11,7 @@ const  userDetails = async (userId)=>{
             })
         }
         const user = await User.findById(userId).select( 
-            "fullName email mobileNumber currentAddress refreshToken accessToken"
+            "fullName role email mobileNumber currentAddress"
         );
         if (!user) {
             throw new apiError({

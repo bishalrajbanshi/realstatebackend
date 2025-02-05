@@ -19,7 +19,7 @@ const managerDetails = async(managerId) =>{
         };
 
         const manager = await Manager.findById(managerId).select(
-            "fullName email mobileNumber avatar accessToken refreshToken"
+            "fullName email role mobileNumber avatar accessToken refreshToken"
         );
 
 

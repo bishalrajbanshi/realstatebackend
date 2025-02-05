@@ -67,12 +67,8 @@ const managerSchema = new Schema({
     passwordResetTokenExpire: {
         type: Date
     },
-    // accessToken: {
-    //     type:String
-    // },
-    refreshToken: {
-        type: String
-    }
+ 
+    refreshToken: [String]
 },{ timestamps: true });
 
 managerSchema.plugin(mongooseAggregatePaginate)

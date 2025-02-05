@@ -5,6 +5,7 @@ import { services } from "../services/index.js";
 const {
   generateNewToken,
   managerRegister,
+  deleteManager,
   loginServices,
   logoutServices,
   userForgotPassword,
@@ -20,21 +21,21 @@ changeUserPassword,
 
 //generate access token
 const generateAccessToken = async (req, res, next) => {
-  //extract cookie token
   const { refreshToken } = req.cookies;
-  console.log("refresh token from cookies", refreshToken);
+
+  console.log("Refresh token received:", refreshToken);
 
   try {
-    // Check if refresh token exists in cookies
+    // Validate refresh token
     if (!refreshToken) {
       return next(new apiError({
         statusCode: 403,
-        message: "Refresh token is missing in cookies",
+        message: "Refresh token is missing",
       }));
     }
 
-    // Call the function to generate new tokens
-    const { accessToken, newRefreshToken } = await generateNewToken(refreshToken);
+    // Generate new access token
+    const { accessToken, refreshToken: newRefreshToken } = await generateNewToken(refreshToken);
 
     // Cookie options
     const options = {
@@ -42,23 +43,22 @@ const generateAccessToken = async (req, res, next) => {
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
     };
-     // Set cookies and send response
-     return res
-     .status(200)
-     .cookie("accessToken", accessToken, options)
-     .cookie("refreshToken", newRefreshToken, options)
-     .json(
-       new apiResponse({
-         success: true,
-         message: `LOGIN SUCCESS`,
-         data : {accessToken,refreshToken:newRefreshToken}
-       })
-     );
+
+    // Set cookies and send response
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", newRefreshToken, { ...options, path: "/api/auth/refresh" })
+      .json(new apiResponse({
+        success: true,
+        message: "Token refreshed successfully",
+        data: { accessToken, refreshToken: newRefreshToken },
+      }));
 
   } catch (error) {
     return next(new apiError({
       statusCode: 500,
-      message: error.message || "error generating token"
+      message: error.message || "Error generating token",
     }));
   }
 };
@@ -94,7 +94,7 @@ const registermanager = asyncHandler(async (req, res, next) => {
     return next(
       new apiError({
         statusCode: 500,
-        message: error.message,
+        message: error.message || "error regirestering manager",
       })
     );
   }
@@ -118,7 +118,7 @@ const loginadmin = asyncHandler(async (req, res, next) => {
     return res
       .status(200)
       .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
+      .cookie("refreshToken", refreshToken, { ...options, path: "/api/auth/refresh" })
       .json(
         new apiResponse({
           success: true,
@@ -156,7 +156,7 @@ const logoutadmin = asyncHandler(async (req, res, next) => {
     return res
       .status(200)
       .clearCookie("accessToken", cookieOptions)
-      .clearCookie("refreshToken", cookieOptions)
+      .clearCookie("refreshToken", { ...cookieOptions, path: "/api/auth/refresh" })
       .json({
         success: true,
         message: "Admin logged out successfully",
@@ -187,7 +187,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     return next(
       new apiError({
         statusCode: 500,
-        message: `error sending email ${error.message}`,
+        message:error.message || "error sending email"
       })
     );
   }
@@ -207,7 +207,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
     return next(
       new apiError({
         statusCode: 500,
-        message: `error resetseting password ${error.message}`
+        message:error.message || "error reseting password"
       })
     );
   }
@@ -240,7 +240,7 @@ const changePassword = asyncHandler(async (req, res, next) => {
     return next(
       new apiError({
         statusCode: 500,
-        message: error.message || "error changinf password"
+        message: error.message || "error changing password"
       })
     );
   }
@@ -264,7 +264,7 @@ const sendadmindetails = asyncHandler(async (req, res, next) => {
     return next(
       new apiError({
         statusCode: 500,
-        message: "Admin not found",
+        message: error.message || "Admin not found",
       })
     );
   }

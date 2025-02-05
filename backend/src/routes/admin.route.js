@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { Admin } from "../models/admin.model.js";
-
+import { asyncHandler } from "../utils/common/asyncHandler.js";
 import {
   deleteMannagers,
   fetchAllManagers,
@@ -13,7 +13,8 @@ import {
   registermanager,
   sendadmindetails,
   totalPostsData,
-postBymanagerData
+postBymanagerData,
+totalUserData
 } from "../controller/allAdmin.services.controller.js";
 import { middlewares } from "../middlewares/index.js";
 
@@ -33,13 +34,15 @@ upload.fields([
     maxCount:1
   }
 ]),
-registermanager
+asyncHandler(registermanager)
 );
 router.route("/admindetails").get(verifyJWT(Admin),sendadmindetails);
 router.route("/allmanager").get(verifyJWT(Admin),fetchAllManagers);
 router.route("/delete/:managerId").delete(verifyJWT(Admin),deleteMannagers);
 router.route("/totaldata").get(verifyJWT(Admin),totalPostsData);
 router.route("/posts/:managerId").get(verifyJWT(Admin),postBymanagerData)
+
+router.route("/totaluser").get(verifyJWT(Admin),totalUserData)
 
 
 export default router;

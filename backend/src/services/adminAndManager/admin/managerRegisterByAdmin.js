@@ -51,7 +51,7 @@ const managerRegister = async (managerData, adminId,req) => {
       }
 
       // Upload avatar to Cloudinary
-      const cloudinaryResponse = await uploadOnCloudinary(avatarFile.path);
+      const cloudinaryResponse = await uploadOnCloudinary(avatarFile?.path);
       if (!cloudinaryResponse) {
           throw new apiError({
               statusCode: 500,
@@ -75,10 +75,8 @@ const managerRegister = async (managerData, adminId,req) => {
         avatar: avatarLink,
         createdBy: adminId,
       });
-      console.log("Saving new manager:", newManager);
     await newManager.save();
-    console.log("New manager saved successfully");
- 
+  
      // Send email to manager
      const emailHtml = emailHtmlContent({
          fullName: newManager.fullName,

@@ -14,7 +14,8 @@ changeUserPassword,
   adminDetails,
   allManagers,
   totalPosts,
-  postByManager
+  postByManager,
+  totalUsers
 } = services;
 
 //controllers
@@ -65,19 +66,16 @@ const generateAccessToken = async (req, res, next) => {
 
 //admin register manager
 const registermanager = asyncHandler(async (req, res, next) => {
+  console.log("Inside registermanager, Res Object:", res);  
+
   try {
     const adminId = req.admin?._id;
     if (!adminId) {
-      return next(
-        new apiError({
-          statusCode: 401,
-          message: "Unauthorized admin access",
-        })
-      );
+      return next(new apiError({ statusCode: 401, message: "Unauthorized admin access" }));
     }
 
     const newManager = await managerRegister(req.body, adminId, req);
-    console.log("New Manager Registered:", newManager);
+
     return res.status(201).json({
       success: true,
       message: "Manager registered successfully",
@@ -90,15 +88,13 @@ const registermanager = asyncHandler(async (req, res, next) => {
       },
     });
   } catch (error) {
-    console.error("Error in registermanager controller:", error);
-    return next(
-      new apiError({
-        statusCode: 500,
-        message: error.message || "error regirestering manager",
-      })
-    );
+    return next(new apiError({
+      statusCode: error.statusCode || 500,
+      message: error.message || "Error registering manager",
+    }));
   }
 });
+
 
 //login admin
 const loginadmin = asyncHandler(async (req, res, next) => {
@@ -375,6 +371,33 @@ const postBymanagerData = asyncHandler(async(req,res,next) => {
       message: error.message || "error getting data"
     }))
   }
+});
+
+// total users
+const totalUserData = asyncHandler(async(req,res,next)=> {
+  try {
+    const adminId = req.admin._id;
+    const filters = { isverified : true}
+    const projection = { email:1,fullName: 1, mobileNumber: 1
+    }; 
+    const options = {
+      sort: { createdAt: -1 }, 
+      limit: 10, 
+    };
+
+    const data = await totalUsers(adminId,filters,projection,options)
+
+    res.status(200)
+    .json(new apiResponse({
+      data:data,
+      message:"all users"
+    }))
+  } catch (error) {
+    return next(new apiError({
+      statusCode: 500,
+      message:error.message
+    }))
+  }
 })
 
 
@@ -390,5 +413,6 @@ export {
   fetchAllManagers,
   deleteMannagers,
   totalPostsData,
-  postBymanagerData
+  postBymanagerData,
+  totalUserData
 };

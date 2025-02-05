@@ -6,6 +6,7 @@ const { ACCESS_TOKEN_SECRET } = config;
 
 const verifyJWT = (model) =>
   asyncHandler(async (req, res, next) => {
+   
     const token =
       req.cookies?.accessToken ||
       req.header("Authorization")?.replace("Bearer ", "").trim();
@@ -38,8 +39,7 @@ const verifyJWT = (model) =>
         });
       }
 
-      // Assign entity to the correct request fiel
-      // Assign the entity based on the model name
+      // Assign entity to the correct request field
       if (model.modelName === "Admin") {
         req.admin = entity;
       } else if (model.modelName === "Manager") {
@@ -52,28 +52,31 @@ const verifyJWT = (model) =>
           message: `Unsupported model type: ${model.modelName}`,
         });
       }
+      
+      console.log("JWT Verification passed. Proceeding to next middleware.");
+
       next();
     } catch (error) {
       console.error("JWT Verification error:", error);
 
       if (error.name === "TokenExpiredError") {
-        throw new apiError({
+        return next(new apiError({
           statusCode: 401,
           message: "TokenExpired",
-        });
+        }));
       }
 
       if (error.name === "JsonWebTokenError") {
-        throw new apiError({
+        return next(new apiError({
           statusCode: 401,
           message: "Malformed token. Authentication failed.",
-        });
+        }));
       }
 
-      throw new apiError({
+      return next(new apiError({
         statusCode: 401,
         message: "Invalid access token",
-      });
+      }));
     }
   });
 

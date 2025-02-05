@@ -35,7 +35,8 @@ const managerSchema = new Schema({
         required : true
     },
     avatar: {
-        type: String // from cloudinary
+        type: String, // from cloudinary
+        required:[true,"Avatar is required"]
     },
     role: {
         type: String,

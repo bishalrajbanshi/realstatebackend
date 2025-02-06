@@ -389,6 +389,9 @@ const deleteSellerData = asyncHandler(async(req,res,next) => {
 //fetch all post
 const fetchAllPosts = asyncHandler(async(req,res,next)=>{
    try {
+    const { page = 1 }=req.query;
+    const limit = 2;
+    const skip = (page - 1) * limit; 
      const filters={};
      const projection= {
        homeName: 1,
@@ -400,8 +403,9 @@ const fetchAllPosts = asyncHandler(async(req,res,next)=>{
        isNegotiable: 1
      }
      const options = {
-       sort: { createdAt: -1 }, 
-       limit: 10, 
+       sort: { createdAt: -1 },
+       limit:limit,
+       skip:skip,
      };
      const data = await viewPosts(filters,projection,options);
      res.status(200)
@@ -413,8 +417,6 @@ const fetchAllPosts = asyncHandler(async(req,res,next)=>{
     return next(new apiError({
       statusCode: 500,
       message:error.message || "error fetching post data"
-
-
     }))
    }
 });

@@ -7,132 +7,87 @@ import { utils } from "../../../utils/index.js";
 const { apiError } = utils;
 import fs from "fs";
 
-//manager post
+// Manager Post
 const managerpost = async (sellerId, managerId, postdata, req) => {
-  let avatarFiles = null;
-  let imagesFiles = null;
-  
   try {
-    const { fullName,propertyTitle, mobileNumber,landLocation,landCity,
-      landAddress,landType, landCategory, facilities, area, price, isNegotiable, purpose, featured,videoLink, description } = postdata;
+    const {
+      fullName, propertyTitle, mobileNumber, landLocation, landCity,
+      landAddress, landType, landCategory, facilities, area, price,
+      isNegotiable, purpose, featured, videoLink, description
+    } = postdata;
 
-    if ([landType, landCategory, facilities, area, price, isNegotiable, purpose, description].some((field) => String(field).trim() === "")) {
-      throw new apiError({
-        statusCode: 400,
-        message: "All fields are required",
-      });
+    if ([landType, landCategory, facilities, area, price, isNegotiable, purpose, description].some(field => !String(field).trim())) {
+      throw new apiError({ statusCode: 400, message: "All fields are required" });
     }
-    
-    
-    let sellerData = null;
 
-    if (sellerId) {
-      sellerData = await Sellproperty.findById(sellerId);
-      if (!sellerData) {
-        throw new apiError({ statusCode: 404, message: "Seller ID is invalid" });
-      }
-    }
+    const sellerData = sellerId ? await Sellproperty.findById(sellerId) : null;
+    if (sellerId && !sellerData) 
+      throw new apiError({ statusCode: 404,
+     message: "Seller ID is invalid"
+       });
 
     const manager = await Manager.findById(managerId);
-    if (!manager) {
-      throw new apiError({ statusCode: 404, message: "Manager not found" });
-    }
-if (sellerId) {
-  const existingPost = await Post.findOne({ sellerId: sellerId });
-  if (existingPost) {
-    throw new apiError({ statusCode: 400, message: "Post already exists for this seller" });
-  }
-  
-}
-   
+    if (!manager) 
+      throw new apiError({ 
+    statusCode: 404,
+     message: "Manager not found" });
 
-    avatarFiles = req.files?.["avatar"];
-    imagesFiles = req.files?.["images"];
-
-
-    // Multer throws a file size error
-    if (req.fileValidationError) {
-      throw new apiError({ statusCode: 400, message: req.fileValidationError });
+    if (sellerId && await Post.findOne({ sellerId })) {
+      throw new apiError({ statusCode: 400, message: "Post already exists for this seller" });
     }
 
-    if (!avatarFiles || avatarFiles.length === 0) {
-      throw new apiError({ statusCode: 400, message: "Avatar not found" });
-    }
-    if (!imagesFiles || imagesFiles.length === 0) {
-      throw new apiError({ statusCode: 400, message: "Images not found" });
-    }
+    const avatarFiles = req.files?.["avatar"] || [];
+    const imagesFiles = req.files?.["images"] || [];
 
-    if (!avatarFiles || avatarFiles.length === 0) {
-      throw new apiError({ statusCode: 400, message: "Avatar not found" });
-    };
-    if (!imagesFiles || imagesFiles.length === 0) {
-      throw new apiError({ statusCode: 400, message: "Images not found" });
-    }
+    if (!avatarFiles.length) throw new apiError({ statusCode: 400, message: "Avatar not found" });
+    if (!imagesFiles.length) throw new apiError({ statusCode: 400, message: "Images not found" });
 
-    // Upload all avatar images to Cloudinary 
-    const avatarPromises = avatarFiles.map(file => uploadOnCloudinary(file.path).then(response => response.url));
-    const avatarLinks = await Promise.all(avatarPromises);
+    if (req.fileValidationError) throw new apiError({ statusCode: 400, message: req.fileValidationError });
 
-    // Upload all images to Cloudinary 
-    const imagesPromises = imagesFiles.map(file => uploadOnCloudinary(file.path).then(response => response.url));
-    const imagesLinks = await Promise.all(imagesPromises);
+    const allFiles =  [...avatarFiles, ...imagesFiles];
 
-    // Delete the temporary files after upload
-    avatarFiles.forEach((file) => {
-      if (fs.existsSync(file.path)) {
-        fs.unlinkSync(file.path);
-      }
-    });
-    imagesFiles.forEach((file) => {
-      if (fs.existsSync(file.path)) {
-        fs.unlinkSync(file.path);
-      }
-    });
+    // Upload all files concurrently
+    const uploadPromises =  allFiles.map(file => uploadOnCloudinary(file.path).then(res => res.url));
+    const allLinks = await Promise.all(uploadPromises);
 
-   // Handle facilities
-const existingFacilities = sellerData?.facilities || [];
-const newFacilities = Array.isArray(facilities) ? facilities : [facilities];
+    // Split uploaded links into avatars and images
+    const avatarLinks = allLinks.slice(0, avatarFiles.length);
+    const imagesLinks = allLinks.slice(avatarFiles.length);
 
-// Merge and remove duplicates
-const updatedFacilities = [...new Set([...existingFacilities, ...newFacilities])].filter(Boolean);
+    // Clean up uploaded files
+    allFiles.forEach(file => fs.existsSync(file.path) && fs.unlinkSync(file.path));
 
+    const existingFacilities = sellerData?.facilities || [];
+    const newFacilities = Array.isArray(facilities) ? facilities : [facilities];
+    const updatedFacilities = [...new Set([...existingFacilities, ...newFacilities])].filter(Boolean);
 
-    // Create the new post
     const newPost = new Post({
       postBy: managerId,
       managerFullName: manager.fullName,
       managerAddress: manager.address,
       sellerId: sellerId || null,
-      propertyTitle: propertyTitle || sellerData.propertyTitle,
-      fullName: fullName || sellerData.fullName,
-      sellerNumber: mobileNumber || sellerData.mobileNumber,
-      landLocation: landLocation || sellerData.landLocation,
-      landCity: landCity || sellerData.landCity,
-      landAddress: landAddress || sellerData.landAddress,
-      landType: landType || sellerData.landType,
-      landCatagory: landCategory || sellerData.landCategory,
-      area: area,
+      propertyTitle: propertyTitle || sellerData?.propertyTitle,
+      fullName: fullName || sellerData?.fullName,
+      sellerNumber: mobileNumber || sellerData?.mobileNumber,
+      landLocation: landLocation || sellerData?.landLocation,
+      landCity: landCity || sellerData?.landCity,
+      landAddress: landAddress || sellerData?.landAddress,
+      landType: landType || sellerData?.landType,
+      landCategory: landCategory || sellerData?.landCategory,
+      area,
       avatar: avatarLinks,
       images: imagesLinks,
-      facilities: updatedFacilities.length > 0 ? updatedFacilities : sellerData?.facilities || [],
-      price: price,
-      isNegotiable: isNegotiable,
-      purpose: purpose,
-      videoLink: videoLink,
-      featured: featured,
-      description: description,
+      facilities: updatedFacilities.length ? updatedFacilities : sellerData?.facilities || [],
+      price,
+      isNegotiable,
+      purpose,
+      videoLink,
+      featured,
+      description,
     });
-    // Save the new post
+
     await newPost.save();
   } catch (error) {
-    // Cleanup temporary files in case of error
-    if (avatarFiles) {
-      avatarFiles.forEach((file) => {
-        if (fs.existsSync(file.path)) {
-          fs.unlinkSync(file.path);
-        }
-      });
-    }
     throw error;
   }
 };

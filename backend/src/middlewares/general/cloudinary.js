@@ -1,14 +1,12 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 
-
 // Cloudinary Configuration
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.CLOUD_API_KEY,
   api_secret: process.env.CLOUD_API_SECRET,
 });
-
 
 const uploadOnCloudinary = async (localFilePath) => {
   try {
@@ -21,6 +19,7 @@ const uploadOnCloudinary = async (localFilePath) => {
     const response = await cloudinary.uploader.upload(localFilePath, {
       resource_type: "image",
       folder: "realstate",
+      transformation: [{ quality: "auto" }, { fetch_format: "auto" }],
     });
 
     console.log("File uploaded to Cloudinary:", response.url);

@@ -16,6 +16,7 @@ changeUserPassword,
   totalPosts,
   postByManager,
   totalUsers,
+  adminStats,
   viewPostData
 } = services;
 
@@ -67,8 +68,6 @@ const generateAccessToken = async (req, res, next) => {
 
 //admin register manager
 const registermanager = asyncHandler(async (req, res, next) => {
-  console.log("Inside registermanager, Res Object:", res);  
-
   try {
     const adminId = req.admin?._id;
     if (!adminId) {
@@ -353,26 +352,25 @@ const totalPostsData = asyncHandler(async(req,res,next) =>{
 
 
 //post by manager
-const postBymanagerData = asyncHandler(async(req,res,next) => {
-  try {
-    const adminId = req.admin?._id;
-    const {managerId} = req.params;
+const postBymanagerData = asyncHandler(async (req, res, next) => {  
+  try {    
+    const adminId = req.admin?._id;    
+    const { managerId } = req.params;    
 
-    const data = await postByManager(adminId,managerId)
+    const data = await postByManager(adminId, managerId,req);
 
-    res.status(200)
-    .json(new apiResponse({
+    return res.status(200).json(new apiResponse({ 
       success: true,
-      data: data
-    }))
-
-  } catch (error) {
-    return next(new apiError({
-      statusCode:500,
-      message: error.message || "error getting data"
-    }))
-  }
+      data: data  
+    }));  
+  } catch (error) {    
+    return next(new apiError({      
+      statusCode: 500,      
+      message: error.message || "Error getting data"    
+    }));  
+  }  
 });
+
 
 // total users
 const totalUserData = asyncHandler(async(req,res,next)=> {
@@ -407,6 +405,9 @@ const totalUserData = asyncHandler(async(req,res,next)=> {
 const viewAllPosts = asyncHandler(async (req,res,next) => {
   try {
     const adminId = req.admin._id;
+    const { page = 1 }=req.query;
+    const limit = 10;
+    const skip = (page - 1) * limit; 
     const filters ={};
     const projection = 
     {
@@ -420,7 +421,8 @@ const viewAllPosts = asyncHandler(async (req,res,next) => {
     };
     const options = {
       sort: { createdAt: -1 }, 
-      limit: 10, 
+      limit: limit, 
+      skip: skip
     };
 
     const data = await viewPostData(adminId,filters,projection,options);
@@ -436,6 +438,28 @@ const viewAllPosts = asyncHandler(async (req,res,next) => {
     return next(new apiError({
       statusCode:500,
       message:error.message
+    }))
+  }
+});
+
+
+//admin states
+const adminStatsData = asyncHandler(async(req,res,next) => {
+  try {
+    const adminId = req.admin._id;
+    const data = await adminStats(adminId);
+
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      data:data
+    }))
+
+
+  } catch (error) {
+    return next(new apiError({
+      statusCode:500,
+      message:error.message|| "error getting admin stats"
     }))
   }
 })
@@ -458,5 +482,6 @@ export {
   totalPostsData,
   postBymanagerData,
   totalUserData,
+adminStatsData,
   viewAllPosts
 };

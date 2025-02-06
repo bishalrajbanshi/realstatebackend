@@ -27,7 +27,7 @@ const managerSchema = new Schema({
     mobileNumber: {
         type: String,
         required: [true, "Phone number is required"],
-        unique: true,
+        // unique: true,
     },
     address: {
         type: String,
@@ -36,7 +36,7 @@ const managerSchema = new Schema({
     },
     avatar: {
         type: String, // from cloudinary
-        required:[true,"Avatar is required"]
+        // required:[true,"Avatar is required"]
     },
     role: {
         type: String,

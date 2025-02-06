@@ -74,7 +74,7 @@ const managerPostSchema = new Schema(
     landCatagory: {
       type: String,
       enum: ["Land", "House", "Apartment", "Property", "Villa"],
-      required: [true, "Category is required"],
+      // required: [true, "Category is required"],
     },
     area: {
       type: String,
@@ -121,6 +121,7 @@ const managerPostSchema = new Schema(
   { timestamps: true }
 );
 
+managerPostSchema.index({sellerId:1})
 managerPostSchema.index({ createdAt: -1 });
 managerPostSchema.index({ landType: 1 });
 managerPostSchema.index({ landCatagory: 1 });

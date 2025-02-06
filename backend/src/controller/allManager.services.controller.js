@@ -465,7 +465,7 @@ const managerPosts = asyncHandler(async (req, res, next) => {
     const managerId = req.manager?._id;
 
     // Create the post data (but don't wait for image uploads yet)
-    const postData = await managerpost(sellerId, managerId, req.body, req);
+    const postData =  managerpost(sellerId, managerId, req.body, req);
 
     // Send immediate response to the client
     res.status(200).json(new apiResponse({

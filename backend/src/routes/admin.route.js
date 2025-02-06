@@ -15,6 +15,7 @@ import {
   totalPostsData,
 postBymanagerData,
 totalUserData,
+adminStatsData,
 viewAllPosts
 } from "../controller/allAdmin.services.controller.js";
 import { middlewares } from "../middlewares/index.js";
@@ -46,6 +47,8 @@ router.route("/posts/:managerId").get(verifyJWT(Admin),postBymanagerData)
 router.route("/totaluser").get(verifyJWT(Admin),totalUserData)
 
 router.route("/view-post").get(verifyJWT(Admin),viewAllPosts)
+
+router.route("/admin-stats").get(verifyJWT(Admin),adminStatsData)
 
 
 

@@ -16,8 +16,6 @@ const viewPosts = async(
             message: "No posts found",
            })
         }
-
-       
         return allPost;
     } catch (error) {
         throw error;

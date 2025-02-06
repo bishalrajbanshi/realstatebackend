@@ -52,8 +52,6 @@ const verifyJWT = (model) =>
           message: `Unsupported model type: ${model.modelName}`,
         });
       }
-      
-      console.log("JWT Verification passed. Proceeding to next middleware.");
 
       next();
     } catch (error) {

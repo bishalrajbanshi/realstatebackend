@@ -33,24 +33,24 @@ const deleteManager = async(managerId) => {
 };
 
 //total post 
-const totalPosts = async(adminId,filters ={},projection={},options={})=>{
-try {
-    if (!adminId) {
-        throw new apiError({
-            statusCode:400,
-            message:"invalid admin id"
-        })
-    };
+// const totalPosts = async(adminId,filters ={},projection={},options={})=>{
+// try {
+//     if (!adminId) {
+//         throw new apiError({
+//             statusCode:400,
+//             message:"invalid admin id"
+//         })
+//     };
 
-    const posts = await Post.find(filters,projection,options);
+//     const posts = await Post.find(filters,projection,options);
 
-    console.log("posts",posts);
+//     console.log("posts",posts);
     
-return posts;
-} catch (error) {
-    throw error
-}
-};
+// return posts;
+// } catch (error) {
+//     throw error
+// }
+// };
 
 
 
@@ -97,4 +97,4 @@ const postByManager = async(adminId,managerId)=>{
 
 }
     
-export { allManagers,deleteManager,totalPosts,postByManager }
+export { allManagers,deleteManager,postByManager }

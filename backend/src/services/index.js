@@ -11,7 +11,6 @@ import {
   allManagers,
   deleteManager,
   postByManager,
-  totalPosts,
 } from "./adminAndManager/admin/adminServices.js";
 import {
   deleteEnqueyProperty,
@@ -61,12 +60,12 @@ import {
   totalEnqueryForm,
   totalSellerForm,
 } from "./adminAndManager/manager/manager.daashboard.js";
-import { adminStats, totalUsers } from "./adminAndManager/admin/adminDashboardStats.js";
+import { adminStats, statsPieChart, totalUsers } from "./adminAndManager/admin/adminDashboardStats.js";
 import { viewPostData } from "./adminAndManager/admin/view.posts.js";
 export const services = {
   //admin
-  totalPosts,
   postByManager,
+statsPieChart,
 
   verifyEmail,
   editProfile,

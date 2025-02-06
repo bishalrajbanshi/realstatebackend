@@ -13,11 +13,12 @@ const {
 changeUserPassword,
   adminDetails,
   allManagers,
-  totalPosts,
+  // totalPosts,
   postByManager,
   totalUsers,
   adminStats,
-  viewPostData
+  viewPostData,
+  statsPieChart,
 } = services;
 
 //controllers
@@ -269,9 +270,16 @@ const sendadmindetails = asyncHandler(async (req, res, next) => {
 //get all managers
 const fetchAllManagers = asyncHandler(async (req, res, next) => {
   try {
+    const { page = 1 }=req.query;
+    const limit = 10;
+    const skip = (page - 1) * limit; 
     const filters = { role: "Manager" };
     const projection = { fullName: 1, email: 1, mobileNumber: 1, avatar: 1, address: 1 };
-    const options = { sort: { createdAt: -1 }, limit: 10, skip: 0 };
+    const options = {
+      sort: { createdAt: -1 }, 
+      limit: limit, 
+      skip:skip
+    }
     const managers = await allManagers(filters, projection, options);
     res.status(200).json(
       new apiResponse({
@@ -314,74 +322,58 @@ const deleteMannagers = asyncHandler(async (req, res, next) => {
   }
 });
 
-//total froms 
-const totalPostsData = asyncHandler(async(req,res,next) =>{
-  try {
-    const adminId = req.admin?._id;
+// //total froms 
+// const totalPostsData = asyncHandler(async(req,res,next) =>{
+//   try {
+//     const adminId = req.admin?._id;
 
-    const  filters= {};
-    const projection = {
-      postBy:1,
-      managerFullName: 1,
-      managerAddress: 1,
-      avatar: 1,
-      homeName: 1,
-      fullName: 1,
-      sellerNumber: 1,
-      landLocation:1
-    };
- const options = {
-      sort: { createdAt: -1 }, 
-      limit: 10, 
-    };
+//     const  filters= {};
+//     const projection = {
+//       postBy:1,
+//       managerFullName: 1,
+//       managerAddress: 1,
+//       avatar: 1,
+//       homeName: 1,
+//       fullName: 1,
+//       sellerNumber: 1,
+//       landLocation:1
+//     };
+//  const options = {
+//       sort: { createdAt: -1 }, 
+//       limit: 10, 
+//     };
 
-    const data = await totalPosts(adminId,filters,projection,options)
+//     const data = await totalPosts(adminId,filters,projection,options)
 
-    res.status(200)
-    .json(new apiResponse({
-      success: true,
-      data: data
-    }))
-  } catch (error) {
-    return next (new apiResponse({
-      statusCode:500,
-      message: error.message || "error getting total psot"
-    }))
-  }
-});
-
-
-//post by manager
-const postBymanagerData = asyncHandler(async (req, res, next) => {  
-  try {    
-    const adminId = req.admin?._id;    
-    const { managerId } = req.params;    
-
-    const data = await postByManager(adminId, managerId,req);
-
-    return res.status(200).json(new apiResponse({ 
-      success: true,
-      data: data  
-    }));  
-  } catch (error) {    
-    return next(new apiError({      
-      statusCode: 500,      
-      message: error.message || "Error getting data"    
-    }));  
-  }  
-});
+//     res.status(200)
+//     .json(new apiResponse({
+//       success: true,
+//       data: data
+//     }))
+//   } catch (error) {
+//     return next (new apiResponse({
+//       statusCode:500,
+//       message: error.message || "error getting total psot"
+//     }))
+//   }
+// });
 
 
 // total users
 const totalUserData = asyncHandler(async(req,res,next)=> {
   try {
     const adminId = req.admin._id;
+    const { page = 1 }=req.query;
+    const limit = 10;
+    const skip = (page - 1) * limit; 
+
     const filters = { isverified : true}
     const projection = { email:1,fullName: 1, mobileNumber: 1,currentAddress:1
     }; 
     const options = {
       sort: { createdAt: -1 }, 
-      limit: 10, 
+      limit: limit, 
+      skip:skip
     };
 
     const data = await totalUsers(adminId,filters,projection,options)
@@ -443,6 +435,27 @@ const viewAllPosts = asyncHandler(async (req,res,next) => {
 });
 
 
+//post by manager
+const postBymanagerData = asyncHandler(async (req, res, next) => {  
+  try {    
+    const adminId = req.admin?._id;    
+    const { managerId } = req.params;    
+
+    const data = await postByManager(adminId, managerId,req);
+
+    return res.status(200).json(new apiResponse({ 
+      success: true,
+      data: data  
+    }));  
+  } catch (error) {    
+    return next(new apiError({      
+      statusCode: 500,      
+      message: error.message || "Error getting data"    
+    }));  
+  }  
+});
+
+
 //admin states
 const adminStatsData = asyncHandler(async(req,res,next) => {
   try {
@@ -462,6 +475,25 @@ const adminStatsData = asyncHandler(async(req,res,next) => {
       message:error.message|| "error getting admin stats"
     }))
   }
+});
+
+
+//stats pie chart
+const pieChartStats = asyncHandler(async(req,res,next) => {
+  try {
+    const adminId = req.admin._id;
+    const data =  await statsPieChart(adminId);
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      data:data
+    }))
+  } catch (error) {
+    return next(new apiError({
+      statusCode:500,
+      message:error.message || "error getting stats data"
+    }))
+  }
 })
 
 
@@ -479,9 +511,10 @@ export {
   sendadmindetails,
   fetchAllManagers,
   deleteMannagers,
-  totalPostsData,
+  // totalPostsData,
   postBymanagerData,
   totalUserData,
 adminStatsData,
-  viewAllPosts
+  viewAllPosts,
+  pieChartStats
 };

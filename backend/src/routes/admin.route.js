@@ -12,11 +12,11 @@ import {
   changePassword,
   registermanager,
   sendadmindetails,
-  totalPostsData,
 postBymanagerData,
 totalUserData,
 adminStatsData,
-viewAllPosts
+viewAllPosts,
+pieChartStats
 } from "../controller/allAdmin.services.controller.js";
 import { middlewares } from "../middlewares/index.js";
 
@@ -41,14 +41,16 @@ asyncHandler(registermanager)
 router.route("/admindetails").get(verifyJWT(Admin),sendadmindetails);
 router.route("/allmanager").get(verifyJWT(Admin),fetchAllManagers);
 router.route("/delete/:managerId").delete(verifyJWT(Admin),deleteMannagers);
-router.route("/totaldata").get(verifyJWT(Admin),totalPostsData);
-router.route("/posts/:managerId").get(verifyJWT(Admin),postBymanagerData)
+router.route("/manager-data/:managerId").get(verifyJWT(Admin),postBymanagerData)
+
 
 router.route("/totaluser").get(verifyJWT(Admin),totalUserData)
 
 router.route("/view-post").get(verifyJWT(Admin),viewAllPosts)
 
 router.route("/admin-stats").get(verifyJWT(Admin),adminStatsData)
+
+router.route("/pie-chart").get(verifyJWT(Admin),pieChartStats)
 
 
 

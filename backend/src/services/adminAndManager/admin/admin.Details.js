@@ -12,7 +12,7 @@ const adminDetails = async (adminid) => {
       });
     }
     const admin = await Admin.findById(adminid).select(
-      "fullName role userName email  mobileNumber"
+      "fullName userName email  mobileNumber"
     );
 
     //validate admin

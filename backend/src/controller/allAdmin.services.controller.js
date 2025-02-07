@@ -19,6 +19,8 @@ changeUserPassword,
   adminStats,
   viewPostData,
   statsPieChart,
+  viewManagerData,
+  viewManagerPost
 } = services;
 
 //controllers
@@ -494,6 +496,62 @@ const pieChartStats = asyncHandler(async(req,res,next) => {
       message:error.message || "error getting stats data"
     }))
   }
+});
+
+//viwe manager all data
+const viewManagerAllData = asyncHandler(async(req,res,next) => {
+  try {
+    const adminId = req.admin._id;
+    const {managerId} = req.params;
+
+    const data = await viewManagerData(adminId,managerId);
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      data: data
+    }))
+  } catch (error) {
+    return next(new apiError({
+      statusCode: 500,
+      message:error.message || "error getting anager data"
+    }))
+  }
+});
+
+//view manager posts data
+const viewAllManagerPost = asyncHandler(async(req,res,next) => {
+  try {
+    const adminId = req.admin._id;
+    const {managerId} = req.params;
+    const { page = 1 }=req.query;
+    const limit = 10;
+    const skip = (page - 1) * limit; 
+    const filters ={postBy: managerId};
+    const projection = 
+    {
+      avatar:1,
+      state:1,
+      proce:1,
+      createdAt:1,
+    };
+    const options = {
+      sort: { createdAt: -1 }, 
+      limit: limit, 
+      skip: skip
+    };
+
+    const data = await viewManagerPost(adminId,managerId,filters,projection,options);
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      data: data
+    }))
+  } catch (error) {
+    return next(new apiError({
+      statusCode:500,
+      message: error.message || "error getting posts"
+    }))
+  }
 })
 
 
@@ -511,10 +569,11 @@ export {
   sendadmindetails,
   fetchAllManagers,
   deleteMannagers,
-  // totalPostsData,
   postBymanagerData,
   totalUserData,
 adminStatsData,
   viewAllPosts,
-  pieChartStats
+  pieChartStats,
+  viewManagerAllData,
+  viewAllManagerPost
 };

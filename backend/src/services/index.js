@@ -62,10 +62,13 @@ import {
 } from "./adminAndManager/manager/manager.daashboard.js";
 import { adminStats, statsPieChart, totalUsers } from "./adminAndManager/admin/adminDashboardStats.js";
 import { viewPostData } from "./adminAndManager/admin/view.posts.js";
+import { viewManagerData, viewManagerPost } from "./adminAndManager/admin/view.manager.data.js";
 export const services = {
   //admin
   postByManager,
 statsPieChart,
+viewManagerData,
+viewManagerPost,
 
   verifyEmail,
   editProfile,

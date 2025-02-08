@@ -73,22 +73,12 @@ const generateAccessToken = async (req, res, next) => {
 const registermanager = asyncHandler(async (req, res, next) => {
   try {
     const adminId = req.admin?._id;
-    if (!adminId) {
-      return next(new apiError({ statusCode: 401, message: "Unauthorized admin access" }));
-    }
-
     const newManager = await managerRegister(req.body, adminId, req);
 
     return res.status(201).json({
       success: true,
       message: "Manager registered successfully",
-      data: {
-        fullName: newManager.fullName,
-        email: newManager.email,
-        mobileNumber: newManager.mobileNumber,
-        avatar: newManager.avatar,
-        address: newManager.address,
-      },
+      data: newManager
     });
   } catch (error) {
     return next(new apiError({
@@ -139,8 +129,6 @@ const loginadmin = asyncHandler(async (req, res, next) => {
 const logoutadmin = asyncHandler(async (req, res, next) => {
   try {
     const  userId= req.admin;
-    console.log("userId",userId);
-    
     const updatedUser = await logoutServices(userId);
 
     // Clear cookies
@@ -531,7 +519,8 @@ const viewAllManagerPost = asyncHandler(async(req,res,next) => {
     {
       avatar:1,
       state:1,
-      proce:1,
+      price:1,
+      propertyTitle:1,
       createdAt:1,
     };
     const options = {

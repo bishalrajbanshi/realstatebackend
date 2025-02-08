@@ -26,7 +26,8 @@ const {
   viewbuyerData,
   sellerState,
   enquertState,
-  buyerState
+  buyerState,
+viewManagerStats
 } =services;
 
 //login manager
@@ -153,7 +154,7 @@ const managerdetailsSend =  asyncHandler( async ( req,res,next)  =>{
   
     res.status(200)
     .json( new apiResponse({
-      data: {managerData},
+      data: managerData,
       success: true
     }))
   } catch (error) {
@@ -619,6 +620,28 @@ const deletePosts = asyncHandler(async(req,res,next) => {
 });
 
 
+//view manager data stats
+const managerStats = asyncHandler(async(req,res,next) => {
+  try {
+    const managerId = req.manager?._id;
+    const data = await viewManagerStats(managerId)
+
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      data:data
+    }))
+
+  } catch (error) {
+    return next( new apiError({
+      statusCode:500,
+      message: error.message || "error getting data"
+    }))
+  }
+})
+
+
+
 
 
 export { 
@@ -645,5 +668,6 @@ export {
   stateCheckingBuyer,
   stateCheckingSeller,
   stateCheckingEnquery,
-  deletePosts
+  deletePosts,
+  managerStats
 };

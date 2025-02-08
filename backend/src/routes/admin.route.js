@@ -54,7 +54,7 @@ router.route("/admin-stats").get(verifyJWT(Admin),adminStatsData)
 
 router.route("/pie-chart").get(verifyJWT(Admin),pieChartStats)
 
-router.route("/viwe/data/:managerId").get(verifyJWT(Admin),viewManagerAllData)
+router.route("/view/data/:managerId").get(verifyJWT(Admin),viewManagerAllData)
 
 router.route("/view-manager/posts/:managerId").get(verifyJWT(Admin),viewAllManagerPost)
 

@@ -29,7 +29,7 @@ const managerRegister = async (managerData, adminId, req) => {
 
         // Check if the manager already exists
         const existingManager = await Manager.findOne({
-            $or: [{ email }, { mobileNumber }],
+            $and: [{ email }, { mobileNumber }],
         });
 
         if (existingManager) {
@@ -47,8 +47,6 @@ const managerRegister = async (managerData, adminId, req) => {
                 message: "Avatar file is required",
             });
         }
-
-        console.log("Avatar File Path:", avatarFile); 
 
         //  Ensure the file exists before uploading
         if (!fs.existsSync(avatarFile)) {

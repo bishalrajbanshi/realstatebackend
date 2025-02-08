@@ -56,19 +56,21 @@ import {
   deleteCartProperty,
   viewCartproperty,
 } from "./user/property/user.cartProperty.js";
-import {
-  totalEnqueryForm,
-  totalSellerForm,
-} from "./adminAndManager/manager/manager.daashboard.js";
+
 import { adminStats, statsPieChart, totalUsers } from "./adminAndManager/admin/adminDashboardStats.js";
 import { viewPostData } from "./adminAndManager/admin/view.posts.js";
 import { viewManagerData, viewManagerPost } from "./adminAndManager/admin/view.manager.data.js";
+import { viewManagerStats } from "./adminAndManager/manager/view.manager.stats.js";
 export const services = {
   //admin
   postByManager,
 statsPieChart,
 viewManagerData,
 viewManagerPost,
+
+
+//manager
+viewManagerStats,
 
   verifyEmail,
   editProfile,
@@ -103,8 +105,6 @@ viewManagerPost,
   userPurchase,
   sellerState,
   enquertState,
-  totalEnqueryForm,
-  totalSellerForm,
   allform,
   viewbuyerData,
   buyerState,

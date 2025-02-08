@@ -23,7 +23,8 @@ import {
   fetchBuyerData,
   stateCheckingSeller,
   stateCheckingEnquery,
-  stateCheckingBuyer
+  stateCheckingBuyer,
+  managerStats
 } from "../controller/allManager.services.controller.js";
 import { verifyJWT } from "../middlewares/general/auth.middleware.js";
 import { Manager } from "../models/manager.model.js";
@@ -78,6 +79,10 @@ router.route("/deletepost/:postId").delete(verifyJWT(Manager),deletePosts)
 router.route("/fetchallforms").get(verifyJWT(Manager), fetchAllForms);
 router.route("/fetchdata/:postId").get(verifyJWT(Manager),fetchBuyerData);
 router.route("/buyserstate/:buyerId").patch(verifyJWT(Manager),stateCheckingBuyer);
+
+
+//getting the data for stats
+router.route("/manager-data/:managerId").get(verifyJWT(Manager),managerStats)
 
 
 export default router;

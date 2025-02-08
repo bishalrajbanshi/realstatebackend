@@ -12,8 +12,8 @@ const logoutServices = async (userId) => {
         message: "Role or user ID is missing",
       });
     }
+    console.log("userID",userId.role);
     
-
     if (userId.role === "Admin") {
       return await logoutUser(Admin, userId);
     } else if (userId.role === "Manager") {

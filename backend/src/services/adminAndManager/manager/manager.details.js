@@ -9,8 +9,6 @@ const {
 const managerDetails = async(managerId) =>{
     try {
         //validate manager id
-        console.log("manager ID",managerId);
-        
         if (!managerId) {
             throw new apiError({
                 statusCode: 400,
@@ -19,7 +17,7 @@ const managerDetails = async(managerId) =>{
         };
 
         const manager = await Manager.findById(managerId).select(
-            "fullName email role mobileNumber avatar accessToken refreshToken"
+            "fullName email role mobileNumber avatar"
         );
 
 

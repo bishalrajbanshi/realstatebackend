@@ -10,15 +10,21 @@ const sendEmail = asyncHandler(async ({ to, subject, html }) => {
       subject,
       html,
     });
-    console.log(`Email sent to ${to}: ${info.response}`);
+    
+    return info;
+
   } catch (error) {
-    // console.error(`Failed to send email to ${to}:`, error.message);
-    // if (error.response) console.error("SMTP Error Response:", error.response);
-    // if (error.code) console.error("Error Code:", error.code);
+    console.error("Error sending email:", error);
+
+    // Extract useful error message
+    const errorMessage =
+      error.response || error.message || "Unknown email sending error";
+
+    console.log("Email Error Response:", errorMessage);
 
     throw new apiError({
       statusCode: 500,
-      message: "Failed to send email.",
+      message: `Failed to send email: ${errorMessage}`,
     });
   }
 });

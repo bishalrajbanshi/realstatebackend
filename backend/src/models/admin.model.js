@@ -41,9 +41,6 @@ const adminSchema = new Schema(
     refreshToken: {
       type: String,
     },
-    // accessToken: {
-    //   type: String,
-    // },
     isLoggedIn: {
       type: Boolean,
       default: false,

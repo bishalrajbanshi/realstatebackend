@@ -27,7 +27,9 @@ const {
   sellerState,
   enquertState,
   buyerState,
-viewManagerStats
+viewManagerStats,
+myPost,
+myPostDetails,
 } =services;
 
 //login manager
@@ -466,7 +468,7 @@ const managerPosts = asyncHandler(async (req, res, next) => {
     const managerId = req.manager?._id;
 
     // Create the post data (but don't wait for image uploads yet)
-    const postData =  managerpost(sellerId, managerId, req.body, req);
+    const postData = await managerpost(sellerId, managerId, req.body, req);
 
     // Send immediate response to the client
     res.status(200).json(new apiResponse({
@@ -638,6 +640,77 @@ const managerStats = asyncHandler(async(req,res,next) => {
       message: error.message || "error getting data"
     }))
   }
+});
+
+
+
+//my all post data
+const myPostData = asyncHandler(async(req,res,next) => {
+  try {
+    const managerId = req.manager?._id;
+    const { page = 1 }=req.query;
+    const limit = 100;
+    const skip = (page - 1) * limit; 
+    const filters ={postBy: managerId};
+    const projection = 
+    {
+      avatar:1,
+      state:1,
+      price:1,
+      propertyTitle:1,
+      createdAt:1,
+    };
+    const options = {
+      sort: { createdAt: -1 }, 
+      limit: limit, 
+      skip: skip
+    };
+    if (!managerId) {
+      throw new apiError({
+        statusCode:401,
+        message:"manager undefined"
+      })
+    };
+
+    const data =  await myPost(managerId,filters,projection,options);
+
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      data:data
+    }))
+
+  } catch (error) {
+    return next(apiError({
+      statusCode: 500,
+      message:error.message || "error getting manager data"
+    }))
+  }
+});
+
+//post details
+const myPostDetailsData = asyncHandler(async(req,res,next) => {
+try {
+  const managerId = req.manager?._id;
+  const postId = req.params.postId
+  if (!managerId) {
+    throw new apiError({
+      statusCode:403,
+      message:"undefined manager"
+    })
+  }
+const data = await myPostDetails(managerId,postId)
+res.status(200)
+.json(new apiResponse({
+  success:true,
+  data:data
+}))
+} catch (error) {
+  return next(apiError({
+    statusCode: 500,
+    message:error.message || "error getting manager post details"
+  }))
+}
 })
 
 
@@ -669,5 +742,7 @@ export {
   stateCheckingSeller,
   stateCheckingEnquery,
   deletePosts,
-  managerStats
+  managerStats,
+  myPostData,
+  myPostDetailsData
 };

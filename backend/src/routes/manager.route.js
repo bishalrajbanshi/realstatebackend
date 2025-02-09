@@ -24,7 +24,9 @@ import {
   stateCheckingSeller,
   stateCheckingEnquery,
   stateCheckingBuyer,
-  managerStats
+  managerStats,
+  myPostData,
+  myPostDetailsData
 } from "../controller/allManager.services.controller.js";
 import { verifyJWT } from "../middlewares/general/auth.middleware.js";
 import { Manager } from "../models/manager.model.js";
@@ -83,6 +85,12 @@ router.route("/buyserstate/:buyerId").patch(verifyJWT(Manager),stateCheckingBuye
 
 //getting the data for stats
 router.route("/manager-data/:managerId").get(verifyJWT(Manager),managerStats)
+
+//my all posts
+router.route("/post/:managerId").get(verifyJWT(Manager),myPostData)
+
+//post details
+router.route("/post-details/:postId").get(verifyJWT(Manager),myPostDetailsData)
 
 
 export default router;

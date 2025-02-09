@@ -61,6 +61,7 @@ import { adminStats, statsPieChart, totalUsers } from "./adminAndManager/admin/a
 import { viewPostData } from "./adminAndManager/admin/view.posts.js";
 import { viewManagerData, viewManagerPost } from "./adminAndManager/admin/view.manager.data.js";
 import { viewManagerStats } from "./adminAndManager/manager/view.manager.stats.js";
+import { myPost, myPostDetails } from "./adminAndManager/manager/my.posts.js";
 export const services = {
   //admin
   postByManager,
@@ -71,6 +72,8 @@ viewManagerPost,
 
 //manager
 viewManagerStats,
+myPost,
+myPostDetails,
 
   verifyEmail,
   editProfile,

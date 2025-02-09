@@ -23,7 +23,7 @@ const managerPostSchema = new Schema(
     ],
     images: [
       {
-        type: String,
+        type: String, //cloudinary
         required: true,
       },
     ],

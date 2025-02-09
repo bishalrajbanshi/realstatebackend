@@ -2,7 +2,8 @@ import { Manager } from "../../../models/manager.model.js";
 import { Enquertproperty } from "../../../models/enquery.property.model.js";
 
 import { utils } from "../../../utils/index.js";
-const { apiError,stateUpdate } = utils;
+const { apiError } = utils;
+import { stateUpdate } from "../../../middlewares/general/stateUpdate.js";
 
 const enqueryFormByUser = async (
   filters = {},
@@ -86,7 +87,7 @@ const viewEnqueryForm = async(formId)=>{
 const enquertState = async(data,enqueryId)=>{
   try {
     const {state}=data;
-    const updatestate = await stateUpdate(Enqueryform,state,enqueryId);
+    const updatestate = await stateUpdate(Enquertproperty,state,enqueryId);
   } catch (error) {
     throw error
   }

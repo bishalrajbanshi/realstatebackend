@@ -32,6 +32,14 @@ const stateUpdate = async(model, state, postId)=>{
             message: "Invalid state value. Allowed values are 'pending', 'approved', or 'reject'."
           });
         }
+
+         // Prevent changing state from "approved" to "pending"
+         if (post.state === "approved" && state === "pending") {
+          throw new apiError({
+              statusCode: 400,
+              message: "Once a post is approved, it cannot be changed back to 'pending'."
+          });
+      }
     
         // Update the state of the post
         const updatedPost = await model.findByIdAndUpdate(postId, { state }, { new: true });

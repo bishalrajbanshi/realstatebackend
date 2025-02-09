@@ -317,7 +317,7 @@ const fetchForm = asyncHandler(async (req, res, next) => {
       });
     }
     const { page = 1 }=req.query;
-    const limit = 10;
+    const limit = 100;
     const skip = (page - 1) * limit; 
     const filters = {};
     const projection = { fullName: 1, mobileNumber: 1,currentAddress: 1,state: 1

@@ -316,12 +316,16 @@ const fetchForm = asyncHandler(async (req, res, next) => {
         message: "Invalid Manager ID ",
       });
     }
+    const { page = 1 }=req.query;
+    const limit = 10;
+    const skip = (page - 1) * limit; 
     const filters = {};
     const projection = { fullName: 1, mobileNumber: 1,currentAddress: 1,state: 1
     }; 
     const options = {
       sort: { createdAt: -1 }, 
-      limit: 10, 
+      limit: limit,
+      skip:skip 
     };
 
     const userForms = await enqueryFormByUser(filters, projection, options, managerId);
@@ -384,7 +388,9 @@ const totalEnqueryData = asyncHandler(async(req,res,next) => {
 const fetchSellerForm = asyncHandler(async(req,res,next) => {
   try {
     const managerId = req.manager?._id;
-
+    const { page = 1 }=req.query;
+    const limit = 10;
+    const skip = (page - 1) * limit; 
     const  filters= {};
     const projection = {
       homeName: 1,
@@ -393,11 +399,11 @@ const fetchSellerForm = asyncHandler(async(req,res,next) => {
       state: 1,
       discription: 1
     };
- const options = {
+    const options = {
       sort: { createdAt: -1 }, 
-      limit: 10, 
+      limit: limit,
+      skip:skip 
     };
-
 
     const sellerData = await sellerUser(filters, projection,options, managerId)
 
@@ -509,7 +515,23 @@ const editPostbyManager = asyncHandler(async(req,res,next) => {
 const fetchAllForms = asyncHandler(async(req,res,next)=> {
   try {
     const managerId = req.manager?._id;
-    const alldata = await allform(managerId);
+    const  filters= {managerId:managerId};
+    const { page = 1 }=req.query;
+    const limit = 10;
+    const skip = (page - 1) * limit; 
+    const projection = {
+      fullName: 1,
+      mobileNumber: 1,
+      postId:1,
+      state: 1,
+    };
+ const options = {
+      sort: { createdAt: -1 }, 
+      limit: limit,
+      skip:skip 
+    };
+
+    const alldata = await allform(managerId,filters,projection,options);
     res.status(200)
     .json(new apiResponse({
       success: true,

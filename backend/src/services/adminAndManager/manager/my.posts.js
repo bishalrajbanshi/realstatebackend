@@ -43,7 +43,7 @@ const myPost = async(managerId,filters,projection,options) => {
 const myPostDetails = async(managerId,postId) => {
     try {
 //validate 
-  const validManager =  checkManager(managerId)
+  const validManager = await checkManager(managerId)
   if (!validManager) {
     throw new apiError({
         statusCode:402,

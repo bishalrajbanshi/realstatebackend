@@ -5,7 +5,7 @@ import { utils } from "../../../utils/index.js";
 const { apiError } = utils;
 
 //view all buyer data
-const allform = async (managerId) => {
+const allform = async (managerId,filters,projection,options) => {
   try {
     //validate
     if (!managerId) {
@@ -16,7 +16,7 @@ const allform = async (managerId) => {
     }
 
     //validate managar id with post manager id
-    const extistForms = await Buyproperty.findOne({managerId:managerId});
+    const extistForms = await Buyproperty.find(filters,projection,options)
 
     return extistForms;
   } catch (error) {

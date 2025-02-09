@@ -728,7 +728,7 @@ res.status(200)
   data:data
 }))
 } catch (error) {
-  return next(apiError({
+  return next(new apiError({
     statusCode: 500,
     message:error.message || "error getting manager post details"
   }))

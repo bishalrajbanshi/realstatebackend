@@ -1,8 +1,9 @@
-import { stateUpdate } from "../../../middlewares/general/stateUpdate.js";
 import { Buyproperty } from "../../../models/buy.property.model.js";
 import { Post } from "../../../models/manager.post.model.js";
 import { utils } from "../../../utils/index.js";
 const { apiError } = utils;
+import { middlewares } from "../../../middlewares/index.js";
+const { stateUpdate } = middlewares;
 
 //view all buyer data
 const allform = async (managerId,filters,projection,options) => {

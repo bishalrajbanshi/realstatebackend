@@ -1,71 +1,80 @@
 import mongoose, { Schema } from "mongoose";
-import { addPasswordhashingHook, addPasswordVerificationMethod } from "../utils/helper/passwordHashCompare.js";
+import {
+  addPasswordhashingHook,
+  addPasswordVerificationMethod,
+} from "../utils/helper/passwordHashCompare.js";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 import { generateResetToken } from "../utils/helper/passwordResetToken.js";
 
-const userSchema = new Schema({
+const userSchema = new Schema(
+  {
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
     fullName: {
-        type: String,
-        required: [true, "FULL NAME IS REQUIRED"],
-        trim: true,
+      type: String,
+      required: [true, "FULL NAME IS REQUIRED"],
+      trim: true,
     },
     email: {
-        type: String,
-        unique: true,
-        lowercase: true,
-        required: [true, "Email is required"],
-        unique: true,
+      type: String,
+      unique: true,
+      lowercase: true,
+      required: [true, "Email is required"],
+      unique: true,
     },
     mobileNumber: {
-        type: Number,
-        required: true,
-        unique: true,
+      type: Number,
+      // required: true,
+      unique: true,
     },
     currentAddress: {
-        type: String,
-        required: [true, "enter your current address"]
+      type: String,
+      // required: [true, "enter your current address"],
     },
     password: {
-        type: String,
-        required: [true, "password is required"],
+      type: String,
+      // required: [true, "password is required"],
     },
     role: {
-        type: String,
-        enum: ["User"], 
-        default: "User",
+      type: String,
+      enum: ["User"],
+      default: "User",
     },
     isverified: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
-    isEmailUpdating:{
-        type: Boolean,
-        default: false
+    isEmailUpdating: {
+      type: Boolean,
+      default: false,
     },
     verificationCode: {
-        type: String
+      type: String,
     },
     verificationCodeExpire: {
-        type: Date,
+      type: Date,
     },
     passwordResetToken: {
-        type: String,
+      type: String,
     },
     passwordResetTokenExpire: {
-        type: Date
+      type: Date,
     },
-    refreshToken: {
-        type: String,
-    },
+    refreshToken: [String],
     isLoggedIn: {
-        type: Boolean,
-        default: false
-    }
-}, { timestamps: true });
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true }
+);
 
 // Add plugins and indexes
-userSchema.plugin(mongooseAggregatePaginate)
-userSchema.index({ email: 1, mobileNumber: 1,  }, { unique: true });
+userSchema.plugin(mongooseAggregatePaginate);
+userSchema.index({ email: 1, mobileNumber: 1 }, { unique: true });
 
 // index for logged-in and verified users
 userSchema.index({ isLoggedIn: 1, isVerified: 1 });
@@ -77,8 +86,4 @@ addPasswordVerificationMethod(userSchema);
 //generet reset token
 generateResetToken(userSchema);
 
-export const User = mongoose.model("User",userSchema);
-
-
-
-
+export const User = mongoose.model("User", userSchema);

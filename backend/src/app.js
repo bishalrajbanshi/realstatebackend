@@ -8,8 +8,11 @@ import { size } from "./constant.js";
 import { config } from "./constant.js";
 const { CORS_ORIGIN, NODE_ENV } = config;
 const isProduction = NODE_ENV === "production";
+import  {passport}  from "./passport.js"
+
 
 const app = express();
+app.use(passport.initialize());
 
 //CORS CONFIGURATION
 const origin = CORS_ORIGIN;
@@ -73,6 +76,9 @@ const limiter = rateLimit({
   message: "Too many requests from this IP, please try again later",
 });
 app.use(limiter);
+
+
+
 
 //api DECLERATIONS
 import adminRouter from "./routes/admin.route.js";

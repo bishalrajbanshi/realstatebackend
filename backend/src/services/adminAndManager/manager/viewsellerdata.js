@@ -1,6 +1,8 @@
 import { Sellproperty } from "../../../models/sell.property.model.js";
 import { utils } from "../../../utils/index.js";
-const { apiError, stateUpdate } = utils;
+const { apiError } = utils;
+import { middlewares } from "../../../middlewares/index.js";
+const { stateUpdate } = middlewares;
 import { Manager } from "../../../models/manager.model.js";
 
 //all seller data

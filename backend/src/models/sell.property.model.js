@@ -55,9 +55,10 @@ const sellProperty = new Schema(
     ],
     state: {
       type: String,
-      enum: ["pending","completed"],
-      default: "pending"
-    },
+      enum:["pending", "approved", "reject"],
+      default:"pending",
+      required: [true, "State is required"],
+  },
     discription: {
         type: String,
         trim: true,

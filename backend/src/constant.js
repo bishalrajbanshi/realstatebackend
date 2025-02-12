@@ -27,6 +27,10 @@ const config = {
  /*  EMAIL SENDER  */
     SENDER_EMAIL:process.env.SENDER_EMAIL,
 
+    /* google clien id */
+    CLIENT_ID:process.env.CLIENT_ID,
+    CLIENT_SECRET:process.env.CLIENT_SECRET
+
 }
 export { config };
 

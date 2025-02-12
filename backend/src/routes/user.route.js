@@ -23,8 +23,11 @@ import {
   deleteEnqueryForm,
   userCart,
   getCartProduct,
-  deleteCartData
+  deleteCartData,
+  viewFeaturedPostData,
+  googleAuthCallback
 } from "../controller/allUser.services.controller.js";
+import passport from "passport";
 
 import { middlewares } from "../middlewares/index.js";
 const { verifyJWT } = middlewares;
@@ -80,6 +83,34 @@ router.route("/delete/:sellerId").delete(verifyJWT(User),deleteSellerData)
 router.route("/posts").get(fetchAllPosts);
 router.route("/viewproperty/:postId").get(viewPropertyData)
 router.route("/getcall/:postId").post(verifyJWT(User),userPurchaseData);
+
+//featured posts
+router.route("/featured-post").get(viewFeaturedPostData)
+
+
+
+// Google login
+router.get(
+  '/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+// Google callback
+// router.get(
+//   '/google/callback',
+//   passport.authenticate('google', { session: false}),
+//   googleAuthCallback
+// );
+
+router.get(
+  "/auth/google/callback",  
+  passport.authenticate("google", { session: false }), 
+  (req, res, next) => {
+    console.log("Reached callback handler");
+    googleAuthCallback(req, res, next);
+  }
+);
+
 
 
 export default router;

@@ -48,5 +48,24 @@ const viewProperty = async (postId, filters = {}, projection = {}, options = {})
       throw error;
     }
   };
+
+  //view feature posts
+  const viewFeaturedPosts = async(filters,projections,options)=> {
+    try {
+        //find post according to the filters,projections,options
+        const viewFeatured = await Post.find(filters,projections,options);
+        if (!viewFeatured) {
+          throw new apiError({
+            statusCode:401,
+            message:"featured post is unavailable"
+          })
+        }
+
+        return viewFeatured
+
+    } catch (error) {
+      throw error;
+    }
+  }
   
-export { viewPosts,viewProperty }
+export { viewPosts,viewProperty, viewFeaturedPosts }

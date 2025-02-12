@@ -3,7 +3,8 @@ import { Enquertproperty } from "../../../models/enquery.property.model.js";
 
 import { utils } from "../../../utils/index.js";
 const { apiError } = utils;
-import { stateUpdate } from "../../../middlewares/general/stateUpdate.js";
+import { middlewares } from "../../../middlewares/index.js";
+const { stateUpdate } = middlewares;
 
 const enqueryFormByUser = async (
   filters = {},

@@ -1,7 +1,8 @@
 
 import { utils } from "../utils/index.js";
-const { apiError, apiResponse, asyncHandler } = utils;
+const { apiError, apiResponse, asyncHandler,generateAccessToken,generateRefreshToken } = utils;
 import { services } from "../services/index.js";
+import { sendAuthResponse } from "../utils/helper/sendAuthResponse.js";
 
 const {
   userRegister,
@@ -27,7 +28,8 @@ const {
   deleteEnqueyProperty,
   addToCart,
   viewCartproperty,
-  deleteCartProperty
+  deleteCartProperty,
+  viewFeaturedPosts
 } = services;
 
 // Register User Controller
@@ -476,9 +478,6 @@ const userPurchaseData = asyncHandler(async(req,res,next) =>{
         const userId = req.user?._id;
         const {postId} = req.params;
         const {mobileNumber} = req.body;
-        console.log("userId",userId);
-        console.log("postId",postId);
-        
         const pudata = await userPurchase(userId,postId,mobileNumber);
 
         res.status(200)
@@ -495,7 +494,7 @@ const userPurchaseData = asyncHandler(async(req,res,next) =>{
 });
 
 //generate access token
-const generateAccessToken = async (req, res, next) => {
+const generateAccessTokens = async (req, res, next) => {
   const { refreshToken } = req.cookies;
 
   console.log("Refresh token received:", refreshToken);
@@ -655,7 +654,77 @@ const deleteCartData = asyncHandler(async(req,res,next)=> {
 
     }))
   }
-})
+});
+
+
+//view featured post in users
+const viewFeaturedPostData = asyncHandler(async(req,res,next) => {
+  try {
+    const  { page = 1} = req.query;
+    const limit = 10;
+    const skip =( page - 1) * limit;
+    const filters = {featured : "featured"};
+    const projections = {
+      avatar:1,
+      propertyTitle:1,
+      landLocation:1,
+      landCity:1,
+      landAddress:1,
+      landCatagory:1,
+      landType:1,
+      featured:1,
+      price:1,
+      purpose:1,
+      description:1,
+      area:1,
+    };
+    const options = {
+      sort: { createdAt: -1 }, 
+      limit: limit, 
+      skip: skip
+    };
+    const data = await viewFeaturedPosts(filters,projections,options);
+
+    res.status(200)
+    .json(new apiResponse({
+      success: true,
+      data: data
+    }))
+  } catch (error) {
+    return next(new apiError({
+      statusCode: 500,
+      message:error.message || "error getting featured posts"
+    }))
+  }
+});
+
+
+
+
+const googleAuthCallback = asyncHandler(async (req, res, next) => {
+  try {
+    if (!req.user) {
+      throw new apiError({ statusCode: 401, message: "Unauthorized" });
+    }
+    const { accessToken, refreshToken, user } = req.user;
+
+    // Send the response with tokens and user data
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        message: "Google login successful",
+        data: { user, accessToken, refreshToken },
+      })
+    );
+  } catch (error) {
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.message || "Error logging in with Google account",
+      })
+    );
+  }
+});
 
 
 export {
@@ -682,5 +751,7 @@ export {
   deleteEnqueryForm,
   userCart,
   getCartProduct,
-  deleteCartData
+  deleteCartData,
+  viewFeaturedPostData,
+  googleAuthCallback
 };

@@ -38,7 +38,7 @@ import {
   sellerUser,
   viewSellerData,
 } from "./adminAndManager/manager/viewsellerdata.js";
-import { viewPosts, viewProperty } from "./user/property/view.property.js";
+import { viewFeaturedPosts, viewPosts, viewProperty } from "./user/property/view.property.js";
 import { userPurchase } from "./user/property/user.buy.property.js";
 import {
   allform,
@@ -74,6 +74,10 @@ viewManagerPost,
 viewManagerStats,
 myPost,
 myPostDetails,
+
+
+//users
+viewFeaturedPosts,
 
   verifyEmail,
   editProfile,

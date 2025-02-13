@@ -2,11 +2,19 @@ import { Post } from "../../../models/manager.post.model.js"
 import { apiError } from "../../../utils/common/apiError.js"
 
 const viewPosts = async(
-    filters={},
-    projection={},
-    options={}
+    filters,
+    projection,
+    options
 ) =>{
     try {
+//validate 
+if (typeof filters !== "object" || typeof projection !== "object" || typeof options !== "object") {
+  throw new apiError({
+      statusCode: 400,
+      message: "Invalid filters, projections, or options. They must be objects."
+  });
+}
+
         //all posts fetch
         const allPost = await Post.find(filters,projection,options);
 
@@ -22,8 +30,14 @@ const viewPosts = async(
     }
 }
 
-const viewProperty = async (postId, filters = {}, projection = {}, options = {}) => {
+const viewProperty = async (postId, filters, projection, options) => {
     try {
+      if (typeof filters !== "object" || typeof projection !== "object" || typeof options !== "object") {
+        throw new apiError({
+            statusCode: 400,
+            message: "Invalid filters, projections, or options. They must be objects."
+        });
+    }
       // Validate postId
       if (!postId) {
         throw new apiError({

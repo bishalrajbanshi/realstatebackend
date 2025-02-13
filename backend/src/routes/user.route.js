@@ -26,7 +26,7 @@ import {
 } from "../controller/user.services.controller.js";
 
 //posts controller imports
-import { viewFeaturedPostData,fetchAllPosts,viewPropertyDetails } from "../controller/property.post.controller.js";
+import { viewFeaturedPostData,fetchAllPosts,viewPropertyDetails,viewCommercialProperty,viewResidentialProperty,viewLand,viewHouse,viewApartment,viewFlat } from "../controller/property.post.controller.js";
 
 import passport from "passport";
 
@@ -82,11 +82,20 @@ router.route("/delete/:sellerId").delete(verifyJWT(User),deleteSellerData)
 
 //posts
 router.route("/property").get(fetchAllPosts);
-router.route("/property-details/:postId").get(viewPropertyDetails)
+//property details global
+router.route("/property-details/:postId").get(viewPropertyDetails);
 router.route("/getcall/:postId").post(verifyJWT(User),userPurchaseData);
 
 //featured posts
-router.route("/featured-posts").get(viewFeaturedPostData)
+router.route("/featured-posts").get(viewFeaturedPostData);
+
+//category post
+router.route("/commercial").get(viewCommercialProperty)
+router.route("/residential").get(viewResidentialProperty)
+router.route("/land").get(viewLand)
+router.route("/house").get(viewHouse)
+router.route("/apartment").get(viewApartment)
+router.route("/flat").get(viewFlat)
 
 
 

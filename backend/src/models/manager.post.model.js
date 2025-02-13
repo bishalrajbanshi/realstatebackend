@@ -71,10 +71,10 @@ const managerPostSchema = new Schema(
       required: [true, " land type is required"],
       trim: true,
     },
-    landCatagory: {
+    landCategory: {
       type: String,
-      enum: ["Land", "House", "Apartment", "Property", "Villa"],
-      // required: [true, "Category is required"],
+      enum: ["Land","House", "Apartment", "OfficeSpace","Flat"],
+      required: [true, "Category is required"]
     },
     area: {
       type: String,
@@ -102,7 +102,7 @@ const managerPostSchema = new Schema(
     },
     purpose: {
       type: String,
-      enum: ["rent", "sell", "officeSpace"],
+      enum: ["rent", "sell"],
       required: [true, "Property type is required"],
     },
     featured: {

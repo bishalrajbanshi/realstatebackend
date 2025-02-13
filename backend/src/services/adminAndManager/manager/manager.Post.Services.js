@@ -16,6 +16,10 @@ const managerpost = async (sellerId, managerId, postdata, req) => {
       isNegotiable, purpose, featured, videoLink, description
     } = postdata;
 
+
+    console.log("postdata",postdata);
+    
+
     if ([landType, landCategory, facilities, area, price, isNegotiable, purpose, description].some(field => !String(field).trim())) {
       throw new apiError({ statusCode: 400, message: "All fields are required" });
     }
@@ -85,6 +89,9 @@ const managerpost = async (sellerId, managerId, postdata, req) => {
       featured,
       description,
     });
+
+    console.log("post new ", newPost);
+    
 
     await newPost.save();
   } catch (error) {

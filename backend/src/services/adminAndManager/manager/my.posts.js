@@ -4,7 +4,7 @@ import { utils } from "../../../utils/index.js";
 const { apiError } = utils;
 
 
-
+//my post 
 const myPost = async(managerId,filters,projection,options) => {
     try {
         //validate 
@@ -31,8 +31,7 @@ const myPost = async(managerId,filters,projection,options) => {
     }
 };
 
-
-//post details
+// post details
 const myPostDetails = async(managerId,postId) => {
     try {
 //validate 

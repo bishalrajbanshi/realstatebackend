@@ -477,7 +477,8 @@ const managerPosts = asyncHandler(async (req, res, next) => {
     const postData = await managerpost(sellerId, managerId, req.body, req);
 
     // Send immediate response to the client
-    res.status(200).json(new apiResponse({
+    res.status(200)
+    .json(new apiResponse({
       success: true,
       data: postData,
     }));

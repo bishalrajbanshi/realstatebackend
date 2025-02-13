@@ -2,7 +2,7 @@ import { utils } from "../utils/index.js";
 const { apiError, apiResponse, asyncHandler, getProjection, getOptions,getProjectionData } =
   utils;
 import { services } from "../services/index.js";
-const { viewFeaturedPosts,viewPosts,viewProperty,commercialProperty,residentialProperty,apartment,flat,house,land } = services;
+const { viewFeaturedPosts,viewPosts,viewProperty,commercialProperty,residentialProperty,apartment,flat,house,land,categotyDataCount } = services;
 
 
 //view featured post in users
@@ -128,7 +128,7 @@ const viewResidentialProperty = asyncHandler( async(req,res,next) => {
     const filters = { landType:"Residential"};
     const projections = getProjection();
     const options = getOptions(page)
-    const data = await (filters,projections,options);
+    const data = await residentialProperty(filters,projections,options);
 
     res.status(200)
     .json(new apiResponse({
@@ -152,7 +152,7 @@ const viewLand = asyncHandler( async(req,res,next) => {
     const filters = { landCategory:"Land"};
     const projections = getProjection();
     const options = getOptions(page)
-    const data = await commercialProperty(filters,projections,options);
+    const data = await land(filters,projections,options);
 
     res.status(200)
     .json(new apiResponse({
@@ -176,7 +176,7 @@ const viewHouse = asyncHandler( async(req,res,next) => {
     const filters = { landCategory:"House"};
     const projections = getProjection();
     const options = getOptions(page)
-    const data = await commercialProperty(filters,projections,options);
+    const data = await house(filters,projections,options);
 
     res.status(200)
     .json(new apiResponse({
@@ -199,7 +199,7 @@ const viewApartment = asyncHandler( async(req,res,next) => {
     const filters = { landCategory:"Apartment"};
     const projections = getProjection();
     const options = getOptions(page)
-    const data = await commercialProperty(filters,projections,options);
+    const data = await apartment(filters,projections,options);
 
     res.status(200)
     .json(new apiResponse({
@@ -223,7 +223,7 @@ const viewFlat = asyncHandler( async(req,res,next) => {
     const filters = { landCategory:"Flat"};
     const projections = getProjection();
     const options = getOptions(page)
-    const data = await commercialProperty(filters,projections,options);
+    const data = await flat(filters,projections,options);
 
     res.status(200)
     .json(new apiResponse({
@@ -238,6 +238,27 @@ const viewFlat = asyncHandler( async(req,res,next) => {
       })
     );
   }
+});
+
+
+
+//view stats of propertycategory
+const viewCategoryStats = asyncHandler(async(req,res,next) => {
+  try {
+    const data = await categotyDataCount();
+    res.status(200)
+    .json( new apiResponse({
+      success: true,
+      data:data
+    }))
+  } catch (error) {
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.message || "error getting property",
+      })
+    );
+  }
 })
 
-export { viewFeaturedPostData, fetchAllPosts,viewPropertyDetails,viewCommercialProperty,viewResidentialProperty,viewHouse,viewLand,viewApartment,viewFlat };
+export { viewFeaturedPostData, fetchAllPosts,viewPropertyDetails,viewCommercialProperty,viewResidentialProperty,viewHouse,viewLand,viewApartment,viewFlat,viewCategoryStats };

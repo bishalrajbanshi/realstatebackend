@@ -62,7 +62,7 @@ import { viewPostData } from "./adminAndManager/admin/view.posts.js";
 import { viewManagerData, viewManagerPost } from "./adminAndManager/admin/view.manager.data.js";
 import { viewManagerStats } from "./adminAndManager/manager/view.manager.stats.js";
 import { myPost, myPostDetails } from "./adminAndManager/manager/my.posts.js";
-import { apartment, commercialProperty, flat, house, land, residentialProperty } from "./user/property/user.view.property.category.js";
+import { apartment, categotyDataCount, commercialProperty, flat, house, land, residentialProperty } from "./user/property/user.view.property.category.js";
 export const services = {
   //admin
   postByManager,
@@ -82,6 +82,7 @@ viewFeaturedPosts,
 commercialProperty,
 residentialProperty,
 apartment,flat,house,land,
+categotyDataCount,
 
   verifyEmail,
   editProfile,

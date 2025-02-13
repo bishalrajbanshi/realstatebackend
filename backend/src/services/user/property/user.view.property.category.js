@@ -82,4 +82,29 @@ async function getProperty(filters,projections,options) {
     }
 }
 
-export { commercialProperty,residentialProperty,house,apartment,flat,land }
+// view categoty data count
+const categotyDataCount = async()=> {
+    try {
+        const commercialProperty = await Post.countDocuments({landType:"Commercial"});
+        const residentialProperty = await Post.countDocuments({landType:"Residential"});
+        const land = await Post.countDocuments({landCategory:"Land"});
+        const house = await Post.countDocuments({landCategory:"House"});
+        const apartment = await Post.countDocuments({landCategory:"Apartment"});
+        const flat = await Post.countDocuments({landCategory:"Flat"});
+
+        const response = {
+            commercialProperty :commercialProperty != null ? commercialProperty : "post unavailabel",
+            residentialProperty :residentialProperty != null ? residentialProperty : "post unavailabel",
+            land :land != null ? land : "post unavailabel",
+            house :house != null ? house : "post unavailabel",
+            apartment :apartment != null ? apartment : "post unavailabel",
+            flat :flat != null ? flat : "post unavailabel"
+        }
+
+        return response;
+    } catch (error) {
+        throw error
+    }
+}
+
+export { commercialProperty,residentialProperty,house,apartment,flat,land ,categotyDataCount}

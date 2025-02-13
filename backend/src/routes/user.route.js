@@ -14,19 +14,20 @@ import {
   userSellerForm,
   deleteSellerData,
   getSellerproperty,
-  fetchAllPosts,
-  viewPropertyData,
   userPurchaseData,
-  generateAccessToken,
   changeUserEmail,
   viewUserEnqueryData,
   deleteEnqueryForm,
   userCart,
   getCartProduct,
   deleteCartData,
-  viewFeaturedPostData,
-  googleAuthCallback
-} from "../controller/allUser.services.controller.js";
+  googleAuthCallback,
+  generateAccessTokens,
+} from "../controller/user.services.controller.js";
+
+//posts controller imports
+import { viewFeaturedPostData,fetchAllPosts,viewPropertyDetails } from "../controller/property.post.controller.js";
+
 import passport from "passport";
 
 import { middlewares } from "../middlewares/index.js";
@@ -37,7 +38,7 @@ import { User } from "../models/user.model.js";
 const router = Router();
 
 //generate new access-token route 
-router.route("/refresh").post(generateAccessToken)
+router.route("/refresh").post(generateAccessTokens)
 //register user
 router.route("/register").post(registerUser);
 
@@ -80,12 +81,12 @@ router.route("/delete/:sellerId").delete(verifyJWT(User),deleteSellerData)
 
 
 //posts
-router.route("/posts").get(fetchAllPosts);
-router.route("/viewproperty/:postId").get(viewPropertyData)
+router.route("/property").get(fetchAllPosts);
+router.route("/property-details/:postId").get(viewPropertyDetails)
 router.route("/getcall/:postId").post(verifyJWT(User),userPurchaseData);
 
 //featured posts
-router.route("/featured-post").get(viewFeaturedPostData)
+router.route("/featured-posts").get(viewFeaturedPostData)
 
 
 
@@ -96,12 +97,6 @@ router.get(
 );
 
 // Google callback
-// router.get(
-//   '/google/callback',
-//   passport.authenticate('google', { session: false}),
-//   googleAuthCallback
-// );
-
 router.get(
   "/auth/google/callback",  
   passport.authenticate("google", { session: false }), 

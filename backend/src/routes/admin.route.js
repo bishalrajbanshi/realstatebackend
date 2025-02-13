@@ -19,7 +19,7 @@ viewAllPosts,
 pieChartStats,
 viewManagerAllData,
 viewAllManagerPost
-} from "../controller/allAdmin.services.controller.js";
+} from "../controller/admin.services.controller.js";
 import { middlewares } from "../middlewares/index.js";
 
 const { upload,verifyJWT } = middlewares;

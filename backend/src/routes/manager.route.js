@@ -27,7 +27,7 @@ import {
   managerStats,
   myPostData,
   myPostDetailsData
-} from "../controller/allManager.services.controller.js";
+} from "../controller/manager.services.controller.js";
 import { verifyJWT } from "../middlewares/general/auth.middleware.js";
 import { Manager } from "../models/manager.model.js";
 import { middlewares } from "../middlewares/index.js";

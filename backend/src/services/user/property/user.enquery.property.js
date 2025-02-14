@@ -7,7 +7,7 @@ const { apiError } = utils;
 const userEnqueryForm = async (userEnqueryData, userId) => {
   try {
     //destructure
-    const { address, propertyType, purpose, mobileNumber, message } =
+    const {fullName, address, propertyType, purpose, mobileNumber, message } =
       userEnqueryData;
 
     if (!address || !propertyType || !purpose || !mobileNumber) {
@@ -28,7 +28,7 @@ const userEnqueryForm = async (userEnqueryData, userId) => {
     }
 
     const newEnqueryForm = new Enquertproperty({
-      fullName: user.fullName,
+      fullName:fullName || user.fullName,
       email: user.email,
       currentAddress: user.currentAddress,
       address,

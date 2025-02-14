@@ -51,7 +51,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
     console.error("Caught error in registerUser:", error);
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "error regirestering user",
       })
     );
@@ -75,7 +75,7 @@ const verifyEmails = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message,
       })
     );
@@ -96,7 +96,7 @@ const resendOtp = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "error sending otp",
       })
     );
@@ -133,7 +133,7 @@ const login = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "error login user",
       })
     );
@@ -168,7 +168,7 @@ const logout = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "error logout user",
       })
     );
@@ -213,7 +213,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "error sending email",
       })
     );
@@ -234,7 +234,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "error resetseting password",
       })
     );
@@ -255,7 +255,7 @@ const changeUserEmail = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "error changing email",
       })
     );
@@ -290,7 +290,7 @@ const changePassword = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "Error changing password",
       })
     );
@@ -310,7 +310,7 @@ const editDetails = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "error updating data",
       })
     );
@@ -337,7 +337,7 @@ const userForm = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "error sending enquery data",
       })
     );
@@ -359,7 +359,7 @@ const userSellerForm = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "error sending seller data",
       })
     );
@@ -381,7 +381,7 @@ const getSellerproperty = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "error sending seller data",
       })
     );
@@ -404,7 +404,7 @@ const deleteSellerData = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "error deleting data",
       })
     );
@@ -430,7 +430,7 @@ const userPurchaseData = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "error sending buy data",
       })
     );
@@ -483,7 +483,7 @@ const generateAccessTokens = async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "Error generating token",
       })
     );
@@ -505,7 +505,7 @@ const viewUserEnqueryData = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "error retrivering data",
       })
     );
@@ -529,7 +529,7 @@ const deleteEnqueryForm = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "error deleting enquery data",
       })
     );
@@ -554,7 +554,7 @@ const userCart = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "error adding data to cart",
       })
     );
@@ -577,7 +577,7 @@ const getCartProduct = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "error getting cart data",
       })
     );
@@ -601,7 +601,7 @@ const deleteCartData = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "error deleting cart data",
       })
     );
@@ -627,7 +627,7 @@ const googleAuthCallback = asyncHandler(async (req, res, next) => {
   } catch (error) {
     return next(
       new apiError({
-        statusCode: 500,
+        statusCode: error.statusCode || 500,
         message: error.message || "Error logging in with Google account",
       })
     );

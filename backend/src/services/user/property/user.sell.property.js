@@ -7,7 +7,7 @@ const { apiError } = utils;
 //userseller property
 const sellerFormByUser = async function (sellerData, userId) {
  try {
-     const { propertyTitle,landLocation,landCity,landAddress , landType, landCategory, facilities = [], discription } =
+     const { mobileNumber,propertyTitle,landLocation,landCity,landAddress , landType, landCategory, facilities = [], discription } =
        sellerData;
 
      //validate fields
@@ -43,9 +43,9 @@ const sellerFormByUser = async function (sellerData, userId) {
    
      const newSellerForm = new Sellproperty({
        fullName: user.fullName,
-       mobileNumber: user.mobileNumber,
+       mobileNumber: mobileNumber || user.mobileNumber,
        propertyTitle,
-       landLocation,
+       landLocation, //province 1
        landCity,
        landAddress,
        landCategory,

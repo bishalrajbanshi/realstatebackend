@@ -26,7 +26,7 @@ import {
 } from "../controller/user.services.controller.js";
 
 //posts controller imports
-import { viewFeaturedPostData,fetchAllPosts,viewPropertyDetails,viewCommercialProperty,viewResidentialProperty,viewLand,viewHouse,viewApartment,viewFlat,viewCategoryStats } from "../controller/property.post.controller.js";
+import { viewFeaturedPostData,fetchAllPosts,viewPropertyDetails,viewPropertyCategory,viewPropertyType,propertyView, propertyViewCount } from "../controller/property.post.controller.js";
 
 import passport from "passport";
 
@@ -84,23 +84,24 @@ router.route("/delete/:sellerId").delete(verifyJWT(User),deleteSellerData)
 router.route("/property").get(fetchAllPosts);
 //property details global
 router.route("/property-details/:postId").get(viewPropertyDetails);
-router.route("/getcall/:postId").post(verifyJWT(User),userPurchaseData);
+
+
+//buy property
+router.route("/buy/:postId").post(verifyJWT(User),userPurchaseData);
 
 //featured posts
 router.route("/featured-posts").get(viewFeaturedPostData);
 
-//land type 
-router.route("/commercial").get(viewCommercialProperty)
-router.route("/residential").get(viewResidentialProperty)
+//view property by category(land,house .....) 
+router.route("/category/:category/data").get(viewPropertyCategory)
+//view property by type ( residential , commercial)
+router.route("/type/:type").get(viewPropertyType);
 
-//category post
-router.route("/land").get(viewLand)
-router.route("/house").get(viewHouse)
-router.route("/apartment").get(viewApartment)
-router.route("/flat").get(viewFlat)
-router.route("/stats-data").get(viewCategoryStats)
+//property view  
+router.route("/property-view/:postId").post(verifyJWT(User),propertyView);
 
-
+//property view count
+router.route("/property-count/:postId").get(propertyViewCount);
 
 // Google login
 router.get(

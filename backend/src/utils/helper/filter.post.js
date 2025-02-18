@@ -5,14 +5,17 @@ const getProjection = () => {
     avatar: 1,
     propertyTitle: 1,
     facilities:1,
+    description: 1,
+    landCategory:1,
     isNegotiable:1,
+    propertyOverView:1,
+    amenities:1,
     purpose:1,
     landType: 1,
     featured: 1,
     price: 1,
     area: 1,
     purpose: 1,
-    description: 1,
   };
 };
 
@@ -30,8 +33,11 @@ const getOptions = (page = 1, limit = 10) => {
 const getProjectionData = () => {
   return {
     images: 1,
+    videoLink:1,
     propertyTitle: 1,
+    landCategory:1,
     landLocation:1,
+    amenities:1,
     landCity:1,
     landAddress:1,
     landType: 1,

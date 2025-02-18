@@ -11,16 +11,14 @@ import fs from "fs";
 const managerpost = async (sellerId, managerId, postdata, req) => {
   try {
     const {
-      fullName, propertyTitle, mobileNumber, landLocation, landCity,
+      fullName,amenities, propertyTitle, mobileNumber, landLocation,
       landAddress, landType, landCategory, facilities, area, price,
-      isNegotiable, purpose, featured, videoLink, description
+      isNegotiable, purpose, featured, videoLink,propertyOverView, description
     } = postdata;
+    console.log("Received amenities:", amenities);
 
 
-    console.log("postdata",postdata);
-    
-
-    if ([landType, landCategory, facilities, area, price, isNegotiable, purpose, description].some(field => !String(field).trim())) {
+    if ([landType,propertyOverView, amenities, landCategory, facilities, area, price, isNegotiable, purpose, description].some(field => !String(field).trim())) {
       throw new apiError({ statusCode: 400, message: "All fields are required" });
     }
 
@@ -64,7 +62,11 @@ const managerpost = async (sellerId, managerId, postdata, req) => {
     const existingFacilities = sellerData?.facilities || [];
     const newFacilities = Array.isArray(facilities) ? facilities : [facilities];
     const updatedFacilities = [...new Set([...existingFacilities, ...newFacilities])].filter(Boolean);
-
+  // Handle amenities correctly
+// Ensure amenities is always an array
+const newAmenities = Array.isArray(amenities) ? amenities : [amenities];
+  const uniqueAmenities = [...new Set(newAmenities)];
+  
     const newPost = new Post({
       postBy: managerId,
       managerFullName: manager.fullName,
@@ -74,10 +76,11 @@ const managerpost = async (sellerId, managerId, postdata, req) => {
       fullName: fullName || sellerData?.fullName,
       sellerNumber: mobileNumber || sellerData?.mobileNumber,
       landLocation: landLocation || sellerData?.landLocation,
-      landCity: landCity || sellerData?.landCity,
       landAddress: landAddress || sellerData?.landAddress,
       landType: landType || sellerData?.landType,
       landCategory: landCategory || sellerData?.landCategory,
+      propertyOverView: propertyOverView,
+      amenities:uniqueAmenities,
       area,
       avatar: avatarLinks,
       images: imagesLinks,
@@ -89,9 +92,6 @@ const managerpost = async (sellerId, managerId, postdata, req) => {
       featured,
       description,
     });
-
-    console.log("post new ", newPost);
-    
 
     await newPost.save();
   } catch (error) {

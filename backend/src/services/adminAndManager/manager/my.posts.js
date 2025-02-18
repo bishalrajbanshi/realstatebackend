@@ -1,4 +1,4 @@
-import { Manager } from "../../../models/manager.model.js";
+    import { Manager } from "../../../models/manager.model.js";
 import { Post } from "../../../models/manager.post.model.js";
 import { utils } from "../../../utils/index.js";
 const { apiError } = utils;

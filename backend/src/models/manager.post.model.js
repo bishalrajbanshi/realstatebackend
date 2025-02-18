@@ -56,11 +56,6 @@ const managerPostSchema = new Schema(
       required: [true, "Address is required"],
       trim: true,
     },
-    landCity: {
-      type: String,
-      required: [true, "city is required"],
-      trim: true,
-    },
     landAddress: {
       type: String,
       required: [true, "land address is required"],
@@ -80,12 +75,14 @@ const managerPostSchema = new Schema(
       type: String,
       required: [true, "Area is required"],
     },
-    facilities: [
-      {
-        type: String,
+    facilities:{
+        type: [String],
         trim: true,
-      },
-    ],
+    },
+    amenities:{
+        type: [String],
+        trim: true,
+    },
     price: {
       type: String,
       required: [true, "Price is reqiuired"],
@@ -112,6 +109,10 @@ const managerPostSchema = new Schema(
     },
     videoLink: {
       type: String,
+    },
+    propertyOverView: {
+      type: String,
+      required: true,
     },
     description: {
       type: String,

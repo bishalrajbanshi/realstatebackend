@@ -4,8 +4,15 @@ import { Buyproperty } from "../../../models/buy.property.model.js";
 import { utils } from "../../../utils/index.js";
 const { apiError } = utils;
 
-const userPurchase = async (userId, postId, mobileNumber) => {
+const userPurchase = async (userId, postId, userData) => {
   try {
+    const { fullName,mobileNumber,message } = userData;
+    if (!mobileNumber || !message || !fullName) {
+      throw new apiError({
+        statusCode:403,
+        message:"all fields are required"
+      })
+    }
     //validate user id
     if (!userId) {
       throw new apiError({
@@ -56,8 +63,9 @@ const userPurchase = async (userId, postId, mobileNumber) => {
 
     const newRequest = new Buyproperty({
       sendBy: userId,
-      fullName: user.fullName,
-      currentNumber: mobileNumber,
+      fullName: fullName || user.fullName,
+      mobileNumber: mobileNumber,
+      message: message,
       postId: postId,
       managerId:post.postBy
     });

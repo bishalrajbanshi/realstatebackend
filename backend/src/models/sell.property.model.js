@@ -48,7 +48,6 @@ const sellProperty = new Schema(
     facilities:[
         {
             type:String,
-            //take the multiple facilities for the individual user
             required: [true,"Facilities are required"] ,
             trim: true
         }

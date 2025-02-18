@@ -418,13 +418,12 @@ const userPurchaseData = asyncHandler(async (req, res, next) => {
   try {
     const userId = req.user?._id;
     const { postId } = req.params;
-    const { mobileNumber } = req.body;
-    const pudata = await userPurchase(userId, postId, mobileNumber);
+    const data = await userPurchase(userId, postId, req.body);
 
     res.status(200).json(
       new apiResponse({
         success: true,
-        data: pudata,
+        data: data,
       })
     );
   } catch (error) {

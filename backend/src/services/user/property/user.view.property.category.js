@@ -1,61 +1,25 @@
 import { utils } from "../../../utils/index.js";
 const { apiError } = utils;
 import { Post } from "../../../models/manager.post.model.js";
+//get property by category
+const getCategoryProperty = async(filters,projections,options) =>{
+    try {
+        const data = await getProperty(filters,projections,options);
+        return data;
+    } catch (error) {
+        throw error;
+    }
+};
 
-//commercial property
-const commercialProperty = async(filters,projections,options) => {
+//get property by type
+const getPropertyType = async(filters,projections,options) =>{
     try {
         const data = await getProperty(filters,projections,options);
         return data;
     } catch (error) {
         throw error;
     }
-}
-//residential property
-const residentialProperty = async(filters,projections,options) => {
-    try {
-        const data = await getProperty(filters,projections,options);
-        return data;
-    } catch (error) {
-        throw error;
-    }
-}
-// land
-const land = async(filters,projections,options) => {
-    try {
-        const data = await getProperty(filters,projections,options);
-        return data;
-    } catch (error) {
-        throw error;
-    }
-}
-// house
-const house = async(filters,projections,options) => {
-    try {
-        const data = await getProperty(filters,projections,options);
-        return data;
-    } catch (error) {
-        throw error;
-    }
-}
-// house
-const apartment = async(filters,projections,options) => {
-    try {
-        const data = await getProperty(filters,projections,options);
-        return data;
-    } catch (error) {
-        throw error;
-    }
-}
-// house
-const flat = async(filters,projections,options) => {
-    try {
-        const data = await getProperty(filters,projections,options);
-        return data;
-    } catch (error) {
-        throw error;
-    }
-}
+};
 
 
 //get property
@@ -65,7 +29,7 @@ async function getProperty(filters,projections,options) {
           if (typeof filters !== "object" || typeof projections !== "object" || typeof options !== "object") {
             throw new apiError({
                 statusCode: 400,
-                message: "Invalid filters, projections, or options. They must be objects."
+                message: "Invalid filters, projections, or options. They must be ob1jects."
             });
         }
         const property =  await Post.find(filters,projections,options);
@@ -85,16 +49,16 @@ async function getProperty(filters,projections,options) {
 // view categoty data count
 const categotyDataCount = async()=> {
     try {
-        const commercialProperty = await Post.countDocuments({landType:"Commercial"});
-        const residentialProperty = await Post.countDocuments({landType:"Residential"});
+        const commercial = await Post.countDocuments({landType:"Commercial"});
+        const residential = await Post.countDocuments({landType:"Residential"});
         const land = await Post.countDocuments({landCategory:"Land"});
         const house = await Post.countDocuments({landCategory:"House"});
         const apartment = await Post.countDocuments({landCategory:"Apartment"});
         const flat = await Post.countDocuments({landCategory:"Flat"});
 
         const response = {
-            commercialProperty :commercialProperty != null ? commercialProperty : "post unavailabel",
-            residentialProperty :residentialProperty != null ? residentialProperty : "post unavailabel",
+            commercial :commercial != null ? commercial : "post unavailabel",
+            residential :residential != null ? residential : "post unavailabel",
             land :land != null ? land : "post unavailabel",
             house :house != null ? house : "post unavailabel",
             apartment :apartment != null ? apartment : "post unavailabel",
@@ -107,4 +71,4 @@ const categotyDataCount = async()=> {
     }
 }
 
-export { commercialProperty,residentialProperty,house,apartment,flat,land ,categotyDataCount}
+export { getCategoryProperty,getPropertyType,categotyDataCount}

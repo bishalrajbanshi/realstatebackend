@@ -116,10 +116,6 @@ const propertyView = asyncHandler(async (req, res, next) => {
     const ipAddress = req.headers['x-forwarded-for']
     ? req.headers['x-forwarded-for'].split(',')[0] 
     : req.connection.remoteAddress || req.ip; 
-
-    console.log("User:", userId);
-    console.log("Post ID:", postId);
-    console.log("IP Address:", ipAddress);
     const data = await propertyViews(userId, postId, ipAddress);
 
     res.status(200).json(

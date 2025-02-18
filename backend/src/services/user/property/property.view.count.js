@@ -55,7 +55,7 @@ const propertyViews = async (userId, postId, ipAddress) => {
     } catch (error) {
       throw error;
     }
-  };
+};
   
 //property view count
 const propertyViewCountData = async (postId) => {
@@ -84,7 +84,7 @@ const propertyViewCountData = async (postId) => {
     } catch (error) {
       throw error;
     }
-  };
+};
   
 
 export { propertyViews,propertyViewCountData }

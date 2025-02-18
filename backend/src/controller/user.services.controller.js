@@ -607,12 +607,24 @@ const deleteCartData = asyncHandler(async (req, res, next) => {
   }
 });
 
-
+//google auth callback
 const googleAuthCallback = asyncHandler(async (req, res, next) => {
   try {
+    // Check if the user is available in the request
     if (!req.user) {
+      // If authInfo has an error message, throw that as a custom error
+      if (req.authInfo && req.authInfo.message) {
+        throw new apiError({
+          statusCode: 400,  // Bad request if the email/password issue occurs
+          message: req.authInfo.message,  // Use the error message from Passport
+        });
+      }
+
+      // If user is not found or not authenticated, throw unauthorized error
       throw new apiError({ statusCode: 401, message: "Unauthorized" });
     }
+
+    // If user is found, extract the user and tokens from the request
     const { accessToken, refreshToken, user } = req.user;
 
     // Send the response with tokens and user data
@@ -632,6 +644,7 @@ const googleAuthCallback = asyncHandler(async (req, res, next) => {
     );
   }
 });
+
 
 export {
   generateAccessTokens,

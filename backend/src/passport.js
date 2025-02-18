@@ -5,9 +5,8 @@ import { User } from "./models/user.model.js";
 const { CLIENT_ID, CLIENT_SECRET } = config;
 import { utils } from "./utils/index.js";
 const { generateAccessToken, generateRefreshToken } = utils;
-import { sendAuthResponse } from "./utils/helper/sendAuthResponse.js";
 
-//google strategy
+// google strategy
 passport.use(
   new GoogleStrategy(
     {
@@ -21,24 +20,34 @@ passport.use(
       try {
         console.log("profile", profile);
 
-        // Check if user already exists in the database
-        let user = await User.findOne({ 
-          googleId: profile.id 
-        });
+        // Check if a user already exists with the same email
+        let user = await User.findOne({ email: profile.emails[0].value });
 
-        // If user does not exist, create a new one
+        // If user exists and has an associated password, throw error
+        if (user && user.password) {
+          return done(null, false, { message: "Please log in with your email and password." });
+        }
+
+        // If user doesn't exist, create a new one
         if (!user) {
           user = new User({
             googleId: profile.id,
             fullName: profile.name.givenName,
             email: profile.emails[0].value,
             isVerified: profile.emails[0].verified,
-            isLoggedIn:true
+            isLoggedIn: true
           });
           await user.save();
+        } else {
+          // If user exists but no password is set, associate Google login with existing user
+          if (!user.googleId) {
+            user.googleId = profile.id;
+            user.isVerified = profile.emails[0].verified; // Ensure the email is marked as verified
+            await user.save();
+          }
         }
 
-        // Generate tokens after saving the user
+        // Generate tokens after saving or verifying the user
         const generatedAccessToken = generateAccessToken(user); 
         const generatedRefreshToken = generateRefreshToken(user);
         if (!user.refreshToken.includes(generatedRefreshToken)) {

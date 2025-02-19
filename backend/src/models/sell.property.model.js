@@ -19,7 +19,7 @@ const sellProperty = new Schema(
       type: String
     },
     // user input address city and area inland location
-    landLocation:{
+    province:{
       type:String,
       enum:["Province1","Province2","Province3","Province4","Province5","Province6","Province7"],
       required: [true, "Address is required"],

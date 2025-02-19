@@ -17,7 +17,7 @@ const enquertProperty = new Schema(
       type: String,
       required: [true,"Current address is required"]
     },
-    address: { 
+    province: { 
       type: String,
       enum:["Province1","Province2","Province3","Province4","Province5","Province6","Province7"],
       required : [true, "Address is required"]

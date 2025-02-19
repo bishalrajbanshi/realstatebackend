@@ -32,7 +32,7 @@ const enqueryFormByUser = async (
     }
 
     //combilne filters with manager address
-    const combinedFilters = { ...filters, address: manager.address };
+    const combinedFilters = { ...filters, province: manager.province };
 
     //fetch the user from 
     const userFrom = await Enquertproperty.find(combinedFilters,projection,options);
@@ -93,8 +93,5 @@ const enquertState = async(data,enqueryId)=>{
     throw error
   }
 }
-
-
-
 
 export { enqueryFormByUser,viewEnqueryForm, enquertState};

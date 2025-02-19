@@ -1,5 +1,4 @@
 import mongoose, { Schema } from "mongoose";
-import { type } from "os";
 
 const managerPostSchema = new Schema(
   {
@@ -42,7 +41,7 @@ const managerPostSchema = new Schema(
     sellerNumber: {
       type: String,
     },
-    landLocation: {
+    province: {
       type: String,
       enum: [
         "Province1",
@@ -68,25 +67,43 @@ const managerPostSchema = new Schema(
     },
     landCategory: {
       type: String,
-      enum: ["Land","House", "Apartment", "OfficeSpace","Flat"],
-      required: [true, "Category is required"]
+      enum: ["Land", "House", "Apartment", "OfficeSpace", "Flat"],
+      required: [true, "Category is required"],
+    },
+    propertyAge: {
+      type: Number, 
+      default: null
     },
     area: {
-      type: String,
-      required: [true, "Area is required"],
-    },
-    facilities:{
-        type: [String],
-        trim: true,
-    },
-    amenities:{
-        type: [String],
-        trim: true,
+      size: { type: Number, required: [true, "Area size is required"] },
+      unit: {
+        type: String,
+        enum: ["sq ft", "ana", "ropani", "bigha", "kattha", "dhur"],
+        required: [true, "Area unit is required"],
+      },
     },
     price: {
-      type: String,
-      required: [true, "Price is reqiuired"],
+      amount: {
+        type: Number,
+        required: [true, "amount is required"],
+      },
+      sizePerAmount: {
+        type: String,
+        enum: ["sq ft", "ana", "ropani", "bigha", "kattha", "dhur"],
+        required: [true, "Area unit is required"],
+      },
     },
+    facing: {
+      type: String,
+      enum: ['North', 'South', 'East', 'West', 'North-East', 'South-East', 'South-West', 'North-West', 'Other'],
+      default: null, 
+      trim: true,
+    },
+    facilities: {
+      type: [String],
+      trim: true,
+    },
+
     isNegotiable: {
       type: Boolean,
       required: [true, "negotiable is required"],
@@ -122,11 +139,11 @@ const managerPostSchema = new Schema(
   { timestamps: true }
 );
 
-managerPostSchema.index({sellerId:1})
+managerPostSchema.index({ sellerId: 1 });
 managerPostSchema.index({ createdAt: -1 });
 managerPostSchema.index({ landType: 1 });
 managerPostSchema.index({ landCatagory: 1 });
-managerPostSchema.index({ landLocation: 1 });
+managerPostSchema.index({ province: 1 });
 managerPostSchema.index({ area: 1 });
 
 export const Post = mongoose.model("Post", managerPostSchema);

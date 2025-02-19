@@ -7,12 +7,12 @@ const { apiError } = utils;
 //userseller property
 const sellerFormByUser = async function (sellerData, userId) {
  try {
-     const { mobileNumber,propertyTitle,landLocation,landCity,landAddress , landType, landCategory, facilities = [], discription } =
+     const { mobileNumber,propertyTitle,province,landCity,landAddress , landType, landCategory, facilities = [], discription } =
        sellerData;
 
      //validate fields
      if (
-        [propertyTitle, landLocation, landType, landCategory,landCity,landAddress, discription].some(
+        [propertyTitle, province, landType,landAddress, discription].some(
           (field) => typeof field !== "string" || !field.trim()
         ) ||
         !facilities.length ||
@@ -44,14 +44,13 @@ const sellerFormByUser = async function (sellerData, userId) {
      const newSellerForm = new Sellproperty({
        fullName: user.fullName,
        mobileNumber: mobileNumber || user.mobileNumber,
-       propertyTitle,
-       landLocation, //province 1
-       landCity,
-       landAddress,
-       landCategory,
-       landType,
-       facilities,
-       discription,
+       propertyTitle:propertyTitle,
+       province: province,
+       landAddress: landAddress,
+       landCategory: landCategory,
+       landType: landType,
+       facilities: facilities,
+       discription : discription,
        sendBy: user
      });
      await newSellerForm.save();

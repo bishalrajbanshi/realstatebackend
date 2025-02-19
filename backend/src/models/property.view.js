@@ -10,9 +10,6 @@ const propertyView = new Schema(
         ipAddress: {
             type: String,
             required: true
-        },
-        view:{
-            type:String
         }
 
 },{ timestamps: true})

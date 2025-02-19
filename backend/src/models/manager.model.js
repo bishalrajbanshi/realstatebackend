@@ -29,7 +29,7 @@ const managerSchema = new Schema({
         required: [true, "Phone number is required"],
         // unique: true,
     },
-    address: {
+    province: {
         type: String,
         enum:["Province1","Province2","Province3","Province4","Province5","Province6","Province7"],
         required : true

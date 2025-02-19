@@ -40,7 +40,6 @@ const propertyViews = async (userId, postId, ipAddress) => {
       // Create a new view entry for this user/IP
       const newView = new View({
         postId: postId,
-        userId: userId,  // This could also be just IP if you're not tracking users
         ipAddress: ipAddress,
       });
   

@@ -1,4 +1,7 @@
 import mongoose, { Schema } from "mongoose";
+import { generatePropertyId } from "../utils/helper/generatePropertyId.js";
+
+
 
 const managerPostSchema = new Schema(
   {
@@ -13,6 +16,10 @@ const managerPostSchema = new Schema(
     managerAddress: {
       type: String,
       required: true,
+    },
+    propertyId : {
+      type: Number,
+      unique: true,
     },
     avatar: [
       {
@@ -61,13 +68,13 @@ const managerPostSchema = new Schema(
     },
     landType: {
       type: String,
-      enum: ["Commercial", "Residential"],
+      enum: ["commercial", "residential"],
       required: [true, " land type is required"],
       trim: true,
     },
     landCategory: {
       type: String,
-      enum: ["Land", "House", "Apartment", "OfficeSpace", "Flat"],
+      enum: ["land", "house", "apartment", "officeSpace", "flat"],
       required: [true, "Category is required"],
     },
     propertyAge: {
@@ -78,7 +85,7 @@ const managerPostSchema = new Schema(
       size: { type: Number, required: [true, "Area size is required"] },
       unit: {
         type: String,
-        enum: ["sq ft", "ana", "ropani", "bigha", "kattha", "dhur"],
+        enum: ["sqft", "ana", "ropani", "bigha", "kattha", "dhur"],
         required: [true, "Area unit is required"],
       },
     },
@@ -138,6 +145,9 @@ const managerPostSchema = new Schema(
   },
   { timestamps: true }
 );
+
+//sending post schema to auto generate poroperty id
+generatePropertyId(managerPostSchema);
 
 managerPostSchema.index({ sellerId: 1 });
 managerPostSchema.index({ createdAt: -1 });

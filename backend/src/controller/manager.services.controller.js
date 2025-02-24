@@ -449,7 +449,7 @@ const viewSeller = asyncHandler(async(req,res,next)=>{
 })
 
 //view total seller form
-const totalSellerData =asyncHandler(async(req,res,next)=>{
+const totalSellerData = asyncHandler(async(req,res,next)=>{
   try {
     const managerId = req.manager?._id;
     const data =  await totalSellerForm(managerId);
@@ -474,13 +474,13 @@ const managerPosts = asyncHandler(async (req, res, next) => {
     const managerId = req.manager?._id;
 
     // Create the post data (but don't wait for image uploads yet)
-    const postData = await managerpost(sellerId, managerId, req.body, req);
+     await  managerpost(sellerId, managerId, req.body, req);
 
     // Send immediate response to the client
     res.status(200)
     .json(new apiResponse({
-      success: true,
-      data: postData,
+      success: true,  
+      message:"post successful"
     }));
 
 

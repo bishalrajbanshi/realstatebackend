@@ -7,7 +7,7 @@ const { apiError } = utils;
 //userseller property
 const sellerFormByUser = async function (sellerData, userId) {
  try {
-     const { mobileNumber,propertyTitle,province,landCity,landAddress , landType, landCategory, facilities = [], discription } =
+     const { mobileNumber,propertyTitle,province,landAddress , landType, landCategory, facilities = [], discription } =
        sellerData;
 
      //validate fields

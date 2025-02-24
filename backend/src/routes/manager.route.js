@@ -70,7 +70,7 @@ router.route("/post/:sellerId?").post(
     },
     {
         name: "images",
-        maxCount:8
+        maxCount:8,
     }
   ]),
   managerPosts);

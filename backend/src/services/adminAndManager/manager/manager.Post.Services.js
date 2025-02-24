@@ -30,29 +30,12 @@ const managerpost = async (sellerId, managerId, postdata, req) => {
       description,
     } = postdata;
 
-    //extrace the area
-    const size = area?.size;
-    const unit = area?.unit;
-    if (!size || !unit) {
-      throw new apiError({
-        statusCode: 401,
-        message: "area and size is required",
-      });
-    }
-
-    //extrace the price
-    const amount = price?.amount;
-    const sizePerAmount = price?.sizePerAmount;
-    console.log(amount, sizePerAmount);
-
-    if (!amount || !sizePerAmount) {
-      throw new apiError({
-        statusCode: 401,
-        message: "area and size is required",
-      });
-    }
-
+    // Validate required fields
     if (
+      !area?.size ||
+      !area?.unit ||
+      !price?.amount ||
+      !price?.sizePerAmount ||
       [
         landType,
         province,
@@ -66,21 +49,22 @@ const managerpost = async (sellerId, managerId, postdata, req) => {
     ) {
       throw new apiError({
         statusCode: 400,
-        message: "All fields are required",
+        message: "All required fields are missing or invalid",
       });
     }
 
+    // Validate seller and manager
     const sellerData = sellerId ? await Sellproperty.findById(sellerId) : null;
-    if (sellerId && !sellerData)
+    if (sellerId && !sellerData) {
       throw new apiError({ statusCode: 404, message: "Seller ID is invalid" });
+    }
 
     const manager = await Manager.findById(managerId);
-    if (!manager)
-      throw new apiError({
-        statusCode: 404,
-        message: "Manager not found",
-      });
+    if (!manager) {
+      throw new apiError({ statusCode: 404, message: "Manager not found" });
+    }
 
+    // Check if a post already exists for the seller
     if (sellerId && (await Post.findOne({ sellerId }))) {
       throw new apiError({
         statusCode: 400,
@@ -88,22 +72,28 @@ const managerpost = async (sellerId, managerId, postdata, req) => {
       });
     }
 
+    // Validate uploaded files
     const avatarFiles = req.files?.["avatar"] || [];
     const imagesFiles = req.files?.["images"] || [];
 
-    if (!avatarFiles.length)
-      throw new apiError({ statusCode: 400, message: "Avatar not found" });
-    if (!imagesFiles.length)
-      throw new apiError({ statusCode: 400, message: "Images not found" });
+    if (!avatarFiles.length || !imagesFiles.length) {
+      throw new apiError({
+        statusCode: 400,
+        message: "Avatar and images are required",
+      });
+    }
 
-    if (req.fileValidationError)
-      throw new apiError({ statusCode: 400, message: req.fileValidationError });
+    if (req.fileValidationError) {
+      throw new apiError({
+        statusCode: 400,
+        message: req.fileValidationError,
+      });
+    }
 
+    // Upload files to Cloudinary concurrently
     const allFiles = [...avatarFiles, ...imagesFiles];
-
-    // Upload all files concurrently
     const uploadPromises = allFiles.map((file) =>
-      uploadOnCloudinary(file.path).then((res) => res.url)
+      uploadOnCloudinary(file.path).then((res) => res.secure_url)
     );
     const allLinks = await Promise.all(uploadPromises);
 
@@ -112,16 +102,18 @@ const managerpost = async (sellerId, managerId, postdata, req) => {
     const imagesLinks = allLinks.slice(avatarFiles.length);
 
     // Clean up uploaded files
-    allFiles.forEach(
-      (file) => fs.existsSync(file.path) && fs.unlinkSync(file.path)
-    );
+    allFiles.forEach((file) => {
+      if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
+    });
 
+    // Merge facilities
     const existingFacilities = sellerData?.facilities || [];
     const newFacilities = Array.isArray(facilities) ? facilities : [facilities];
     const updatedFacilities = [
       ...new Set([...existingFacilities, ...newFacilities]),
     ].filter(Boolean);
 
+    // Create new post
     const newPost = new Post({
       postBy: managerId,
       managerFullName: manager.fullName,
@@ -134,28 +126,33 @@ const managerpost = async (sellerId, managerId, postdata, req) => {
       landAddress: landAddress || sellerData?.landAddress,
       landType: landType || sellerData?.landType,
       landCategory: landCategory || sellerData?.landCategory,
-      propertyOverView: propertyOverView,
-      area: { size, unit },
+      propertyOverView,
+      area: { size: area.size, unit: area.unit },
       avatar: avatarLinks,
       images: imagesLinks,
-      facing: facing,
-      facilities: updatedFacilities.length
-        ? updatedFacilities
-        : sellerData?.facilities || [],
-      price: { amount, sizePerAmount },
-      isNegotiable: isNegotiable,
-      purpose: purpose,
-      videoLink: videoLink,
-      featured: featured,
-      description: description,
+      facing,
+      facilities: updatedFacilities.length ? updatedFacilities : [],
+      price: { amount: price.amount, sizePerAmount: price.sizePerAmount },
+      isNegotiable,
+      purpose,
+      videoLink,
+      featured,
+      description,
     });
 
     await newPost.save();
   } catch (error) {
+    // Clean up files in case of error
+    if (req.files) {
+      const allFiles = [...(req.files["avatar"] || []), ...(req.files["images"] || [])];
+      allFiles.forEach((file) => {
+        if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
+      });
+    }
+
     throw error;
   }
 };
-
 //manager edit post
 const editPost = async (managerId, postId, updateData) => {
   try {

@@ -1,6 +1,6 @@
 import { User } from "../../../models/user.model.js";
 import { apiError } from "../../../utils/common/apiError.js";
-import { hashOtp, generateCode } from "../../../utils/helper/otpgenarator.js";
+import { hashOtp, generateCode } from "../../../utils/helper/otpGenarator.js";
 import { sendEmail } from "../../../middlewares/general/sendemail.js";
 import { emailHtmlContent } from "../../../utils/common/emailTemplate.js";
 

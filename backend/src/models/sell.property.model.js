@@ -25,24 +25,19 @@ const sellProperty = new Schema(
       required: [true, "Address is required"],
       trim: true
     },
-    landCity: {
-      type: String,
-      required: [true, "city is required"],
-      trim: true
-    },
     landAddress: {
       type: String,
       required:[true,"land address is required"]
     },
     landType: {
       type: String,
-      enum: ["Commercial", "Residential"],
+      enum: ["commercial", "residential"],
       required: [true, " land type is required"],
       trim: true
     },
     landCategory: {
         type: String,
-        enum: ["Land","House","Apartment","Property","Villa",],
+        enum: ["land","house","apartment","property","villa"],
         required: [true,"Category is required"],
     },
     facilities:[

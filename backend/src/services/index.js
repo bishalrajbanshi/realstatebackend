@@ -38,7 +38,11 @@ import {
   sellerUser,
   viewSellerData,
 } from "./adminAndManager/manager/viewsellerdata.js";
-import { viewFeaturedPosts, viewPosts, viewProperty } from "./user/property/view.property.js";
+import {
+  viewFeaturedPosts,
+  viewPosts,
+  viewProperty,
+} from "./user/property/view.property.js";
 import { userPurchase } from "./user/property/user.buy.property.js";
 import {
   allform,
@@ -57,35 +61,55 @@ import {
   viewCartproperty,
 } from "./user/property/user.cartProperty.js";
 
-import { adminStats, statsPieChart, totalUsers } from "./adminAndManager/admin/adminDashboardStats.js";
+import {
+  adminStats,
+  statsPieChart,
+  totalUsers,
+} from "./adminAndManager/admin/adminDashboardStats.js";
 import { viewPostData } from "./adminAndManager/admin/view.posts.js";
-import { viewManagerData, viewManagerPost } from "./adminAndManager/admin/view.manager.data.js";
+import {
+  viewManagerData,
+  viewManagerPost,
+} from "./adminAndManager/admin/view.manager.data.js";
 import { viewManagerStats } from "./adminAndManager/manager/view.manager.stats.js";
 import { myPost, myPostDetails } from "./adminAndManager/manager/my.posts.js";
-import {  categotyDataCount, getCategoryProperty, getPropertyType } from "./user/property/user.view.property.category.js";
-import {  propertyViewCountData, propertyViews } from "./user/property/property.view.count.js";
+import {
+  categotyDataCount,
+  getCategoryProperty,
+  getPropertyType,
+} from "./user/property/user.view.property.category.js";
+import {
+  propertyViewCountData,
+  propertyViews,
+} from "./user/property/property.view.count.js";
 export const services = {
   //admin
+  managerRegister,
   postByManager,
-statsPieChart,
-viewManagerData,
-viewManagerPost,
+  statsPieChart,
+  viewManagerData,
+  viewManagerPost,
+  adminDetails,
+  deleteManager,
+  allManagers,
+
+  
+  //manager
+  managerDetails,
+  viewManagerStats,
+  myPost,
+  myPostDetails,
+
+  //users
+  viewFeaturedPosts,
+  categotyDataCount,
+  getCategoryProperty,
+  getPropertyType,
+  propertyViews,
+  propertyViewCountData,
 
 
-//manager
-viewManagerStats,
-myPost,
-myPostDetails,
-
-
-//users
-viewFeaturedPosts,
-categotyDataCount,
-getCategoryProperty,
-getPropertyType,
-propertyViews,
-propertyViewCountData,
-
+  //global uses
   verifyEmail,
   editProfile,
   userRegister,
@@ -98,11 +122,8 @@ propertyViewCountData,
   changeUserPassword,
   userForgotPassword,
   userResetPassword,
-  managerRegister,
-  adminDetails,
-  managerDetails,
-  allManagers,
-  deleteManager,
+
+ 
   userEnqueryForm,
   enqueryFormByUser,
   viewEnqueryForm,
@@ -129,5 +150,5 @@ propertyViewCountData,
   deleteCartProperty,
   totalUsers,
   adminStats,
-  viewPostData
+  viewPostData,
 };

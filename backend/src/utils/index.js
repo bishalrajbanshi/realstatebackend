@@ -3,14 +3,18 @@ import { apiResponse } from "./common/apiResponse.js";
 import { asyncHandler } from "./common/asyncHandler.js";
 import { emailHtmlContent } from "./common/emailTemplate.js";
 import { generateAccessToken, generateRefreshToken } from "./helper/generateTokens.js";
-import { generateCode, hashOtp } from "./helper/otpgenarator.js";
+import { generateCode, hashOtp } from "./helper/otpGenarator.js";
 import { addPasswordhashingHook, addPasswordVerificationMethod } from "./helper/passwordHashCompare.js";
 import { generateResetToken } from "./helper/passwordResetToken.js";
-import { countForms } from "./helper/counter.js";
 import { getOptions, getProjection, getProjectionData } from "./helper/filter.post.js";
+import { generatePropertyId } from "./helper/generatePropertyId.js";
 
 
 export const utils = { 
+
+    //property id
+generatePropertyId,
+
     apiError,
     apiResponse,
     asyncHandler,
@@ -22,10 +26,11 @@ export const utils = {
     addPasswordhashingHook,
     addPasswordVerificationMethod,
     generateResetToken,
-    countForms,
 
     //data projection and options
     getProjection,
     getProjectionData,
-    getOptions
+    getOptions,
+
+    
 }

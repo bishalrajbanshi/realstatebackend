@@ -3,7 +3,7 @@ const{sendEmail} =middlewares;
 import { User } from "../../../models/user.model.js";
 import { apiError } from "../../../utils/common/apiError.js";
 import { emailHtmlContent } from "../../../utils/common/emailTemplate.js";
-import { generateCode, hashOtp } from "../../../utils/helper/otpgenarator.js";
+import { generateCode, hashOtp } from "../../../utils/helper/otpGenarator.js";
 
 const userResend = async (userData) => {
   try {

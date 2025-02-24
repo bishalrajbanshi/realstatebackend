@@ -33,7 +33,7 @@ const managerSchema = new Schema({
         type: String,
         enum:["Province1","Province2","Province3","Province4","Province5","Province6","Province7"],
         required : true
-    },
+    }, 
     avatar: {
         type: String, // from cloudinary
         // required:[true,"Avatar is required"]

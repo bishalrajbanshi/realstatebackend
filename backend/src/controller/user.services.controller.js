@@ -148,9 +148,11 @@ const logout = asyncHandler(async (req, res, next) => {
     // Clear cookies
     const isProduction = process.env.NODE_ENV === "production";
     const cookieOptions = {
+      maxAge:0,
       httpOnly: true,
       secure: isProduction,
       sameSite: isProduction ? "strict" : "lax",
+      path:'/'
     };
 
     // Send response after clearing the cookies

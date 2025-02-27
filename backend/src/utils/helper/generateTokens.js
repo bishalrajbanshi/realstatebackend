@@ -4,8 +4,6 @@ import jwt from "jsonwebtoken";
 import { config } from "../../constant.js";
 const{ ALGORITHEM,ACCESS_TOKEN_SECRET,ACCESS_TOKEN_EXPIRY,REFRESH_TOKEN_SECRET,REFRESH_TOKEN_EXPIRY }=config;
 
-console.log("algo",ALGORITHEM);
-
 
 function generateAccessToken(user) {
     const accessTokenSecret = ACCESS_TOKEN_SECRET;

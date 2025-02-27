@@ -461,7 +461,7 @@ const generateAccessTokens = async (req, res, next) => {
 
     // Cookie options
     const options = {
-      httpOnly: true,
+      httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
     };

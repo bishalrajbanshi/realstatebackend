@@ -25,7 +25,8 @@ const managerpost = async (sellerId, managerId, postdata, req) => {
       isNegotiable,
       purpose,
       featured,
-      videoLink,
+      facebookVideoLink,
+      youtubeVideoLink,
       propertyOverView,
       description,
     } = postdata;
@@ -133,11 +134,12 @@ const managerpost = async (sellerId, managerId, postdata, req) => {
       facing,
       facilities: updatedFacilities.length ? updatedFacilities : [],
       price: { amount: price.amount, sizePerAmount: price.sizePerAmount },
-      isNegotiable,
-      purpose,
-      videoLink,
-      featured,
-      description,
+      isNegotiable: isNegotiable,
+      purpose: purpose,
+      facebookVideoLink: facebookVideoLink,
+      youtubeVideoLink: youtubeVideoLink,
+      featured: featured,
+      description: description,
     });
 
     await newPost.save();

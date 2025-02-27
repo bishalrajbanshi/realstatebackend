@@ -26,7 +26,7 @@ import {
 } from "../controller/user.services.controller.js";
 
 //posts controller imports
-import { viewFeaturedPostData,fetchAllPosts,viewPropertyDetails,viewPropertyCategory,viewPropertyType,propertyView, propertyViewCount } from "../controller/property.post.controller.js";
+import { viewFeaturedPostData,fetchAllPosts,viewPropertyDetails,viewPropertyCategory,viewPropertyType,propertyView, propertyViewCount,viewCategoryStats } from "../controller/property.post.controller.js";
 
 import passport from "passport";
 
@@ -99,6 +99,7 @@ router.route("/type/:type").get(viewPropertyType);
 
 //property view  
 router.route("/property-view/:postId").post(verifyJWT(User),propertyView);
+router.route("/stats-data").get(viewCategoryStats)
 
 //property view count
 router.route("/property-count/:postId").get(propertyViewCount);

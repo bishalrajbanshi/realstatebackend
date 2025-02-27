@@ -49,12 +49,12 @@ async function getProperty(filters,projections,options) {
 // view categoty data count
 const categotyDataCount = async()=> {
     try {
-        const commercial = await Post.countDocuments({landType:"Commercial"});
-        const residential = await Post.countDocuments({landType:"Residential"});
-        const land = await Post.countDocuments({landCategory:"Land"});
-        const house = await Post.countDocuments({landCategory:"House"});
-        const apartment = await Post.countDocuments({landCategory:"Apartment"});
-        const flat = await Post.countDocuments({landCategory:"Flat"});
+        const commercial = await Post.countDocuments({landType:"commercial"});
+        const residential = await Post.countDocuments({landType:"residential"});
+        const land = await Post.countDocuments({landCategory:"land"});
+        const house = await Post.countDocuments({landCategory:"house"});
+        const apartment = await Post.countDocuments({landCategory:"apartment"});
+        const flat = await Post.countDocuments({landCategory:"flat"});
 
         const response = {
             commercial :commercial != null ? commercial : "post unavailabel",

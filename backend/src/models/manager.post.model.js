@@ -131,8 +131,13 @@ const managerPostSchema = new Schema(
       enum: ["featured", "unpaid"],
       default: "unpaid",
     },
-    videoLink: {
+    facebookVideoLink: {
       type: String,
+      default : null
+    },
+    youtubeVideoLink: {
+        type: String,
+        default : null
     },
     propertyOverView: {
       type: String,

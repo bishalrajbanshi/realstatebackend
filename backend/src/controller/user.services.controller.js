@@ -63,13 +63,12 @@ const verifyEmails = asyncHandler(async (req, res, next) => {
   try {
     const userData = req.body;
     const userId = req.user?._id;
-
-    const data = await verifyEmail(userData, userId);
+    await verifyEmail(userData, userId);
 
     res.status(200).json(
       new apiResponse({
         success: true,
-        data: data,
+        message:"email verified success"
       })
     );
   } catch (error) {

@@ -111,7 +111,7 @@ async function changeEmailVerification(userData,userId) {
 }
 
 async function verifyEmailRegstration(userData) {
-  const { code }= userData;
+  const { code,email }= userData;
   if (!code) {
     throw new apiError({
       statusCode: 400,
@@ -119,8 +119,7 @@ async function verifyEmailRegstration(userData) {
     });
   };
   const user = await User.findOne({
-    isverified: false,
-    verificationCode: { $exists: true ,}
+    email
   });
   if (!user) {
     throw new apiError({

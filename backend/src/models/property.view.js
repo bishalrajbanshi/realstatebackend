@@ -7,6 +7,10 @@ const propertyView = new Schema(
             ref:"Post",
             required:true
         },
+        userId:{
+            type: String,
+            required: true,
+        },
         ipAddress: {
             type: String,
             required: true

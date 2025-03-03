@@ -84,12 +84,12 @@ const verifyEmails = asyncHandler(async (req, res, next) => {
 //user resend otp
 const resendOtp = asyncHandler(async (req, res, next) => {
   try {
-    const email = await userResend(req.body);
+    const email = req.body
+    await userResend(email);
     return res.status(201).json(
       new apiResponse({
         success: true,
-        message: `VERIFICATION CODE SEND TO ${email}`,
-        data: email,
+        message: `VERIFICATION CODE SEND`
       })
     );
   } catch (error) {
@@ -180,8 +180,7 @@ const logout = asyncHandler(async (req, res, next) => {
 const sendDetials = asyncHandler(async (req, res, next) => {
   try {
     const userId = req.user?._id;
-    console.log("my user id", userId);
-
+  
     const userData = await userDetails(userId);
 
     res.status(200).json(

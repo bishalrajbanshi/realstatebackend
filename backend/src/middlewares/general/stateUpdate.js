@@ -34,12 +34,15 @@ const stateUpdate = async(model, state, postId)=>{
         }
 
          // Prevent changing state from "approved" to "pending"
-         if (post.state === "approved" && state === "pending") {
+         if (post.state === "completed" && state !== "completed") {
           throw new apiError({
               statusCode: 400,
-              message: "Once a post is approved, it cannot be changed back to 'pending'."
+              message: "Once a post is completed, it cannot be changed to any other state."
           });
       }
+      
+      
+    
     
         // Update the state of the post
         const updatedPost = await model.findByIdAndUpdate(postId, { state }, { new: true });

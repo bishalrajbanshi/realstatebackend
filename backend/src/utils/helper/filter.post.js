@@ -22,7 +22,7 @@ const getProjection = () => {
 };
 
 //options for posts
-const getOptions = (page = 1, limit = 3) => {
+const getOptions = (page = 1, limit = 10) => {
   const skip = (page - 1) * limit;
   return {
     sort: { createdAt: -1 },
@@ -56,4 +56,25 @@ const getProjectionData = () => {
   }
 }
 
-export { getProjection , getOptions, getProjectionData }
+//buyer form projections
+const buyerFromProjection = ()=> {
+  return {
+    fullName: 1,
+    mobileNumber: 1,
+    postId:1,
+    state: 1,
+  }
+}
+
+//seller from projections
+const sellerFormProjections = () => {
+  return {
+    homeName: 1,
+    fullName: 1,
+    mobileNumber: 1,
+    state: 1,
+    discription: 1
+  }
+}
+
+export { getProjection , getOptions, getProjectionData,buyerFromProjection,sellerFormProjections }

@@ -5,8 +5,10 @@ import { Manager } from "../../models/manager.model.js";
 import { utils } from "../../utils/index.js";
 const {apiError,apiResponse}=utils;
 
-const getUserModel = (role) => {
-  if (!role) role = "User";
+const getUserModel = (userId) => {
+    const role = userId.role;
+    if (!role) role = "User";
+
 
   if (!["User","Manager","Admin"].includes(role)) {
     throw new apiError({
@@ -42,14 +44,14 @@ const verifyEmail = async (userData, userId) => {
 };
 
 async function changeEmailVerification(userData,userId) {
-  const { code,role } = userData;
+  const { code } = userData;
   if(!code){
     throw new apiError({
       statusCode: 400,
       message : "code is required"
     })
   };
-  const selectedModel = getUserModel(role);
+  const selectedModel = getUserModel(userId);
 
   if (!userId) {
     throw new apiError({

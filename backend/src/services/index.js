@@ -1,5 +1,5 @@
 import { userRegister } from "./user/auth/user.Register.js";
-import { userResend } from "./user/auth/user.ResendOtp.js";
+import { userResend } from "./commonservices/user.ResendOtp.js";
 import { userForgotPassword } from "./commonservices/forgotPassword.js";
 import { userResetPassword } from "./commonservices/resetPassword.js";
 import { managerRegister } from "./adminAndManager/admin/managerRegisterByAdmin.js";
@@ -82,6 +82,8 @@ import {
   propertyViewCountData,
   propertyViews,
 } from "./user/property/property.view.count.js";
+import { searchProperty } from "./commonservices/property.search.js";
+import { searchByFilter } from "./user/property/property.filter.search.js";
 export const services = {
   //admin
   managerRegister,
@@ -100,6 +102,11 @@ export const services = {
   myPost,
   myPostDetails,
 
+
+  //common services
+  searchProperty,
+
+
   //users
   viewFeaturedPosts,
   categotyDataCount,
@@ -107,6 +114,7 @@ export const services = {
   getPropertyType,
   propertyViews,
   propertyViewCountData,
+  searchByFilter,
 
 
   //global uses

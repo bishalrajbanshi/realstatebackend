@@ -1,5 +1,5 @@
 import { utils } from "../utils/index.js";
-const { apiError, apiResponse, asyncHandler } = utils;
+const { apiError, apiResponse, asyncHandler,buyerFromProjection,sellerFormProjections,getOptions } = utils;
 
 import { services } from "../services/index.js";
 const { 
@@ -31,6 +31,8 @@ viewManagerStats,
 myPost,
 myPostDetails,
 } =services;
+
+
 
 //login manager
 const loginManager = asyncHandler(async (req, res, next) => {
@@ -389,21 +391,9 @@ const fetchSellerForm = asyncHandler(async(req,res,next) => {
   try {
     const managerId = req.manager?._id;
     const { page = 1 }=req.query;
-    const limit = 10;
-    const skip = (page - 1) * limit; 
     const  filters= {};
-    const projection = {
-      homeName: 1,
-      fullName: 1,
-      mobileNumber: 1,
-      state: 1,
-      discription: 1
-    };
-    const options = {
-      sort: { createdAt: -1 }, 
-      limit: limit,
-      skip:skip 
-    };
+    const projection =  sellerFormProjections();
+    const options = getOptions(page)
 
     const sellerData = await sellerUser(filters, projection,options, managerId)
 
@@ -518,19 +508,8 @@ const fetchAllForms = asyncHandler(async(req,res,next)=> {
     const managerId = req.manager?._id;
     const  filters= {managerId:managerId};
     const { page = 1 }=req.query;
-    const limit = 10;
-    const skip = (page - 1) * limit; 
-    const projection = {
-      fullName: 1,
-      mobileNumber: 1,
-      postId:1,
-      state: 1,
-    };
- const options = {
-      sort: { createdAt: -1 }, 
-      limit: limit,
-      skip:skip 
-    };
+    const projection = buyerFromProjection()
+ const options = getOptions(page)
 
     const alldata = await allform(managerId,filters,projection,options);
     res.status(200)
@@ -546,6 +525,12 @@ const fetchAllForms = asyncHandler(async(req,res,next)=> {
     }))
   }
 });
+
+//buyer from pending approved and completed  
+
+const buyerFrom
+
+
 
 //view buyerdata
 const fetchBuyerData = asyncHandler(async(req,res,next)=> {
@@ -570,7 +555,7 @@ const fetchBuyerData = asyncHandler(async(req,res,next)=> {
 const stateCheckingBuyer = asyncHandler(async(req,res,next) => {
   try {
     const {buyerId} = req.params;
-    const updateState = await buyerState(req.body,buyerId);
+    await buyerState(req.body,buyerId);
     res.status(200)
     .json (new apiResponse({
       success: true,
@@ -588,7 +573,7 @@ const stateCheckingBuyer = asyncHandler(async(req,res,next) => {
 const stateCheckingSeller = asyncHandler(async (req, res, next) => {
   try {
     const { sellerId } = req.params;
-    const updatedPost = await sellerState(req.body, sellerId);
+    await sellerState(req.body, sellerId);
 
     // Send the response with the updated post
     res.status(200).json(new apiResponse({
@@ -608,7 +593,7 @@ const stateCheckingSeller = asyncHandler(async (req, res, next) => {
 const stateCheckingEnquery = asyncHandler(async (req, res, next) => {
   try {
     const { enqueryId } = req.params;
-    const updatedPost = await enquertState(req.body, enqueryId);
+   await enquertState(req.body, enqueryId);
 
     // Send the response with the updated post
     res.status(200).json(new apiResponse({

@@ -27,7 +27,7 @@ const propertyViews = async (userId, postId, ipAddress) => {
       }
   
       // Check if the user/IP has already viewed this post
-      const existingView = await View.findOne({ postId, ipAddress });
+      const existingView = await View.findOne({ postId,userId });
   
       if (existingView) {
         // If this IP has already viewed the post, return an error
@@ -40,6 +40,7 @@ const propertyViews = async (userId, postId, ipAddress) => {
       // Create a new view entry for this user/IP
       const newView = new View({
         postId: postId,
+        userId: user._id,
         ipAddress: ipAddress,
       });
   
@@ -70,12 +71,6 @@ const propertyViewCountData = async (postId) => {
       // Count the number of views for the specific postId
       const postCount = await View.countDocuments({ postId });
   
-      if (postCount === 0) {
-        throw new apiError({
-          statusCode: 404,
-          message: "No views found for this post"
-        });
-      }
   
       // Return the view count for the post
       return postCount;

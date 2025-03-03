@@ -28,7 +28,7 @@ const buyProperty = new Schema(
     },
     state: {
       type: String,
-      enum: ["pending", "approved", "reject"],
+      enum: ["pending", "approved", "completed"],
       default: "pending",
       required: [true, "State is required"],
     },

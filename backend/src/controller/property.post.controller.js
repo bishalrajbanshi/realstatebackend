@@ -17,6 +17,8 @@ const {
   getPropertyType,
   propertyViews,
   propertyViewCountData,
+  searchProperty,
+  searchByFilter,
 } = services;
 
 //view featured post in users
@@ -113,9 +115,9 @@ const propertyView = asyncHandler(async (req, res, next) => {
   try {
     const userId = req.user?._id;
     const { postId } = req.params;
-    const ipAddress = req.headers['x-forwarded-for']
-    ? req.headers['x-forwarded-for'].split(',')[0] 
-    : req.connection.remoteAddress || req.ip; 
+    const ipAddress = req.headers["x-forwarded-for"]
+      ? req.headers["x-forwarded-for"].split(",")[0]
+      : req.connection.remoteAddress || req.ip;
     const data = await propertyViews(userId, postId, ipAddress);
 
     res.status(200).json(
@@ -186,7 +188,6 @@ const viewPropertyType = asyncHandler(async (req, res, next) => {
   try {
     const { page = 1 } = req.query;
     const { type } = req.params;
-    console.log(type);
     const filters = { landType: type };
     const projections = getProjection();
     const options = getOptions(page);
@@ -228,7 +229,55 @@ const viewCategoryStats = asyncHandler(async (req, res, next) => {
   }
 });
 
+//searcb the property byproperty number
+const propertySearch = asyncHandler(async (req, res, next) => {
+  try {
+    const searchQuery = req.query.query;
+    const data = await searchProperty(searchQuery);
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        data: data,
+      })
+    );
 
+    res.statusCode();
+  } catch (error) {
+    return next(
+      new apiError({
+        statusCode: error.statusCode || 500,
+        message: error.message || "error getting property",
+      })
+    );
+  }
+});
+
+//filter multiple
+const searchFilters = asyncHandler(async (req, res, next) => {
+  try {
+    const { category, type, facing } = req.query;
+    const filter = {};
+
+    if (category) filter.landCategory = category;
+    if (type) filter.landType = type;
+    if (facing) filter.facing = facing;
+    const  projection = getProjection();
+    
+    const data = await searchByFilter(filter,projection);
+
+    if (!data.length) {
+      return res.status(200).json(new apiResponse({ 
+        success: true, 
+        data: [], 
+        message: "No properties found matching the filters."
+       }));
+    }
+
+    res.status(200).json(new apiResponse({ success: true, data }));
+  } catch (error) {
+    return next(new apiError({ statusCode: error.statusCode || 500, message: error.message || "Error getting property" }));
+  }
+});
 
 export {
   viewFeaturedPostData,
@@ -239,4 +288,6 @@ export {
   viewPropertyType,
   propertyView,
   propertyViewCount,
+  propertySearch,
+  searchFilters
 };

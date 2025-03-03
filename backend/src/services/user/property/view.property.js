@@ -17,19 +17,20 @@ if (typeof filters !== "object" || typeof projection !== "object" || typeof opti
 
         //all posts fetch
         const allPost = await Post.find(filters,projection,options);
+        const totalproperty = await Post.countDocuments()
 
-        if (!allPost || allPost.length === 0) {
-           throw new apiError({
-            statusCode: 404,
-            message: "No posts found",
-           })
+        const response = {
+          allPost : allPost !=null ? allPost : "post unavailable",
+          totalproperty :totalproperty != null ? totalproperty : "unavailabel",
         }
-        return allPost;
+      
+        return response;
     } catch (error) {
         throw error;
     }
 }
 
+//property details
 const viewProperty = async (postId, filters, projection, options) => {
     try {
       if (typeof filters !== "object" || typeof projection !== "object" || typeof options !== "object") {

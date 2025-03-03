@@ -26,7 +26,7 @@ import {
 } from "../controller/user.services.controller.js";
 
 //posts controller imports
-import { viewFeaturedPostData,fetchAllPosts,viewPropertyDetails,viewPropertyCategory,viewPropertyType,propertyView, propertyViewCount,viewCategoryStats } from "../controller/property.post.controller.js";
+import { viewFeaturedPostData,fetchAllPosts,viewPropertyDetails,viewPropertyCategory,viewPropertyType,propertyView, propertyViewCount,viewCategoryStats,propertySearch,searchFilters } from "../controller/property.post.controller.js";
 
 import passport from "passport";
 
@@ -43,9 +43,11 @@ router.route("/refresh").post(generateAccessTokens)
 router.route("/register").post(registerUser);
 
 //verify email and resend otp
-router.route("/verifyemail").post(verifyEmails);
-router.route("/verifymail").post(verifyJWT(User),verifyEmails);
+router.route("/register/verifyemail").post(verifyEmails);
+router.route("/verify-email").post(verifyJWT(User),verifyEmails);
 router.route("/resendotp").post(resendOtp);
+router.route("/resend-otp").post(verifyJWT(User),resendOtp);
+
 
 //change user email
 router.route("/changeemail").patch(verifyJWT(User),changeUserEmail)
@@ -97,12 +99,21 @@ router.route("/category/:category/data").get(viewPropertyCategory)
 //view property by type ( residential , commercial)
 router.route("/type/:type").get(viewPropertyType);
 
-//property view  
-router.route("/property-view/:postId").post(verifyJWT(User),propertyView);
 router.route("/stats-data").get(viewCategoryStats)
 
-//property view count
+//property view  
+router.route("/property-view/:postId").post(verifyJWT(User),propertyView);
+//property view count 
 router.route("/property-count/:postId").get(propertyViewCount);
+
+//search property by id
+router.route("/search").get(propertySearch)
+
+//search by multiple filters
+// /filters?category=house&price=3500000&type=residential
+router.route("/filters").get(searchFilters);
+
+
 
 // Google login
 router.get(

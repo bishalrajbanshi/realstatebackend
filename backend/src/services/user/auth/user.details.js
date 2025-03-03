@@ -11,7 +11,7 @@ const  userDetails = async (userId)=>{
             })
         }
         const user = await User.findById(userId).select( 
-            "fullName role email mobileNumber currentAddress"
+            "fullName role email mobileNumber currentAddress isEmailUpdating"
         );
         if (!user) {
             throw new apiError({

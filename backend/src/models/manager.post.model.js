@@ -117,7 +117,7 @@ const managerPostSchema = new Schema(
     },
     state: {
       type: String,
-      enum: ["pending", "approved", "reject"],
+      enum: ["pending", "approved", "completed"],
       default: "pending",
       required: [true, "State is required"],
     },
@@ -156,6 +156,7 @@ generatePropertyId(managerPostSchema);
 
 managerPostSchema.index({ sellerId: 1 });
 managerPostSchema.index({ createdAt: -1 });
+managerPostSchema.index({ 'amount': 1, 'sizePerAmount': 1 });
 managerPostSchema.index({ landType: 1 });
 managerPostSchema.index({ landCatagory: 1 });
 managerPostSchema.index({ province: 1 });

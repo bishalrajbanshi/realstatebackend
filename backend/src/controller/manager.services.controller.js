@@ -5,6 +5,7 @@ const {
   asyncHandler,
   buyerFromProjection,
   sellerFormProjections,
+  enqueryFromProjections,
   getOptions,
 } = utils;
 
@@ -180,6 +181,8 @@ const managerdetailsSend = asyncHandler(async (req, res, next) => {
   }
 });
 
+
+//change email
 const changeManagerEmail = asyncHandler(async (req, res, next) => {
   try {
     const data = await changeEmail(req.body, req.manager?._id);
@@ -291,20 +294,9 @@ const fetchForm = asyncHandler(async (req, res, next) => {
       });
     }
     const { page = 1 } = req.query;
-    const limit = 100;
-    const skip = (page - 1) * limit;
     const filters = {};
-    const projection = {
-      fullName: 1,
-      mobileNumber: 1,
-      currentAddress: 1,
-      state: 1,
-    };
-    const options = {
-      sort: { createdAt: -1 },
-      limit: limit,
-      skip: skip,
-    };
+    const projection = enqueryFromProjections()
+    const options = getOptions(page)
 
     const userForms = await enqueryFormByUser(
       filters,

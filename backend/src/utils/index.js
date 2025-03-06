@@ -6,7 +6,7 @@ import { generateAccessToken, generateRefreshToken } from "./helper/generateToke
 import { generateCode, hashOtp } from "./helper/otpGenarator.js";
 import { addPasswordhashingHook, addPasswordVerificationMethod } from "./helper/passwordHashCompare.js";
 import { generateResetToken } from "./helper/passwordResetToken.js";
-import { buyerFromProjection, getOptions, getProjection, getProjectionData, sellerFormProjections } from "./helper/filter.post.js";
+import { buyerFromProjection, enqueryFromProjections, getOptions, getProjection, getProjectionData, sellerFormProjections } from "./helper/filter.post.js";
 import { generatePropertyId } from "./helper/generatePropertyId.js";
 
 
@@ -33,6 +33,7 @@ generatePropertyId,
     getOptions,
     buyerFromProjection,
     sellerFormProjections,
+    enqueryFromProjections
 
     
 }

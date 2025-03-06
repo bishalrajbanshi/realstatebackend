@@ -77,4 +77,14 @@ const sellerFormProjections = () => {
   }
 }
 
-export { getProjection , getOptions, getProjectionData,buyerFromProjection,sellerFormProjections }
+//enquery from projections
+const enqueryFromProjections = () =>{
+  return {
+    fullName: 1,
+    mobileNumber: 1,
+    currentAddress: 1,
+    state: 1,
+  }
+}
+
+export { getProjection , getOptions, getProjectionData,buyerFromProjection,sellerFormProjections,enqueryFromProjections }

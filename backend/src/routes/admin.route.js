@@ -4,7 +4,6 @@ import { asyncHandler } from "../utils/common/asyncHandler.js";
 import {
   deleteMannagers,
   fetchAllManagers,
-  generateAccessToken,
   loginadmin,
   logoutadmin,
   forgotPassword,
@@ -25,7 +24,6 @@ import { middlewares } from "../middlewares/index.js";
 const { upload,verifyJWT } = middlewares;
 
 const router = Router();
-router.route("/refresh").post(generateAccessToken)
 router.route("/login").post(loginadmin);
 router.route("/logout").post(verifyJWT(Admin), logoutadmin);
 router.route("/forgotpwd").post(forgotPassword);

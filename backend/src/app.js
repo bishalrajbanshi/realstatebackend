@@ -84,10 +84,12 @@ app.use(limiter);
 import adminRouter from "./routes/admin.route.js";
 import managerRouter from "./routes/manager.route.js";
 import userRouter from "./routes/user.route.js";
+import authRouter from "./routes/global.route.js";
 
-app.use("/api/admin", adminRouter);
-app.use("/api/manager", managerRouter);
+app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/manager", managerRouter);
 app.use("/api/v1/user", userRouter);
+app.use("/api/auth/v1/",authRouter);
 
 //ERROR HANDALING MIDDLEWARES
 app.use((err, req, res, next) => {

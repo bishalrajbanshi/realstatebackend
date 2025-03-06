@@ -22,7 +22,6 @@ const generateNewToken = async (refreshToken) => {
 
     // Verify the refresh token
     const decodedToken = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
-    console.log("Decoded Token:", decodedToken);
 
     // Retrieve the user based on role
     let user;
@@ -34,9 +33,6 @@ const generateNewToken = async (refreshToken) => {
       user = await User.findById(decodedToken._id);
     }
 
-    const manager = await Manager.findById("676a0c073bc07ee4c3c5cf07");
-    console.log("manager", manager);
-
     // Validate user existence
     if (!user) {
       throw new apiError({
@@ -45,7 +41,7 @@ const generateNewToken = async (refreshToken) => {
       });
     }
 
-    // Check if the refresh token exists in the user's stored refresh tokens**
+    // Check if the refresh token exists in the user's stored refresh tokens
     if (!user.refreshToken.includes(refreshToken)) {
       throw new apiError({
         statusCode: 403,

@@ -1,11 +1,17 @@
 import { utils } from "../utils/index.js";
-const { apiError, apiResponse, asyncHandler,buyerFromProjection,sellerFormProjections,getOptions } = utils;
+const {
+  apiError,
+  apiResponse,
+  asyncHandler,
+  buyerFromProjection,
+  sellerFormProjections,
+  getOptions,
+} = utils;
 
 import { services } from "../services/index.js";
-const { 
- loginServices,
- logoutServices,
- generateNewToken, 
+const {
+  loginServices,
+  logoutServices,
   managerDetails,
   editProfile,
   userForgotPassword,
@@ -27,37 +33,39 @@ const {
   sellerState,
   enquertState,
   buyerState,
-viewManagerStats,
-myPost,
-myPostDetails,
-} =services;
-
-
+  viewManagerStats,
+  myPost,
+  myPostDetails,
+} = services;
 
 //login manager
 const loginManager = asyncHandler(async (req, res, next) => {
   try {
-    const { accessToken, refreshToken, user } = await loginServices(
-      req.body
-    );
+    const { accessToken, refreshToken, user } = await loginServices(req.body);
 
     // Cookie options
     const options = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === "production", 
       sameSite: "strict",
     };
 
     // Set cookies and send response
     return res
       .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, { ...options, path: "/api/auth/refresh" })
+      .cookie("accessToken", accessToken, {
+        ...options,
+        path: "/",
+      })
+      .cookie("refreshToken", refreshToken, {
+        ...options,
+        path: "/api/auth/refresh", 
+      })
       .json(
         new apiResponse({
           success: true,
-          data:{accessToken,refreshToken,user},
-          message: "Manager Logged In",
+          message: `LOGIN SUCCESS`,
+          data: { accessToken },
         })
       );
   } catch (error) {
@@ -73,14 +81,13 @@ const loginManager = asyncHandler(async (req, res, next) => {
 //logout manager
 const logoutmanager = asyncHandler(async (req, res, next) => {
   try {
-    const  userId= req.manager;
-    console.log("userId",userId);
-    
-    const updatedUser = await logoutServices(userId);
+
+    const updatedUser = await logoutServices(req.manager);
 
     // Clear cookies
     const isProduction = process.env.NODE_ENV === "production";
     const cookieOptions = {
+      maxAge: 0,
       httpOnly: true,
       secure: isProduction,
       sameSite: isProduction ? "strict" : "lax",
@@ -90,7 +97,10 @@ const logoutmanager = asyncHandler(async (req, res, next) => {
     return res
       .status(200)
       .clearCookie("accessToken", cookieOptions)
-      .clearCookie("refreshToken", { ...cookieOptions, path: "/api/auth/refresh" })
+      .clearCookie("refreshToken", {
+        ...cookieOptions,
+        path: "/api/auth/refresh",
+      })
       .json({
         success: true,
         message: "Manager logged out successfully",
@@ -120,8 +130,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     return next(
       new apiError({
         statusCode: 500,
-        message:error.message || "error sending email"
-
+        message: error.message || "error sending email",
       })
     );
   }
@@ -141,85 +150,94 @@ const resetPassword = asyncHandler(async (req, res, next) => {
     return next(
       new apiError({
         statusCode: 500,
-        message:error.message || "error reseting passowrd"
+        message: error.message || "error reseting passowrd",
       })
     );
   }
 });
- 
 
 //manager details
-const managerdetailsSend =  asyncHandler( async ( req,res,next)  =>{
+const managerdetailsSend = asyncHandler(async (req, res, next) => {
   try {
     const managerId = req.manager?._id;
-    console.log("This is my manager id",managerId);
-    
+    console.log("This is my manager id", managerId);
+
     const managerData = await managerDetails(managerId);
-  
-    res.status(200)
-    .json( new apiResponse({
-      data: managerData,
-      success: true
-    }))
+
+    res.status(200).json(
+      new apiResponse({
+        data: managerData,
+        success: true,
+      })
+    );
   } catch (error) {
-    return next (new apiError({
-      statusCode: 500,
-      message: error.message || "error sending manager details"
-    }))
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.message || "error sending manager details",
+      })
+    );
   }
 });
 
-const changeManagerEmail = asyncHandler(async(req,res,next)=>{
+const changeManagerEmail = asyncHandler(async (req, res, next) => {
   try {
-    const data = await changeEmail(req.body,req.manager?._id);
-    res.status(200)
-    .json(new apiResponse({
+    const data = await changeEmail(req.body, req.manager?._id);
+    res.status(200).json(
+      new apiResponse({
         success: true,
         data: data,
-        message:"otp sent to emiail"
-    }))
-} catch (error) {
-    return next(new apiError({
+        message: "otp sent to emiail",
+      })
+    );
+  } catch (error) {
+    return next(
+      new apiError({
         statusCode: 500,
-           message: error.message || "error changing email"
-    }))
-}
+        message: error.message || "error changing email",
+      })
+    );
+  }
 });
-
 
 //verify email
 const verifyEmails = asyncHandler(async (req, res, next) => {
   try {
-    const userData=req.body;
+    const userData = req.body;
     const userId = req.manager?._id;
-    const data = await verifyEmail(userData,userId);
-  
-    res.status(200)
-    .json(new apiResponse({
-      success: true,
-      data: data
-    }))
-  
+    const data = await verifyEmail(userData, userId);
+
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        data: data,
+      })
+    );
   } catch (error) {
-    return next ( new apiError({
-      statusCode: 500,
-      message: error.message || "error verifying email"
-    }))
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.message || "error verifying email",
+      })
+    );
   }
 });
 
 //change password
 const changePassword = asyncHandler(async (req, res, next) => {
   try {
-    const { role, userId } = req.params; 
-    const { newPassword, oldPassword } = req.body; 
-    const data = await changeUserPassword({ role, userId }, { newPassword, oldPassword });
-    
+    const { role, userId } = req.params;
+    const { newPassword, oldPassword } = req.body;
+    const data = await changeUserPassword(
+      { role, userId },
+      { newPassword, oldPassword }
+    );
+
     // Validate the result
     if (!data) {
       throw new apiError({
         statusCode: 400,
-        message: "Invalid data"
+        message: "Invalid data",
       });
     }
 
@@ -227,84 +245,38 @@ const changePassword = asyncHandler(async (req, res, next) => {
     res.status(200).json(
       new apiResponse({
         success: true,
-        message: `PASSWORD CHANGED`
+        message: `PASSWORD CHANGED`,
       })
     );
   } catch (error) {
     return next(
       new apiError({
         statusCode: 500,
-        message: error.message || "error changing password"
+        message: error.message || "error changing password",
       })
     );
   }
 });
 
-//generate access token
-const generateAccessToken = async (req, res, next) => {
-  const refreshToken = req.cookies.refreshToken;
-
-  console.log("Refresh token received:", refreshToken);
-
-
-  try {
-    // Validate refresh token
-    if (!refreshToken) {
-      return next(new apiError({
-        statusCode: 403,
-        message: "Refresh token is missing",
-      }));
-    }
-
-    // Generate new access token
-    const { accessToken, refreshToken: newRefreshToken } = await generateNewToken(refreshToken);
-
-    // Cookie options
-    const options = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-    };
-
-    // Set cookies and send response
-    return res
-      .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", newRefreshToken, { ...options, path: "/api/auth/refresh" })
-      .json(new apiResponse({
-        success: true,
-        message: "Token refreshed successfully",
-        data: { accessToken, refreshToken: newRefreshToken },
-      }));
-
-  } catch (error) {
-    return next(new apiError({
-      statusCode: 500,
-      message: error.message || "Error generating token",
-    }));
-  }
-};
-
-
-
 //edit manager details
-const editDetails = asyncHandler(async(req,res,next)=>{
+const editDetails = asyncHandler(async (req, res, next) => {
   try {
-    const uodatedData = await editProfile(req.params,req.body);
-    res.status(200)
-    .json(new apiResponse({
-      success: true,
-      message: `PROFILE UPDATED SUCCESS`
-    }))
+    const uodatedData = await editProfile(req.params, req.body);
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        message: `PROFILE UPDATED SUCCESS`,
+      })
+    );
   } catch (error) {
-    return next(new apiError({
-      statusCode:500,
-      message:error.message || "error editing details"
-    }))
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.message || "error editing details",
+      })
+    );
   }
-
-})
-
+});
 
 // fetch enquery froms by user
 const fetchForm = asyncHandler(async (req, res, next) => {
@@ -318,19 +290,28 @@ const fetchForm = asyncHandler(async (req, res, next) => {
         message: "Invalid Manager ID ",
       });
     }
-    const { page = 1 }=req.query;
+    const { page = 1 } = req.query;
     const limit = 100;
-    const skip = (page - 1) * limit; 
+    const skip = (page - 1) * limit;
     const filters = {};
-    const projection = { fullName: 1, mobileNumber: 1,currentAddress: 1,state: 1
-    }; 
+    const projection = {
+      fullName: 1,
+      mobileNumber: 1,
+      currentAddress: 1,
+      state: 1,
+    };
     const options = {
-      sort: { createdAt: -1 }, 
+      sort: { createdAt: -1 },
       limit: limit,
-      skip:skip 
+      skip: skip,
     };
 
-    const userForms = await enqueryFormByUser(filters, projection, options, managerId);
+    const userForms = await enqueryFormByUser(
+      filters,
+      projection,
+      options,
+      managerId
+    );
 
     res.status(200).json(
       new apiResponse({
@@ -349,53 +330,63 @@ const fetchForm = asyncHandler(async (req, res, next) => {
 });
 
 //view enquery from
-const viewEnqueryData = asyncHandler(async(req,res,next)=>{
+const viewEnqueryData = asyncHandler(async (req, res, next) => {
   try {
-    const {formId} = req.params;
+    const { formId } = req.params;
     const alldata = await viewEnqueryForm(formId);
-    res.status(200)
-    .json(new apiResponse({
-      success: true,
-      data: alldata
-    }))
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        data: alldata,
+      })
+    );
   } catch (error) {
-    return next(new apiError({
-      statusCode: 500,
-      message: error.message || "erron fetching enquery data"
-    }))
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.message || "erron fetching enquery data",
+      })
+    );
   }
 });
 
 //view total enquery from
-const totalEnqueryData = asyncHandler(async(req,res,next) => {
+const totalEnqueryData = asyncHandler(async (req, res, next) => {
   try {
     const managerId = req.manager?._id;
-    const data = await totalEnqueryForm(managerId)
+    const data = await totalEnqueryForm(managerId);
 
-    res.status(200)
-    .json(new apiResponse({
-      success: true,
-      data: data
-    }))
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        data: data,
+      })
+    );
   } catch (error) {
-    return next(new apiError({
-      statusCode: 500,
-      message: error.manager || "error getting total forms"
-    }))
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.manager || "error getting total forms",
+      })
+    );
   }
-})
-
+});
 
 //fetch seller from
-const fetchSellerForm = asyncHandler(async(req,res,next) => {
+const fetchSellerForm = asyncHandler(async (req, res, next) => {
   try {
     const managerId = req.manager?._id;
-    const { page = 1 }=req.query;
-    const  filters= {};
-    const projection =  sellerFormProjections();
-    const options = getOptions(page)
+    const { page = 1 } = req.query;
+    const filters = {};
+    const projection = sellerFormProjections();
+    const options = getOptions(page);
 
-    const sellerData = await sellerUser(filters, projection,options, managerId)
+    const sellerData = await sellerUser(
+      filters,
+      projection,
+      options,
+      managerId
+    );
 
     if (!sellerData || sellerData.length === 0) {
       return res.status(404).json({
@@ -403,60 +394,66 @@ const fetchSellerForm = asyncHandler(async(req,res,next) => {
         message: "No seller data found.",
       });
     }
-    res.status(200)
-    .json( new apiResponse({
-      success : true,
-      data : sellerData
-    }))
-    
-
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        data: sellerData,
+      })
+    );
   } catch (error) {
-    return  next( new apiError({
-      statusCode: 500,
-      message: error.message || "error sending seller from"
-    }))
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.message || "error sending seller from",
+      })
+    );
   }
 });
 
 //view seller data
-const viewSeller = asyncHandler(async(req,res,next)=>{
+const viewSeller = asyncHandler(async (req, res, next) => {
   try {
-    const{sellerId} = req.params;
-    //send id 
+    const { sellerId } = req.params;
+    //send id
     const viewData = await viewSellerData(sellerId);
-    res.status(200)
-    .json(new apiResponse({
-      success: true,
-      data: viewData
-    }))
-    
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        data: viewData,
+      })
+    );
   } catch (error) {
-    return next(new apiError({
-      statusCode: 500,
-      message: error.message || "error infetching seller data"
-    }))
-  }
-})
-
-//view total seller form
-const totalSellerData = asyncHandler(async(req,res,next)=>{
-  try {
-    const managerId = req.manager?._id;
-    const data =  await totalSellerForm(managerId);
-    res.status(200)
-    .json(new apiResponse({
-      success: true,
-      data:data
-    }))
-  } catch (error) {
-    return next(new apiError({
-      statusCode: 500,
-      message:error.manager || "error getting total seller from"
-    }))
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.message || "error infetching seller data",
+      })
+    );
   }
 });
 
-//manager post 
+//view total seller form
+const totalSellerData = asyncHandler(async (req, res, next) => {
+  try {
+    const managerId = req.manager?._id;
+    const data = await totalSellerForm(managerId);
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        data: data,
+      })
+    );
+  } catch (error) {
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.manager || "error getting total seller from",
+      })
+    );
+  }
+});
+
+//manager post
 const managerPosts = asyncHandler(async (req, res, next) => {
   try {
     //if seller id exist use it else set null
@@ -464,110 +461,116 @@ const managerPosts = asyncHandler(async (req, res, next) => {
     const managerId = req.manager?._id;
 
     // Create the post data (but don't wait for image uploads yet)
-     await  managerpost(sellerId, managerId, req.body, req);
+    await managerpost(sellerId, managerId, req.body, req);
 
     // Send immediate response to the client
-    res.status(200)
-    .json(new apiResponse({
-      success: true,  
-      message:"post successful"
-    }));
-
-
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        message: "post successful",
+      })
+    );
   } catch (error) {
-    return next(new apiError({
-      statusCode: error.statusCode || 500,
-      message: error.message || "Error on manager posting data"
-    }));
+    return next(
+      new apiError({
+        statusCode: error.statusCode || 500,
+        message: error.message || "Error on manager posting data",
+      })
+    );
   }
 });
 
 //manager edit post
-const editPostbyManager = asyncHandler(async(req,res,next) => {
+const editPostbyManager = asyncHandler(async (req, res, next) => {
   try {
     const managerId = req.manager?._id;
     const { postId } = req.params;
-    await editPost(managerId,postId,req.body);
+    await editPost(managerId, postId, req.body);
 
-    res.status(200)
-    .json(new apiResponse({
-      success: true,
-      message:"Post updated success"
-    }))
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        message: "Post updated success",
+      })
+    );
   } catch (error) {
-    return next(new apiError({
-      statusCode: 500,
-      message:error.message || "error editing data"
-    }))
-  }
-})
-
-// fetch all buyer froms
-const fetchAllForms = asyncHandler(async(req,res,next)=> {
-  try {
-    const managerId = req.manager?._id;
-    const  filters= {managerId:managerId};
-    const { page = 1 }=req.query;
-    const projection = buyerFromProjection()
- const options = getOptions(page)
-
-    const alldata = await allform(managerId,filters,projection,options);
-    res.status(200)
-    .json(new apiResponse({
-      success: true,
-      data: alldata
-    }))
-
-  } catch (error) {
-    return next(new apiError({
-      statusCode: 500,
-      message: error.message || "error while fetching form"
-    }))
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.message || "error editing data",
+      })
+    );
   }
 });
 
-//buyer from pending approved and completed  
+// fetch all buyer froms
+const fetchAllForms = asyncHandler(async (req, res, next) => {
+  try {
+    const managerId = req.manager?._id;
+    const filters = { managerId: managerId };
+    const { page = 1 } = req.query;
+    const projection = buyerFromProjection();
+    const options = getOptions(page);
 
-const buyerFrom
-
-
+    const alldata = await allform(managerId, filters, projection, options);
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        data: alldata,
+      })
+    );
+  } catch (error) {
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.message || "error while fetching form",
+      })
+    );
+  }
+});
 
 //view buyerdata
-const fetchBuyerData = asyncHandler(async(req,res,next)=> {
+const fetchBuyerData = asyncHandler(async (req, res, next) => {
   try {
-    const {postId} = req.params;
+    const { postId } = req.params;
     const viewData = await viewbuyerData(postId);
-  
-    res.status(200)
-    .json(new apiResponse({
-      success: true,
-      data: viewData,
-    }))
+
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        data: viewData,
+      })
+    );
   } catch (error) {
-    return next(new apiError({
-      statusCode: 500,
-      message: error.message || "error fetching postdata"
-    }))
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.message || "error fetching postdata",
+      })
+    );
   }
-})
+});
 
 //state update for buyer
-const stateCheckingBuyer = asyncHandler(async(req,res,next) => {
+const stateCheckingBuyer = asyncHandler(async (req, res, next) => {
   try {
-    const {buyerId} = req.params;
-    await buyerState(req.body,buyerId);
-    res.status(200)
-    .json (new apiResponse({
-      success: true,
-      message: "State updated successful"
-    }))
+    const { buyerId } = req.params;
+    await buyerState(req.body, buyerId);
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        message: "State updated successful",
+      })
+    );
   } catch (error) {
-    return next(new apiError({
-      statusCode: 500,
-      message: error.message || "error updating the buyer state"
-    }))
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.message || "error updating the buyer state",
+      })
+    );
   }
-})
+});
 
 // state checking for seller
 const stateCheckingSeller = asyncHandler(async (req, res, next) => {
@@ -576,172 +579,178 @@ const stateCheckingSeller = asyncHandler(async (req, res, next) => {
     await sellerState(req.body, sellerId);
 
     // Send the response with the updated post
-    res.status(200).json(new apiResponse({
-      success: true,
-      message: `successfully updated state`
-    }));
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        message: `successfully updated state`,
+      })
+    );
   } catch (error) {
-
-    return next(new apiError({
-      statusCode: 500,
-      message: error.message || "Error setting state"
-    }));
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.message || "Error setting state",
+      })
+    );
   }
 });
 
-    //enqueery from state
+//enqueery from state
 const stateCheckingEnquery = asyncHandler(async (req, res, next) => {
   try {
     const { enqueryId } = req.params;
-   await enquertState(req.body, enqueryId);
+    await enquertState(req.body, enqueryId);
 
     // Send the response with the updated post
-    res.status(200).json(new apiResponse({
-      success: true,
-      message: `successfully updated state`
-    }));
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        message: `successfully updated state`,
+      })
+    );
   } catch (error) {
-
-    return next(new apiError({
-      statusCode: 500,
-      message: error.message || "Error setting state"
-    }));
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.message || "Error setting state",
+      })
+    );
   }
 });
 
-
 //manager delete post
-const deletePosts = asyncHandler(async(req,res,next) => {
+const deletePosts = asyncHandler(async (req, res, next) => {
   try {
     const managerId = req.manager?._id;
     const { postId } = req.params;
-    await postDelete(managerId,postId);
-    res.status(200)
-    .json( new apiResponse({
-      success: true,
-      message: "success deleting post"
-    }))
+    await postDelete(managerId, postId);
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        message: "success deleting post",
+      })
+    );
   } catch (error) {
-    return next (new apiError({
-      statusCode: 500,
-      message: error.message || "error deleting post"
-    }))
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.message || "error deleting post",
+      })
+    );
   }
 });
-
 
 //view manager data stats
-const managerStats = asyncHandler(async(req,res,next) => {
+const managerStats = asyncHandler(async (req, res, next) => {
   try {
     const managerId = req.manager?._id;
-    const data = await viewManagerStats(managerId)
+    const data = await viewManagerStats(managerId);
 
-    res.status(200)
-    .json(new apiResponse({
-      success: true,
-      data:data
-    }))
-
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        data: data,
+      })
+    );
   } catch (error) {
-    return next( new apiError({
-      statusCode:500,
-      message: error.message || "error getting data"
-    }))
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.message || "error getting data",
+      })
+    );
   }
 });
 
-
-
 //my all post data
-const myPostData = asyncHandler(async(req,res,next) => {
+const myPostData = asyncHandler(async (req, res, next) => {
   try {
     const managerId = req.manager?._id;
-    const { page = 1 }=req.query;
+    const { page = 1 } = req.query;
     const limit = 100;
-    const skip = (page - 1) * limit; 
-    const filters ={postBy: managerId};
-    const projection = 
-    {
-      avatar:1,
-      state:1,
-      price:1,
-      propertyTitle:1,
-      createdAt:1,
+    const skip = (page - 1) * limit;
+    const filters = { postBy: managerId };
+    const projection = {
+      avatar: 1,
+      state: 1,
+      price: 1,
+      propertyTitle: 1,
+      createdAt: 1,
     };
     const options = {
-      sort: { createdAt: -1 }, 
-      limit: limit, 
-      skip: skip
+      sort: { createdAt: -1 },
+      limit: limit,
+      skip: skip,
     };
     if (!managerId) {
       throw new apiError({
-        statusCode:401,
-        message:"manager undefined"
+        statusCode: 401,
+        message: "manager undefined",
+      });
+    }
+
+    const data = await myPost(managerId, filters, projection, options);
+
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        data: data,
       })
-    };
-
-    const data =  await myPost(managerId,filters,projection,options);
-
-    res.status(200)
-    .json(new apiResponse({
-      success: true,
-      data:data
-    }))
-
+    );
   } catch (error) {
-    return next(apiError({
-      statusCode: 500,
-      message:error.message || "error getting manager data"
-    }))
+    return next(
+      apiError({
+        statusCode: 500,
+        message: error.message || "error getting manager data",
+      })
+    );
   }
 });
 
 //post details
-const myPostDetailsData = asyncHandler(async(req,res,next) => {
-try {
-  const managerId = req.manager?._id;
-  const postId = req.params.postId
-  if (!managerId) {
-    throw new apiError({
-      statusCode:403,
-      message:"undefined manager"
-    })
+const myPostDetailsData = asyncHandler(async (req, res, next) => {
+  try {
+    const managerId = req.manager?._id;
+    const postId = req.params.postId;
+    if (!managerId) {
+      throw new apiError({
+        statusCode: 403,
+        message: "undefined manager",
+      });
+    }
+    const data = await myPostDetails(managerId, postId);
+    res.status(200).json(
+      new apiResponse({
+        success: true,
+        data: data,
+      })
+    );
+  } catch (error) {
+    return next(
+      new apiError({
+        statusCode: 500,
+        message: error.message || "error getting manager post details",
+      })
+    );
   }
-const data = await myPostDetails(managerId,postId)
-res.status(200)
-.json(new apiResponse({
-  success:true,
-  data:data
-}))
-} catch (error) {
-  return next(new apiError({
-    statusCode: 500,
-    message:error.message || "error getting manager post details"
-  }))
-}
-})
+});
 
-
-
-
-
-export { 
-  loginManager, 
+export {
+  loginManager,
   logoutmanager,
-  generateAccessToken,
   editDetails,
   forgotPassword,
   resetPassword,
   changeManagerEmail,
   verifyEmails,
   changePassword,
-  managerdetailsSend, 
-  fetchForm, 
+  managerdetailsSend,
+  fetchForm,
   viewEnqueryData,
   totalEnqueryData,
   totalSellerData,
-  fetchSellerForm, 
-  viewSeller, 
+  fetchSellerForm,
+  viewSeller,
   managerPosts,
   editPostbyManager,
   fetchAllForms,
@@ -752,5 +761,5 @@ export {
   deletePosts,
   managerStats,
   myPostData,
-  myPostDetailsData
+  myPostDetailsData,
 };

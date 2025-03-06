@@ -57,7 +57,7 @@ async function validation(userModel, email, password) {
   
   user.refreshToken = refreshToken;
 
-  const loggedInUser = await userModel.findById(user._id).select("-password");
+  const loggedInUser = await userModel.findById(user._id).select("-password -refreshToken");
 
   user.isLoggedIn = true;
   await user.save();

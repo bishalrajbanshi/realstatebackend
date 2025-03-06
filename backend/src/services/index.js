@@ -54,7 +54,7 @@ import { editProfile } from "./commonservices/editprofile.js";
 import { changeEmail } from "./commonservices/changeemail.js";
 import { changeUserPassword } from "./commonservices/changepassword.js";
 import { userDetails } from "./user/auth/user.details.js";
-import { generateNewToken } from "./commonservices/generateAccessToken.js";
+import { generateNewToken } from "../middlewares/general/generateAccessToken.js";
 import {
   addToCart,
   deleteCartProperty,

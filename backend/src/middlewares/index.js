@@ -4,6 +4,7 @@ import { uploadOnCloudinary } from "./general/cloudinary.js";
 import { upload } from "./general/multer.js";
 import { sendEmail } from "./general/sendemail.js";
 import { stateUpdate } from "./general/stateUpdate.js";
+import { generateNewToken } from "./general/generateAccessToken.js";
 
 export const middlewares = {
     verifyJWT,
@@ -11,5 +12,6 @@ export const middlewares = {
     upload,
     uploadOnCloudinary,
     sendEmail,
-    stateUpdate
+    stateUpdate,
+    generateNewToken
 }

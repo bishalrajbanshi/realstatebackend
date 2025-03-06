@@ -1,6 +1,5 @@
 import { Router } from "express";
 import {
-  generateAccessToken,
   fetchForm,
   viewEnqueryData,
   totalEnqueryData,
@@ -34,7 +33,6 @@ import { middlewares } from "../middlewares/index.js";
 const{upload} = middlewares;
 
 const router = Router();
-router.patch("/refresh", generateAccessToken);
 
 router.route("/login").post(loginManager);
 router.route("/logout").post(verifyJWT(Manager), logoutmanager);

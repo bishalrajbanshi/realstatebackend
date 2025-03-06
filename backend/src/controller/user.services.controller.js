@@ -15,7 +15,6 @@ const {
   userRegister,
   loginServices,
   logoutServices,
-  generateNewToken,
   verifyEmail,
   changeEmail,
   editProfile,
@@ -102,38 +101,42 @@ const resendOtp = asyncHandler(async (req, res, next) => {
   }
 });
 
-//user login
+
+// user login
 const login = asyncHandler(async (req, res, next) => {
   try {
     const { accessToken, refreshToken, user } = await loginServices(req.body);
 
     // Cookie options
     const options = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === "production", 
       sameSite: "strict",
     };
 
     // Set cookies and send response
     return res
       .status(200)
-      .cookie("accessToken", accessToken, options)
+      .cookie("accessToken", accessToken, {
+        ...options,
+        path: "/",
+      })
       .cookie("refreshToken", refreshToken, {
         ...options,
-        path: "/api/auth/refresh",
+        path: "/api/auth/refresh", 
       })
       .json(
         new apiResponse({
           success: true,
           message: `LOGIN SUCCESS`,
-          data: { accessToken, refreshToken },
+          data: { accessToken },
         })
       );
   } catch (error) {
     return next(
       new apiError({
         statusCode: error.statusCode || 500,
-        message: error.message || "error login user",
+        message: error.message || "Error logging in user",
       })
     );
   }
@@ -151,7 +154,6 @@ const logout = asyncHandler(async (req, res, next) => {
       httpOnly: true,
       secure: isProduction,
       sameSite: isProduction ? "strict" : "lax",
-      path:'/'
     };
 
     // Send response after clearing the cookies
@@ -436,58 +438,6 @@ const userPurchaseData = asyncHandler(async (req, res, next) => {
   }
 });
 
-//generate access token
-const generateAccessTokens = async (req, res, next) => {
-  const { refreshToken } = req.cookies;
-
-  console.log("Refresh token received:", refreshToken);
-
-  try {
-    // Validate refresh token
-    if (!refreshToken) {
-      return next(
-        new apiError({
-          statusCode: 403,
-          message: "Refresh token is missing",
-        })
-      );
-    }
-
-    // Generate new access token
-    const { accessToken, refreshToken: newRefreshToken } =
-      await generateNewToken(refreshToken);
-
-    // Cookie options
-    const options = {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-    };
-
-    // Set cookies and send response
-    return res
-      .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", newRefreshToken, {
-        ...options,
-        path: "/api/auth/refresh",
-      })
-      .json(
-        new apiResponse({
-          success: true,
-          message: "Token refreshed successfully",
-          data: { accessToken, refreshToken: newRefreshToken },
-        })
-      );
-  } catch (error) {
-    return next(
-      new apiError({
-        statusCode: error.statusCode || 500,
-        message: error.message || "Error generating token",
-      })
-    );
-  }
-};
 
 //view enquery properties
 const viewUserEnqueryData = asyncHandler(async (req, res, next) => {
@@ -647,7 +597,6 @@ const googleAuthCallback = asyncHandler(async (req, res, next) => {
 
 
 export {
-  generateAccessTokens,
   changeUserEmail,
   registerUser,
   verifyEmails,

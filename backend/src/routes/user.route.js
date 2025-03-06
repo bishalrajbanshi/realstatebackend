@@ -21,8 +21,7 @@ import {
   userCart,
   getCartProduct,
   deleteCartData,
-  googleAuthCallback,
-  generateAccessTokens,
+  googleAuthCallback, 
 } from "../controller/user.services.controller.js";
 
 //posts controller imports
@@ -38,7 +37,7 @@ import { User } from "../models/user.model.js";
 const router = Router();
 
 //generate new access-token route 
-router.route("/refresh").post(generateAccessTokens)
+router.route("/refresh").post()
 //register user
 router.route("/register").post(registerUser);
 
@@ -106,11 +105,10 @@ router.route("/property-view/:postId").post(verifyJWT(User),propertyView);
 //property view count 
 router.route("/property-count/:postId").get(propertyViewCount);
 
-//search property by id
+//search property by id 101 ....
 router.route("/search").get(propertySearch)
 
-//search by multiple filters
-// /filters?category=house&price=3500000&type=residential
+// filters?category=house&type=residential
 router.route("/filters").get(searchFilters);
 
 

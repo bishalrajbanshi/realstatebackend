@@ -565,8 +565,8 @@ const googleAuthCallback = asyncHandler(async (req, res, next) => {
       // If authInfo has an error message, throw that as a custom error
       if (req.authInfo && req.authInfo.message) {
         throw new apiError({
-          statusCode: 400,  // Bad request if the email/password issue occurs
-          message: req.authInfo.message,  // Use the error message from Passport
+          statusCode: 400, 
+          message: req.authInfo.message,  
         });
       }
 

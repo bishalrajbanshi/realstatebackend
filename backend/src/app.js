@@ -89,7 +89,7 @@ import authRouter from "./routes/global.route.js";
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/manager", managerRouter);
 app.use("/api/v1/user", userRouter);
-app.use("/api/auth/v1/",authRouter);
+app.use("/api/auth/",authRouter);
 
 //ERROR HANDALING MIDDLEWARES
 app.use((err, req, res, next) => {

@@ -18,7 +18,6 @@ passport.use(
     },
     async (req, accessToken, refreshToken, profile, done) => {
       try {
-        console.log("profile", profile);
 
         // Check if a user already exists with the same email
         let user = await User.findOne({ email: profile.emails[0].value });
@@ -34,15 +33,17 @@ passport.use(
             googleId: profile.id,
             fullName: profile.name.givenName,
             email: profile.emails[0].value,
+            mobileNumber: 0, // Use a default number if empty
             isVerified: profile.emails[0].verified,
-            isLoggedIn: true
+            isLoggedIn: true,
           });
           await user.save();
-        } else {
+        }
+         else {
           // If user exists but no password is set, associate Google login with existing user
           if (!user.googleId) {
             user.googleId = profile.id;
-            user.isVerified = profile.emails[0].verified; // Ensure the email is marked as verified
+            user.isVerified = profile.emails[0].verified; 
             await user.save();
           }
         }
@@ -55,8 +56,16 @@ passport.use(
           await user.save(); 
         }
 
+           // Store refresh token in HTTP-only cookie
+           req.res.cookie("refreshToken", generatedRefreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "Strict",
+            path: "/api/auth/refresh",
+          });
+
         // Send response with the generated tokens
-        return done(null, { user, accessToken: generatedAccessToken, refreshToken: generatedRefreshToken });
+        return done(null, { accessToken: generatedAccessToken});
       } catch (error) {
         console.error("Error during Google OAuth:", error);
         return done(error, null);

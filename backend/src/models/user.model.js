@@ -27,8 +27,8 @@ const userSchema = new Schema(
     },
     mobileNumber: {
       type: Number,
-      // required: true,
       unique: true,
+      sparse: true ,
     },
     currentAddress: {
       type: String,

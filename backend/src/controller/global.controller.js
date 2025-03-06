@@ -39,7 +39,7 @@ const generateAccessTokens = async (req, res, next) => {
       })
       .cookie("refreshToken", refreshToken, {
         ...options,
-        path: "/api/auth/v1/refresh", 
+        path: "/api/auth/refresh", 
       })
         .json(
           new apiResponse({

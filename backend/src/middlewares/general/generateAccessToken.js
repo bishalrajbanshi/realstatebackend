@@ -33,6 +33,8 @@ const generateNewToken = async (refreshToken) => {
       user = await User.findById(decodedToken._id);
     }
 
+    const role = user.role;
+
     // Validate user existence
     if (!user) {
       throw new apiError({
@@ -58,14 +60,8 @@ const generateNewToken = async (refreshToken) => {
 
     // Generate new tokens
     const accessToken = generateAccessToken(user);
-    const newRefreshToken = generateRefreshToken(user);
 
-    // Remove the used refresh token and store the new one
-    user.refreshToken = user.refreshToken.filter((rt) => rt !== refreshToken);
-    user.refreshToken.push(newRefreshToken);
-    await user.save();
-
-    return { accessToken, refreshToken: newRefreshToken };
+    return { accessToken ,role};
   } catch (error) {
     console.error("JWT Verification error:", error);
 

@@ -23,13 +23,13 @@ const userSchema = new Schema(
       unique: true,
       lowercase: true,
       required: [true, "Email is required"],
-      unique: true,
+      sparse: true, 
     },
     mobileNumber: {
       type: Number,
       unique: true,
-      sparse: true ,
-    },
+      sparse: true,
+     },
     currentAddress: {
       type: String,
       // required: [true, "enter your current address"],
@@ -74,7 +74,6 @@ const userSchema = new Schema(
 
 // Add plugins and indexes
 userSchema.plugin(mongooseAggregatePaginate);
-userSchema.index({ email: 1, mobileNumber: 1 }, { unique: true });
 
 // index for logged-in and verified users
 userSchema.index({ isLoggedIn: 1, isVerified: 1 });

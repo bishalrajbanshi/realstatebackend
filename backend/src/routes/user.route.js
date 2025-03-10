@@ -81,7 +81,7 @@ router.route("/sellerdata").get(verifyJWT(User),getSellerproperty);
 router.route("/delete/:sellerId").delete(verifyJWT(User),deleteSellerData)
 
 
-//posts
+//all property
 router.route("/property").get(fetchAllPosts);
 //property details global
 router.route("/property-details/:postId").get(viewPropertyDetails);

@@ -4,7 +4,6 @@ import { utils } from "../utils/index.js";
 const { addPasswordhashingHook, addPasswordVerificationMethod } = utils;
 
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
-import { type } from "os";
 import { generateResetToken } from "../utils/helper/passwordResetToken.js";
 
 const managerSchema = new Schema({

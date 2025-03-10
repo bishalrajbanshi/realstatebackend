@@ -1,5 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
+import morgan from "morgan"
 import cors from "cors";
 import helmet, { xssFilter } from "helmet";
 import rateLimit from "express-rate-limit";
@@ -12,6 +13,7 @@ import  {passport}  from "./passport.js"
 
 
 const app = express();
+app.use(morgan('dev'))
 app.use(passport.initialize());
 
 //CORS CONFIGURATION

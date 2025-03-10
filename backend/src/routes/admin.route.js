@@ -26,8 +26,8 @@ const { upload,verifyJWT } = middlewares;
 const router = Router();
 router.route("/login").post(loginadmin);
 router.route("/logout").post(verifyJWT(Admin), logoutadmin);
-router.route("/forgotpwd").post(forgotPassword);
-router.route("/reset").patch(resetPassword);
+router.route("/forgot-password").post(forgotPassword);
+router.route("/reset-password").patch(resetPassword);
 router.route("/changepwd/:role/:userId").patch(verifyJWT(Admin),changePassword);
 router.route("/register-manager").post(verifyJWT(Admin),
 upload.fields([

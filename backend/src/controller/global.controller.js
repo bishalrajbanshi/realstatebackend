@@ -20,7 +20,7 @@ const generateAccessTokens = async (req, res, next) => {
       }
   
       // Generate new access token
-      const { accessToken, refreshToken: newRefreshToken } =
+      const { accessToken,role } =
         await generateNewToken(refreshToken);
   
       // Cookie options
@@ -45,7 +45,7 @@ const generateAccessTokens = async (req, res, next) => {
           new apiResponse({
             success: true,
             message: "Token refreshed successfully",
-            data: { accessToken, refreshToken: newRefreshToken },
+            data: { accessToken,role },
           })
         );
     } catch (error) {

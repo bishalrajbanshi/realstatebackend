@@ -8,7 +8,8 @@ const{ apiError,generateCode,hashOtp,emailHtmlContent }=utils;
 
 const changeEmail = async (data, userId) => {
     try {
-      const { email, role } = data;
+      const role = userId.role;
+      const { email } = data;
   
       // Validate input data
       if (!email) {

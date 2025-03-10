@@ -10,6 +10,7 @@ const {
 } = utils;
 
 import { services } from "../services/index.js";
+import e from "express";
 const {
   loginServices,
   logoutServices,
@@ -37,6 +38,7 @@ const {
   viewManagerStats,
   myPost,
   myPostDetails,
+  userResend
 } = services;
 
 //login manager
@@ -123,7 +125,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     res.status(200).json(
       new apiResponse({
         success: true,
-        message: `RESET OTP IS SEND TO ${email}`,
+        message: "reset otp send",
         data: email,
       })
     );
@@ -161,7 +163,6 @@ const resetPassword = asyncHandler(async (req, res, next) => {
 const managerdetailsSend = asyncHandler(async (req, res, next) => {
   try {
     const managerId = req.manager?._id;
-    console.log("This is my manager id", managerId);
 
     const managerData = await managerDetails(managerId);
 
@@ -185,7 +186,9 @@ const managerdetailsSend = asyncHandler(async (req, res, next) => {
 //change email
 const changeManagerEmail = asyncHandler(async (req, res, next) => {
   try {
-    const data = await changeEmail(req.body, req.manager?._id);
+   const email = req.body
+   const userId = req.manager;
+    const data = await changeEmail( email, userId);
     res.status(200).json(
       new apiResponse({
         success: true,
@@ -206,14 +209,14 @@ const changeManagerEmail = asyncHandler(async (req, res, next) => {
 //verify email
 const verifyEmails = asyncHandler(async (req, res, next) => {
   try {
-    const userData = req.body;
-    const userId = req.manager?._id;
-    const data = await verifyEmail(userData, userId);
+    const code = req.body;
+    const userId = req.manager;
+    await verifyEmail(code, userId);
 
     res.status(200).json(
       new apiResponse({
         success: true,
-        data: data,
+        message:"email verified"
       })
     );
   } catch (error) {
@@ -225,6 +228,28 @@ const verifyEmails = asyncHandler(async (req, res, next) => {
     );
   }
 });
+
+
+//manager resend otp
+const managerResendOtp = asyncHandler(async(req,res,next) => {
+  try {
+
+    const userId = req.manager;
+    const email = req.body;
+    await userResend(email,userId);
+    res.status(201)
+    .json( new apiResponse({
+      success:true,
+      message:"otp sent success"
+    }))
+    
+  } catch (error) {
+    return next(new apiError({
+      statusCode:error.statusCode || 500,
+      message:error.message || "error resend otp"
+    }))
+  }
+})
 
 //change password
 const changePassword = asyncHandler(async (req, res, next) => {
@@ -734,6 +759,7 @@ export {
   forgotPassword,
   resetPassword,
   changeManagerEmail,
+  managerResendOtp,
   verifyEmails,
   changePassword,
   managerdetailsSend,

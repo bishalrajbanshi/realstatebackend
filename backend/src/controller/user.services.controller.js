@@ -10,7 +10,6 @@ const {
 } = utils;
 import { services } from "../services/index.js";
 
-
 const {
   userRegister,
   loginServices,
@@ -84,11 +83,12 @@ const verifyEmails = asyncHandler(async (req, res, next) => {
 const resendOtp = asyncHandler(async (req, res, next) => {
   try {
     const email = req.body
-    await userResend(email);
+    const userId = req.user;
+    await userResend(email,userId);
     return res.status(201).json(
       new apiResponse({
         success: true,
-        message: `VERIFICATION CODE SEND`
+        message:"otp sent success"
       })
     );
   } catch (error) {
@@ -208,7 +208,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     res.status(200).json(
       new apiResponse({
         success: true,
-        message: `RESET OTP IS SEND TO ${email}`,
+        message: `RESET OTP IS SEND TO`,
         data: email,
       })
     );

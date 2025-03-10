@@ -128,7 +128,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     res.status(200).json(
       new apiResponse({
         success: true,
-        message: `RESET OTP IS SEND TO ${email}`,
+        message: "reset otp send",
         data: email,
       })
     );

@@ -9,7 +9,7 @@ import { Manager } from "../../models/manager.model.js";
 const{sendEmail}=middlewares;
 
 const userForgotPassword = async (userData) => {
-    const { role,email } = userData;
+    let { role,email } = userData;
     // Find the user by email
     const user = await getUserModel(role,email);
     if (!user) {
@@ -59,7 +59,6 @@ async function getUserModel(role, email) {
             message: "Email is required",
         });
     }
-
     //  "User" if no role 
     if (!role || role === "User") {
         return await User.findOne({ email: email.toLowerCase() });

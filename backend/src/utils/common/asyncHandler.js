@@ -1,41 +1,23 @@
-// const asyncHandler = (func) => async (req, res, next) => {
-//     try {
-//         // Debugging to check if res is correct
-//         console.log("Res Object Inside asyncHandler:", res);
+import { logger } from "../../db/logger.js";
 
-//         await func(req, res, next);
-//     } catch (error) {
-//         // Debugging response object
-//         if (!res || !res.status) {
-//             console.error("Response object not valid", res);
-//         }
-
-//         res.status(error.statusCode || 500).json({
-//             success: false,
-//             message: error.message || "Internal server error",
-//         });
-//     }
-// };
-
-// export { asyncHandler };
-
-
-const asyncHandler = (func) => async (req, res, next) => {
-    try {
-        // Debugging to check if res is correctly passed
-        console.log("Inside asyncHandler, Res Object:", res);
-
-        await func(req, res, next);
-    } catch (error) {
-        console.error("Error caught in asyncHandler:", error);
-
-        if (!res || typeof res.status !== "function") {
-            console.error("Invalid response object detected:", res);
+const asyncHandler = (func) => (req, res, next) => {
+    Promise.resolve(func(req, res, next)).catch((error) => {
+        console.log("Res Object Inside asyncHandler:", res);
+     
+        
+        if (!res || !res.status) {
+            console.error("Response object not valid");
+            logger.error("Response object not valid");
             return next(error);
         }
 
-        next(error); 
-    }
+        logger.error(`Error occurred: ${error.message}`, { stack: error.stack });
+
+        res.status(error.statusCode || 500).json({
+            success: false,
+            message: error.message || "Internal server error",
+        });
+    });
 };
 
 export { asyncHandler };

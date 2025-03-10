@@ -6,7 +6,7 @@ const { CLIENT_ID, CLIENT_SECRET } = config;
 import { utils } from "./utils/index.js";
 const { generateAccessToken, generateRefreshToken } = utils;
 
-// google strategy
+// Google OAuth Strategy
 passport.use(
   new GoogleStrategy(
     {
@@ -18,54 +18,59 @@ passport.use(
     },
     async (req, accessToken, refreshToken, profile, done) => {
       try {
+        console.log("Google Profile:", profile);
 
-        // Check if a user already exists with the same email
+        // Check if user exists by email
         let user = await User.findOne({ email: profile.emails[0].value });
 
-        // If user exists and has an associated password, throw error
+        // If user exists and has a password, prevent Google login
         if (user && user.password) {
-          return done(null, false, { message: "Please log in with your email and password." });
+          return done(null, false, { message: "Please log in with email and password." });
         }
 
-        // If user doesn't exist, create a new one
         if (!user) {
+          // Create a new user if not found
           user = new User({
             googleId: profile.id,
             fullName: profile.name.givenName,
             email: profile.emails[0].value,
-            mobileNumber: 0, // Use a default number if empty
-            isVerified: profile.emails[0].verified,
+            isverified: true,
             isLoggedIn: true,
           });
+
+          // Only assign mobileNumber if it exists in profile (to prevent null conflict)
+          if (profile.mobileNumber) {
+            user.mobileNumber = profile.mobileNumber;
+          }
+
           await user.save();
-        }
-         else {
-          // If user exists but no password is set, associate Google login with existing user
+        } else {
+          // If user exists but no Google ID, update Google login details
           if (!user.googleId) {
             user.googleId = profile.id;
-            user.isVerified = profile.emails[0].verified; 
+            user.isVerified = profile.emails[0].verified;
             await user.save();
           }
         }
 
-        // Generate tokens after saving or verifying the user
-        const generatedAccessToken = generateAccessToken(user); 
+        // Generate tokens
+        const generatedAccessToken = generateAccessToken(user);
         const generatedRefreshToken = generateRefreshToken(user);
-        if (!user.refreshToken.includes(generatedRefreshToken)) {
-          user.refreshToken.push(generatedRefreshToken); 
-          await user.save(); 
-        }
 
-           // Store refresh token in HTTP-only cookie
-           req.res.cookie("refreshToken", generatedRefreshToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "Strict",
-            path: "/api/auth/refresh",
-          });
+        // Add refresh token if it not already in user'tokens
+        user.refreshToken = [generatedRefreshToken]; 
+        await user.save();
 
-        // Send response with the generated tokens
-        return done(null, { accessToken: generatedAccessToken});
+        // Store refresh token in HTTP-only cookie
+        req.res.cookie("refreshToken", generatedRefreshToken, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "Strict",
+          path: "/api/auth/refresh",
+        });
+
+        // Return access token
+        return done(null, { accessToken: generatedAccessToken });
       } catch (error) {
         console.error("Error during Google OAuth:", error);
         return done(error, null);

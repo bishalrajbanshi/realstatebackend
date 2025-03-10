@@ -17,7 +17,7 @@ const logger = winston.createLogger({
             filename: 'logs/http_requests-%DATE%.log',
             datePattern: 'YYYY-MM-DD',
             level: 'info',
-            maxFiles: '30d', 
+            maxFiles: '1d', 
         }),
 
         // Rotate database logs daily
@@ -25,7 +25,7 @@ const logger = winston.createLogger({
             filename: 'logs/database-%DATE%.log',
             datePattern: 'YYYY-MM-DD',
             level: 'info',
-            maxFiles: '30d',  
+            maxFiles: '1d',  
         }),
 
         // Rotate error logs daily
@@ -33,7 +33,7 @@ const logger = winston.createLogger({
             filename: 'logs/errors-%DATE%.log',
             datePattern: 'YYYY-MM-DD',
             level: 'error',  
-            maxFiles: '30d', 
+            maxFiles: '1d', 
         }),
 
         new winston.transports.Console({

@@ -12,6 +12,7 @@ import {
   editDetails,
   changePassword,
   changeManagerEmail,
+  managerResendOtp,
   verifyEmails,
   managerdetailsSend,
   managerPosts,
@@ -36,15 +37,16 @@ const router = Router();
 
 router.route("/login").post(loginManager);
 router.route("/logout").post(verifyJWT(Manager), logoutmanager);
-router.route("/forgotpwd").post(forgotPassword)
-router.route("/resetpwd").patch(resetPassword)
+router.route("/forgot-password").post(forgotPassword)
+router.route("/reset-password").patch(resetPassword)
 
 //edit manager
 router.route("/managerdetails").get(verifyJWT(Manager), managerdetailsSend);
 router.route("/edit/:role/:userId").patch(verifyJWT(Manager),editDetails)
 router.route("/changeemail").patch(verifyJWT(Manager),changeManagerEmail)
 router.route("/verifymail").post(verifyJWT(Manager),verifyEmails);
-router.route("/changepassword/:role/:userId").patch(verifyJWT(Manager),changePassword);3
+router.route("/changepassword/:role/:userId").patch(verifyJWT(Manager),changePassword);
+router.route("/resend-otp").post(verifyJWT(Manager),managerResendOtp)
 
 // enquery from
 router.route("/enqueryfrom").get(verifyJWT(Manager), fetchForm);

@@ -20,6 +20,10 @@ const verifyJWT = (model) =>
 
     try {
       const decodedToken = jwt.verify(token, ACCESS_TOKEN_SECRET);
+      console.log(decodedToken._id);
+      console.log(decodedToken.role);
+      
+      
 
       if (!model) {
         throw new apiError({

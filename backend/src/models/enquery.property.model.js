@@ -15,7 +15,6 @@ const enquertProperty = new Schema(
     },
     currentAddress: {
       type: String,
-      required: [true,"Current address is required"]
     },
     province: { 
       type: String,

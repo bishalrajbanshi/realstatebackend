@@ -7,10 +7,10 @@ const { apiError } = utils;
 const userEnqueryForm = async (userEnqueryData, userId) => {
   try {
     //destructure
-    const {fullName, address, propertyType, purpose, mobileNumber, message } =
+    const {fullName, province, propertyType, purpose, mobileNumber, message } =
       userEnqueryData;
 
-    if (!address || !propertyType || !purpose || !mobileNumber) {
+    if (!province || !propertyType || !purpose || !mobileNumber) {
       throw new apiError({
         statusCode: 400,
         message: "All Fields are required",
@@ -30,12 +30,12 @@ const userEnqueryForm = async (userEnqueryData, userId) => {
     const newEnqueryForm = new Enquertproperty({
       fullName:fullName || user.fullName,
       email: user.email,
-      currentAddress: user.currentAddress,
-      address,
-      propertyType,
-      purpose,
-      mobileNumber,
-      message,
+      currentAddress: user.currentAddress || "",
+      province:province,
+      propertyType:propertyType,
+      purpose:purpose,
+      mobileNumber:mobileNumber,
+      message:message,
       sendBy:user
     });
     await newEnqueryForm.save();

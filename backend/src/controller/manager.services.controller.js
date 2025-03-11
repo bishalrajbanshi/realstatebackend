@@ -10,7 +10,7 @@ const {
 } = utils;
 
 import { services } from "../services/index.js";
-import e from "express";
+
 const {
   loginServices,
   logoutServices,
@@ -471,13 +471,13 @@ const totalSellerData = asyncHandler(async (req, res, next) => {
 });
 
 //manager post
-const managerPosts = asyncHandler(async (req, res, next) => {
+const managerPosts = asyncHandler(async(req,res,next) => {
   try {
-    //if seller id exist use it else set null
     const { sellerId } = req.params || null;
-    const managerId = req.manager?._id;
+    const managerId = req.manager;
+    console.log(managerId);
+    
 
-    // Create the post data (but don't wait for image uploads yet)
     await managerpost(sellerId, managerId, req.body, req);
 
     // Send immediate response to the client
@@ -495,7 +495,7 @@ const managerPosts = asyncHandler(async (req, res, next) => {
       })
     );
   }
-});
+})
 
 //manager edit post
 const editPostbyManager = asyncHandler(async (req, res, next) => {

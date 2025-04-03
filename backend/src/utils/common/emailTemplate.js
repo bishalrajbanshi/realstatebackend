@@ -24,7 +24,7 @@ export const emailHtmlContent = ({ fullName, verificationCode }) => `
       </div>
       <div style="text-align: center; font-size: 16px; color: #333333;">
         <p>Dear <strong>${fullName}</strong>,</p>
-        <p>Thank you for choosing Sulav Ghar Gharadi. Please use the verification code below:</p>
+        <p>Thank you for choosing Realstate. Please use the verification code below:</p>
         <div style="font-size: 24px; font-weight: bold; color: #27ae60; padding: 10px 20px; border-radius: 5px; border: 2px solid #27ae60; display: inline-block; margin: 20px 0;">
           ${verificationCode}
         </div>
@@ -32,9 +32,9 @@ export const emailHtmlContent = ({ fullName, verificationCode }) => `
       </div>
       <div style="margin-top: 20px; text-align: center; font-size: 12px; color: #999999;">
         <p>Best regards,</p>
-        <p><strong>Sulav Ghar Gharadi Team</strong></p>
+        <p><strong>Realstate Team</strong></p>
         <hr style="border: none; border-top: 1px solid #e0e0e0;">
-        <p>This email was sent by Sulav Ghar Gharadi. Please do not reply directly to this email.</p>
+        <p>This email was sent by realstate. Please do not reply directly to this email.</p>
       </div>
     </div>
   </body>
@@ -44,10 +44,10 @@ export const emailHtmlContent = ({ fullName, verificationCode }) => `
 export const emailPlaintextContent = ({ fullName, verificationCode }) => `
 Dear ${fullName},
 
-Thank you for choosing Sulav Ghar Gharadi. Your verification code is: ${verificationCode}.
+Thank you for choosing realstate. Your verification code is: ${verificationCode}.
 
 If you did not request this code, please ignore this email.
 
 Best regards,
-Sulav Ghar Gharadi Team
+realstate Team
 `;
